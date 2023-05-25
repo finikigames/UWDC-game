@@ -1,6 +1,7 @@
 ﻿using Core.AssetManager;
 using Global.Services.Context;
 using Global.Services.Scheduler;
+using Global.StateMachine;
 using Global.StateMachine.States;
 using Global.Window;
 using Global.Window.Signals;
@@ -22,6 +23,10 @@ namespace Global {
             InstallFactories();
             InstallSignals();
 
+            Container
+                .BindInterfacesAndSelfTo<GameStateMachine>()
+                .AsSingle();
+            
             Container
                 .BindInterfacesAndSelfTo<ProfileGetService>()
                 .AsSingle();

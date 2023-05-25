@@ -17,12 +17,10 @@ namespace Global.StateMachine {
         }
 
         public void Initialize() {
-            _stateMachine
-                .Start();
         }
         
         public void InitializeStates() {
-            _stateMachine = new StateMachine<GameContext, Trigger>(GameContext.Launch);
+            _stateMachine = new StateMachine<GameContext, Trigger>(GameContext.Preloader);
 
             _stateProvider.SubscribeToRegisterState(RegisterState);
         }

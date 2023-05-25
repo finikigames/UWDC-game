@@ -29,8 +29,6 @@ namespace Checkers.States {
         public override void RegisterState(StateMachine<GameContext, Trigger> stateMachine) {
             stateMachine
                 .RegisterState(GameContext.Checkers, this)
-                .Permit(Trigger.MetaTrigger, GameContext.Meta)
-                .Permit(Trigger.CoreTrigger, GameContext.Core)
                 .SetupInternals(state => {
                     state.InternalTransition(Trigger.AfterSceneLoadTrigger, AfterSceneLoad);
                 });

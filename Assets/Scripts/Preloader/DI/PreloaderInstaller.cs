@@ -1,4 +1,5 @@
 ﻿using Global;
+using Preloader.States;
 using Zenject;
 
 namespace Preloader.DI {
@@ -6,6 +7,10 @@ namespace Preloader.DI {
         public override void InstallBindings() {
             Container
                 .BindInterfacesAndSelfTo<EntryPoint>()
+                .AsSingle();
+
+            Container
+                .BindInterfacesAndSelfTo<PreloaderRootState>()
                 .AsSingle();
         }
     }

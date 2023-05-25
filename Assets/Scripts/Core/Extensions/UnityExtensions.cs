@@ -19,11 +19,20 @@ namespace Core.Extensions {
             asyncOperation.allowSceneActivation = false;
             while (true) {
                 await Task.Yield();
-                if (asyncOperation.progress>=0.9f)
-                    break;               
+                if (asyncOperation.progress >= 0.9f) {
+                    break;
+                }
             }
-            asyncOperation.allowSceneActivation = true;            
-            
+            asyncOperation.allowSceneActivation = true;
+        }
+
+
+        public static async Task UnloadSceneAsync(int sceneIndex) {
+            AsyncOperation asyncOperation = SceneManager.UnloadSceneAsync(sceneIndex);
+
+            while (!asyncOperation.isDone) {
+                await Task.Yield();
+            }
         }
         
         public static Vector3 TransformPointUnscaled(this Transform transform, Vector3 position)

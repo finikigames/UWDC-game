@@ -15,18 +15,11 @@ namespace Global.UI {
 
         [SerializeField] protected Image _blackBg;
 
-        private WindowSettings _windowSettings;
-
         public Action OnClickCloseButton {
             get;
             set;
         }
-
-        [Inject]
-        public void Construct(WindowSettings windowSettings) {
-            _windowSettings = windowSettings;
-        }
-
+        
         #region BaseView
 
         protected override void OnEnable() {
@@ -84,12 +77,13 @@ namespace Global.UI {
 
         protected void ShowBlack() {
             _blackBg.enabled = true;
-            _blackBg.DOFade(0.8f, _windowSettings.fadeTime);
+            _blackBg.DOFade(0.8f, 0.2f);
         }
 
         protected void HideBlack() {
-            DOTween.Sequence()
-                .Append(_blackBg.DOFade(0, _windowSettings.fadeTime))
+            var sequence = DOTween.Sequence();
+
+            sequence.Append(_blackBg.DOFade(0, 0.2f))
                 .AppendCallback(() => { _blackBg.enabled = true; });
         }
 

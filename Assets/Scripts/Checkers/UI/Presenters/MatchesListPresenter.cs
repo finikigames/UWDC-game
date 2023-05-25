@@ -31,7 +31,7 @@ namespace Checkers.UI.Presenters {
         private IMatch _match;
         
         public MatchesListPresenter(ContextService service) : base(service) {
-            _checkersConfig = Resolve<CheckersUIConfig>(GameContext.Meta);
+            _checkersConfig = Resolve<CheckersUIConfig>(GameContext.Project);
             _nakamaService = Resolve<NakamaService>(GameContext.Project);
         }
 

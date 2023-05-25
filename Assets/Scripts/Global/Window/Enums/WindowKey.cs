@@ -1,5 +1,6 @@
 namespace Global.Window.Enums {
     public enum WindowKey {
-        MatchesList = 15
+        MatchesList = 0,
+        StartWindow = 1
     }
 }

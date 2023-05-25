@@ -2,7 +2,7 @@
     public enum Trigger {
         LaunchTrigger,
         CoreTrigger,
-        MetaTrigger,
+        MainTrigger,
         RestartTrigger,
         PauseTrigger,
         UnpauseTrigger,
