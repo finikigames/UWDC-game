@@ -1,9 +1,8 @@
 ﻿using System;
 using Global.StateMachine.Base.Enums;
-using Unity.Collections;
 using Zenject;
 
-namespace Global.Services.Context.Base {
+namespace Global.Context.Base {
     public interface IContextService {
         void SubscribeOnRegister(Action<GameContext> onRegister);
         void SubscribeOnRegister(Action<GameContext> onRegister, GameContext gameContext);

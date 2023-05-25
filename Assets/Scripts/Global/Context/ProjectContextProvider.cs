@@ -1,9 +1,9 @@
 ﻿using System;
-using Global.Services.Context.Base;
+using Global.Context.Base;
 using Global.StateMachine.Base.Enums;
 using Zenject;
 
-namespace Global.Services.Context {
+namespace Global.Context {
     public class ProjectContextProvider : IContext,
                                           IInitializable,
                                           IDisposable {

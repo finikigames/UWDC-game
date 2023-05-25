@@ -1,10 +1,7 @@
-﻿using System;
-using System.Linq;
-using Checkers.ConfigTemplate;
-using UnityEngine;
+﻿using Global.ConfigTemplate;
 using Zenject;
 
-namespace Global {
+namespace Global.Services {
     public class ProfileGetService : IInitializable {
         private Profile _profile;
         

@@ -1,9 +1,9 @@
 using System;
-using System.Threading.Tasks;
 using Core.AssetManager;
 using Core.MVP.Base.Interfaces;
+using Cysharp.Threading.Tasks;
 using Global.ConfigTemplate;
-using Global.Services.Context.Base;
+using Global.Context.Base;
 using Global.VisibilityMechanisms;
 using Global.Window.Enums;
 using UnityEngine;
@@ -21,7 +21,7 @@ namespace Global.Window {
             _service = assets;
         }
 
-        public async Task<UIWindow> Create(WindowConfig data, Transform parent, WindowKey key,
+        public async UniTask<UIWindow> Create(WindowConfig data, Transform parent, WindowKey key,
             Vector3 position) {
             var uid = Guid.NewGuid().ToString();
 
@@ -45,7 +45,7 @@ namespace Global.Window {
             return controller as IBasePresenter<WindowKey>;
         }
 
-        private async Task<BaseView> CreateView(WindowConfig data) {
+        private async UniTask<BaseView> CreateView(WindowConfig data) {
             var prefab = await _service.Load<GameObject>(data.PrefabReference);
 
             var container = _contextService.ResolveContainer(data.Context);

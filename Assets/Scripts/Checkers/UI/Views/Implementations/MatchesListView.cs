@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Checkers.UI.Views.Interfaces;
+using Cysharp.Threading.Tasks;
 using EnhancedUI.EnhancedScroller;
-using Global.UI;
 using Global.VisibilityMechanisms;
+using Global.Window.Base;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -62,7 +62,7 @@ namespace Checkers.UI.Views.Implementations {
             _matchesRefreshButton.onClick.AddListener(() => OnMatchesRefresh?.Invoke());
         }
 
-        public override async Task Hide() {
+        public override async UniTask Hide() {
             base.Hide(null);
         }
 

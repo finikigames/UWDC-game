@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Checkers.ConfigTemplate;
 using Checkers.UI.Data;
 using Checkers.UI.Views.Implementations;
 using Checkers.UI.Views.Interfaces;
 using Core.Extensions;
+using Cysharp.Threading.Tasks;
 using EnhancedUI.EnhancedScroller;
-using Global.Services.Context;
+using Global.Context;
 using Global.StateMachine.Base.Enums;
 using Global.Window.Base;
 using Global.Window.Enums;
@@ -35,15 +35,15 @@ namespace Checkers.UI.Presenters {
             _nakamaService = Resolve<NakamaService>(GameContext.Project);
         }
 
-        protected override async Task InitializeData() {
+        protected override async UniTask InitializeData() {
             
         }
 
-        protected override async Task LoadContent() {
+        protected override async UniTask LoadContent() {
             View.SetScrollerDelegate(this);
         }
 
-        public override async Task InitializeOnce() {
+        public override async UniTask InitializeOnce() {
             View.OnMatchCreate += OnMatchCreate;
             View.OnMatchJoin += OnMatchJoin;
             View.OnMatchesRefresh += RefreshMatches;
@@ -55,7 +55,7 @@ namespace Checkers.UI.Presenters {
             await LoadMatches();
         }
 
-        private async Task LoadMatches() {
+        private async UniTask LoadMatches() {
             var matches = await _nakamaService.GetMatchesList();
             _matchesList = matches.Matches.ToList();
 

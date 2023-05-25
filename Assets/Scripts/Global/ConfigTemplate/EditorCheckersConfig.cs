@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine.Serialization;
 
-namespace Checkers.ConfigTemplate {
+namespace Global.ConfigTemplate {
     [Serializable]
     public class EditorCheckersConfig {
         public string UserId;

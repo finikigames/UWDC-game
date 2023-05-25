@@ -1,6 +1,6 @@
-﻿using System.Threading.Tasks;
-using Core.MVP.Base.Interfaces;
-using Global.Services.Context;
+﻿using Core.MVP.Base.Interfaces;
+using Cysharp.Threading.Tasks;
+using Global.Context;
 using Global.Window.Enums;
 using Global.Window.Signals;
 
@@ -11,7 +11,7 @@ namespace Global.Window.Base {
         protected BaseWindowPresenter(ContextService service) : base(service) {
         }
 
-        public override async Task Initialize(IWindowData data, WindowKey key, bool isInit) {
+        public override async UniTask Initialize(IWindowData data, WindowKey key, bool isInit) {
             WindowData = (TData) data;
 
             await InitializeData();

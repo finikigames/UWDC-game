@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using Global.StateMachine.Base.Enums;
 using Global.StateMachine.States;
 using Source.Scripts.Core.StateMachine;
@@ -36,11 +36,11 @@ namespace Global.StateMachine {
             _stateMachine.UnRegisterSubStateFor(state, subGameContext);
         }
 
-        public async Task Fire(Trigger trigger) {
+        public async UniTask Fire(Trigger trigger) {
             await _stateMachine.Fire(trigger);
         }
 
-        public async Task ForceExit() {
+        public async UniTask ForceExit() {
             await _stateMachine.ForceExit();
         }
 

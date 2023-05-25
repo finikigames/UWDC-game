@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Checkers.UI.Data;
 using Core.Extensions;
+using Cysharp.Threading.Tasks;
 using UnityEngine.SceneManagement;
 using Zenject;
 
@@ -18,7 +18,7 @@ namespace Checkers {
             _signalBus.Subscribe<ToCheckersMetaSignal>(async signal => await LoadYourAsyncScene(signal));
         }
 
-        public async Task LoadYourAsyncScene(ToCheckersMetaSignal signal) {
+        public async UniTask LoadYourAsyncScene(ToCheckersMetaSignal signal) {
             var currentScene = SceneManager.GetActiveScene();
 
             PlayerPrefsX.SetBool("WithPlayer", signal.WithPlayer);

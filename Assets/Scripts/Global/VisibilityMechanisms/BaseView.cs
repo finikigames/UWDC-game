@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Core;
 using Core.MVP.Base.Enums;
 using Core.MVP.Base.Interfaces;
 using Core.MVP.ShowStates.Interfaces;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -81,10 +81,10 @@ namespace Global.VisibilityMechanisms {
             _hideMechanism = hideMechanism;
         }
 
-        public virtual async Task ShowView() {
+        public virtual async UniTask ShowView() {
         }
         
-        public virtual async Task Hide() {
+        public virtual async UniTask Hide() {
         }
     }
 }

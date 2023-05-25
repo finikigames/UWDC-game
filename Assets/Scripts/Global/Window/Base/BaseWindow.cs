@@ -1,14 +1,13 @@
 using System;
-using System.Threading.Tasks;
 using Core.MVP.Base.Enums;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Global.VisibilityMechanisms;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using Zenject;
 
-namespace Global.UI {
+namespace Global.Window.Base {
     public class BaseWindow : BaseView {
         [SerializeField] private TextMeshProUGUI _headerText;
         [SerializeField] protected Button _closeButton;
@@ -54,7 +53,7 @@ namespace Global.UI {
 
         #region BaseWindow
 
-        public virtual async Task ShowView() {
+        public virtual async UniTask ShowView() {
             Open();
         }
 

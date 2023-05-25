@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Threading.Tasks;
 using Core.AssetManager.Interfaces;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.AddressableAssets.ResourceLocators;
@@ -26,8 +26,8 @@ namespace Core.AssetManager {
             _loadCache = new Dictionary<(Type, AssetReference), ILoadTaskWrapper>();
         }
 
-        public Task Initialize() {
-            var source = new TaskCompletionSource<bool>();
+        public UniTask Initialize() {
+            var source = new UniTaskCompletionSource<bool>();
             Addressables.InitializeAsync().Completed += _ => source.TrySetResult(true);
             return source.Task;
         }
@@ -44,7 +44,7 @@ namespace Core.AssetManager {
             return (typeof(T), assetReference);
         }
 
-        public async Task<T> Load<T>(AssetReference assetReference) where T : class {
+        public async UniTask<T> Load<T>(AssetReference assetReference) where T : class {
             if (!GuardKey(assetReference, out string key)) {
                 throw new InvalidKeyException(key);
             }
@@ -55,17 +55,17 @@ namespace Core.AssetManager {
 
             var cacheKey = GetCacheKey<T>(assetReference);
             if (_loadCache.ContainsKey(cacheKey)) {
-                var task = (LoadTaskWrapper<T>) _loadCache[cacheKey];
-                var otherResult = await task.Task;
+                var UniTask = (LoadTaskWrapper<T>) _loadCache[cacheKey];
+                var otherResult = await UniTask.Task;
                 return otherResult;
             }
             
             var assetHandle = assetReference.LoadAssetAsync<T>();
 
-            var loadTask = new LoadTaskWrapper<T> {
-                Task = assetHandle.Task
+            var loadUniTask = new LoadTaskWrapper<T> {
+                Task = assetHandle.Task.AsUniTask()
             };
-            _loadCache.Add(cacheKey, loadTask);
+            _loadCache.Add(cacheKey, loadUniTask);
 
             return await LoadWithCache(
                 key,
@@ -75,7 +75,7 @@ namespace Core.AssetManager {
                     _loadCache.Remove(cacheKey);
                 });
         }
-        public async Task<T> Load<T>(string address) where T : class {
+        public async UniTask<T> Load<T>(string address) where T : class {
             if (!GuardKey(address, out string key)) {
                 throw new InvalidKeyException(key);
             }
@@ -85,7 +85,7 @@ namespace Core.AssetManager {
                 Addressables.LoadAssetAsync<T>(address),
                 completed => { _assets[key] = completed; });
         }
-        public async Task<List<T>> Load<T>(List<AssetReference> assetReferences) where T : class {
+        public async UniTask<List<T>> Load<T>(List<AssetReference> assetReferences) where T : class {
             var loadOps = new List<AsyncOperationHandle>();
             foreach (AssetReference asset in assetReferences) {
                 if (!GuardKey(asset, out string key)) {
@@ -109,7 +109,7 @@ namespace Core.AssetManager {
         }
 
         /*
-        public async Task<List<T>> LoadByLabel<T>(IEnumerable<string> keys) where T : class {
+        public async UniTask<List<T>> LoadByLabel<T>(IEnumerable<string> keys) where T : class {
             IList<IResourceLocation> locations
                 = await Addressables.LoadResourceLocationsAsync(keys,
                     Addressables.MergeMode.Union, typeof(T));
@@ -128,13 +128,13 @@ namespace Core.AssetManager {
 
             AsyncOperationHandle<IList<AsyncOperationHandle>> group
                 = Addressables.ResourceManager.CreateGenericGroupOperation(loadOps, true);
-            await group.Task;
+            await group.UniTask;
 
             var instances = loadOps.Select(x => (T) x.Result).ToList();
             return instances;
         }*/
 
-        public async Task<SceneInstance> LoadScene(AssetReference sceneReference, LoadSceneMode sceneMode) {
+        public async UniTask<SceneInstance> LoadScene(AssetReference sceneReference, LoadSceneMode sceneMode) {
             if (!GuardKey(sceneReference, out string key)) {
                 throw new InvalidKeyException(key);
             }
@@ -150,7 +150,7 @@ namespace Core.AssetManager {
             return await handle.Task;
         }
 
-        private async Task<T> LoadWithCache<T>(string key,
+        private async UniTask<T> LoadWithCache<T>(string key,
             AsyncOperationHandle<T> handle,
             Action<AsyncOperationHandle<T>> callback) where T : class {
             
@@ -207,14 +207,14 @@ namespace Core.AssetManager {
 
         #region Get download size
 
-        public async Task<long> GetDownloadSize(string address)
+        public async UniTask<long> GetDownloadSize(string address)
             => await GetDownloadSize(Addressables.GetDownloadSizeAsync(address));
-        public async Task<long> GetDownloadSize(AssetReference assetReference)
+        public async UniTask<long> GetDownloadSize(AssetReference assetReference)
             => await GetDownloadSize(Addressables.GetDownloadSizeAsync(assetReference));
-        public async Task<long> GetDownloadSize(IEnumerable<AssetReference> assetReferences)
+        public async UniTask<long> GetDownloadSize(IEnumerable<AssetReference> assetReferences)
             => await GetDownloadSize(Addressables.GetDownloadSizeAsync(assetReferences));
 
-        private static async Task<long> GetDownloadSize(AsyncOperationHandle<long> handle) {
+        private static async UniTask<long> GetDownloadSize(AsyncOperationHandle<long> handle) {
             long size = await handle.Task;
             Addressables.Release(handle);
             return size;

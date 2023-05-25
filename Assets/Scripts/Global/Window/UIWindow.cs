@@ -1,6 +1,6 @@
 using System;
-using System.Threading.Tasks;
 using Core.MVP.Base.Interfaces;
+using Cysharp.Threading.Tasks;
 using Global.ConfigTemplate;
 using Global.VisibilityMechanisms;
 using Global.Window.Enums;
@@ -27,12 +27,12 @@ namespace Global.Window {
             State = WindowState.Created;
         }
 
-        public async Task Open() {
+        public async UniTask Open() {
             await _controller.Open();
             State = WindowState.Opened;
         }
 
-        public async Task Close() {
+        public async UniTask Close() {
             await _controller.Close();
             _controller.Dispose();
             _view.Dispose();
@@ -43,7 +43,7 @@ namespace Global.Window {
             _view.HideImmediate();
         }
 
-        public async Task Initialize(IWindowData data, bool isInit) {
+        public async UniTask Initialize(IWindowData data, bool isInit) {
             await _controller.Initialize(data, _key, isInit);
             _view.Initialize(Uid);
         }
@@ -67,7 +67,7 @@ namespace Global.Window {
             _controller.InitDependencies();
         }
 
-        public async Task InitializeOnce() {
+        public async UniTask InitializeOnce() {
             await _controller.InitializeOnce();
         }
     }

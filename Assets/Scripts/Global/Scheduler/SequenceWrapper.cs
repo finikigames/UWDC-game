@@ -1,8 +1,8 @@
 using System;
-using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 
-namespace Global.Services.Scheduler {
+namespace Global.Scheduler {
     public class SequenceWrapper {
         public Action<Guid> OnCompleteSequence;
 
@@ -33,7 +33,7 @@ namespace Global.Services.Scheduler {
         }
 
         private async void DelayFrames(int frames) {
-            await Task.Delay(frames);
+            await UniTask.Delay(frames);
             _sequence.onComplete += DisposeSequence;
         }
 

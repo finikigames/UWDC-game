@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Global;
+using Cysharp.Threading.Tasks;
+using Global.Services;
 using Nakama;
 using UnityEngine;
 #if UNITY_EDITOR
@@ -16,28 +17,74 @@ namespace Server.Services {
         private ISocketAdapter _adapter;
         private IMatch _match;
         private Profile _profile;
+        private IApiAccount _me;
 
         public void ProvideData(Profile userProfile) {
             _profile = userProfile;
         }
 
-        public async Task CommonInitialize() {
+        public async UniTask CommonInitialize() {
             await CreateClient();
             await DeviceAuth();
             await CreateSocket();
             await ConnectSocket();
+            _me = await GetUserInfo();
             
 #if UNITY_EDITOR
             EditorApplication.playModeStateChanged += OnPlayModeChanged;
 #endif
         }
+
+        public async UniTask<IApiAccount> GetUserInfo() {
+            return await _client.GetAccountAsync(_session);
+        }
         
-        public async Task JoinGroup(string groupName) {
-            await _client.JoinGroupAsync(_session, groupName);
+        public async UniTask<IApiGroup> CreateGroup(string groupName) {
+            var groups = await _client.ListGroupsAsync(_session, groupName);
+            foreach (var group in groups.Groups) {
+                if (group.Name == groupName) {
+                    return group;
+                }
+            }
+            var createdGroup = await _client.CreateGroupAsync(_session, groupName);
+            return createdGroup;
+        }
+        
+        public async UniTask JoinGroup(string groupId) {
+            var resultsMember = await _client.ListUserGroupsAsync(_session, 2, 1, "");
+            
+            foreach (var group in resultsMember.UserGroups) {
+                if (group.Group.Id == groupId) return;
+            }
+            var resultsSuperAdmin = await _client.ListUserGroupsAsync(_session, 0, 1, "");
+
+            foreach (var group in resultsSuperAdmin.UserGroups) {
+                if (group.Group.Id == groupId) return;
+            }
+            
+            await _client.JoinGroupAsync(_session, groupId);
         }
 
-        public async Task<IApiGroupUserList> GetGroupUsers(string groupName, int limit, string cursor = "") {
+        public async UniTask<IApiGroup> GetGroupInfo(string groupName) {
+            var groups = await _client.ListGroupsAsync(_session, groupName);
+
+            foreach (var group in groups.Groups) {
+                if (group.Name == groupName) return group;
+            }
+
+            return null;
+        }
+
+        public async UniTask<IApiGroupUserList> GetGroupUsers(string groupName, int limit, string cursor = "") {
             return await _client.ListGroupUsersAsync(_session, groupName, 2, limit, cursor);
+        }
+        
+        public async UniTask<List<IGroupUserListGroupUser>> GetGroupUsersWithoutMe(string groupName, int limit, string cursor = "") {
+            var usersList = await _client.ListGroupUsersAsync(_session, groupName, 2, limit, cursor);
+
+            var value = usersList.GroupUsers.Where(u => u.User.Id != _me.User.Id).ToList();
+
+            return value;
         }
         
         public string GetCurrentMatchId() {
@@ -52,7 +99,7 @@ namespace Server.Services {
         }
 #endif
 
-        public async Task CreateClient() {
+        public async UniTask CreateClient() {
             _client = new Client("https", "main.arcanecrystalsnakama.ru", 7350, "defaultkey", UnityWebRequestAdapter.Instance);
             
 #if UNITY_WEBGL && !UNITY_EDITOR
@@ -67,29 +114,29 @@ namespace Server.Services {
             return _match.Presences.Count();
         }
 
-        public async Task DeviceAuth() {
+        public async UniTask DeviceAuth() {
             _session = await _client.AuthenticateDeviceAsync(_profile.UserId);
 
             Debug.Log(_session);
 
             var account = await _client.GetAccountAsync(_session);
 
-            var userName = account.User.Username == _profile.Username ? null : _profile.UserId;
+            var userName = account.User.Username == _profile.Username ? null : _profile.Username;
 
             await _client.UpdateAccountAsync(_session, userName, $"{_profile.FirstName} {_profile.LastName}");
         }
 
-        public async Task CreateSocket() {
+        public async UniTask CreateSocket() {
             _socket = Socket.From(_client, _adapter);
         }
 
-        public async Task ConnectSocket() {
+        public async UniTask ConnectSocket() {
             bool appearOnline = true;
             int connectionTimeout = 30;
             await _socket.ConnectAsync(_session, appearOnline, connectionTimeout);
         }
 
-        public async Task JoinMatch(string matchId) {
+        public async UniTask JoinMatch(string matchId) {
             await CheckSocketState();
             
             _match = await _socket.JoinMatchAsync(matchId);
@@ -99,18 +146,18 @@ namespace Server.Services {
             }
         }
 
-        public async Task<IMatch> CreateMatch(string matchId) {
+        public async UniTask<IMatch> CreateMatch(string matchId) {
             await CheckSocketState();
             
             _match = await _socket.CreateMatchAsync(matchId);
             return _match;
         }
 
-        public async Task<IApiMatchList> GetMatchesList() {
+        public async UniTask<IApiMatchList> GetMatchesList() {
             return await _client.ListMatchesAsync(_session, 0, 1, 10, false, null, null);
         }
 
-        public async Task SendMatchStateAsync(string matchId, long opCode, string data) {
+        public async UniTask SendMatchStateAsync(string matchId, long opCode, string data) {
             await _socket.SendMatchStateAsync(matchId, opCode, data);
         }
 
@@ -130,15 +177,15 @@ namespace Server.Services {
             _socket.ReceivedMatchState -= callback;
         }
 
-        public async Task AddFriend(string friendId) {
+        public async UniTask AddFriend(string friendId) {
             await _client.AddFriendsAsync(_session, new [] {friendId});
         }
 
-        public async Task LeaveMatch(string matchId) {
+        public async UniTask LeaveMatch(string matchId) {
             await _socket.LeaveMatchAsync(matchId);
         }
 
-        private async Task CheckSocketState() {
+        private async UniTask CheckSocketState() {
             if (_socket.IsConnected) return;
 
             await ConnectSocket();

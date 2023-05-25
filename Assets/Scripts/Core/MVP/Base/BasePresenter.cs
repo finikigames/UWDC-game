@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Core.MVP.Base.Interfaces;
 using Core.MVP.Initializer.Interfaces;
+using Cysharp.Threading.Tasks;
 using Zenject;
 
 namespace Core.MVP.Base {
@@ -53,12 +53,12 @@ namespace Core.MVP.Base {
 
         public virtual void DisposeUnit() { }
         
-        public async Task Open() {
+        public async UniTask Open() {
             await View.ShowView();
             // await View.Show();
         }
 
-        public async Task Close()
+        public async UniTask Close()
         {
             // await View.Hide();
             // View.Cleanup();

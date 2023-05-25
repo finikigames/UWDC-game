@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Core.MVP.Base.Interfaces;
-using Global.Services.Context;
+using Cysharp.Threading.Tasks;
+using Global.Context;
 using Global.StateMachine.Base.Enums;
 using Global.Window.Enums;
 using Zenject;
@@ -30,13 +30,13 @@ namespace Global.Window.Base {
             
         }
 
-        public virtual async Task Initialize(IWindowData data, WindowKey key, bool isInit) {
+        public virtual async UniTask Initialize(IWindowData data, WindowKey key, bool isInit) {
             WindowData = (TData) data;
 
             await InitializeData();
         }
 
-        public virtual async Task InitializeOnce() {
+        public virtual async UniTask InitializeOnce() {
             
         }
 
@@ -44,7 +44,7 @@ namespace Global.Window.Base {
             View = (TView) view;
         }
         
-        public async Task Open() {
+        public async UniTask Open() {
             await LoadContent();
             await View.ShowView();
         }
@@ -53,7 +53,7 @@ namespace Global.Window.Base {
             SignalBus.Subscribe(action);
         }
 
-        public async Task Close() {
+        public async UniTask Close() {
             await View.Hide();
         }
 
@@ -61,9 +61,9 @@ namespace Global.Window.Base {
             View.HideImmediate();
         }
         
-        protected virtual async Task InitializeData() {}
+        protected virtual async UniTask InitializeData() {}
         
-        protected virtual async Task LoadContent() {}
+        protected virtual async UniTask LoadContent() {}
 
         public virtual void InitDependencies() {
         }

@@ -1,11 +1,9 @@
-﻿using System.Threading.Tasks;
-using Checkers.Settings;
+﻿using Checkers.Settings;
 using Core.Extensions;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
-using Global;
 using Global.Extensions;
-using Global.Services.Scheduler.Base;
-using Server.Services;
+using Global.Scheduler.Base;
 using UnityEngine;
 using Zenject;
 
@@ -75,7 +73,7 @@ namespace Checkers.Services {
                 .Append(0.3f, () => { StartAsync(); });
         }
 
-        private async Task StartAsync() {
+        private async UniTask StartAsync() {
             await UnityExtensions.LoadSceneAsync("Simple");
             await UnityExtensions.LoadSceneAsync("CheckersMain");
         }

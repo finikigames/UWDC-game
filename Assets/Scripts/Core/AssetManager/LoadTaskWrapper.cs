@@ -1,8 +1,8 @@
-﻿using System.Threading.Tasks;
-using Core.AssetManager.Interfaces;
+﻿using Core.AssetManager.Interfaces;
+using Cysharp.Threading.Tasks;
 
 namespace Core.AssetManager {
     public class LoadTaskWrapper<TLoad> : ILoadTaskWrapper {
-        public Task<TLoad> Task;
+        public UniTask<TLoad> Task;
     }
 }

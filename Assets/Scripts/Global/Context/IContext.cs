@@ -1,6 +1,6 @@
 ﻿using Global.StateMachine.Base.Enums;
 
-namespace Global {
+namespace Global.Context {
     public interface IContext {
         GameContext Context();
         void RegisterContext();

@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Threading.Tasks;
 using Core.MVP.Base.Interfaces;
+using Cysharp.Threading.Tasks;
 using Global.ConfigTemplate;
 using Global.Window.Enums;
 using Global.Window.Interfaces;
@@ -45,7 +45,7 @@ namespace Global.Window {
             window.Open();
         }
 
-        private async Task<(UIWindow window, bool isInitialized)> PreloadWindow(WindowKey key) {
+        private async UniTask<(UIWindow window, bool isInitialized)> PreloadWindow(WindowKey key) {
             var config = GetWindowConfig(key);
 
             UIWindow window;
@@ -76,7 +76,7 @@ namespace Global.Window {
 
         public bool IsWindowLoaded(WindowKey key) => _windowsByUid.ContainsKey(key);
 
-        private async Task CloseWindow(WindowKey key) {
+        private async UniTask CloseWindow(WindowKey key) {
             if (!_windowsByUid.TryGetValue(key, out UIWindow window)) {
                 throw new WarningException($"Window is not active, uid: {key}");
             }

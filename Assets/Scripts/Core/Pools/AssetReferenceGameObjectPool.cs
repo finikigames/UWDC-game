@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Core.AssetManager;
 using Core.Pools.Base;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using Object = UnityEngine.Object;
@@ -42,7 +42,7 @@ namespace Core.Pools {
             _taken = new List<GameObject>();
         }
 
-        public async Task LoadPrefab() {
+        public async UniTask LoadPrefab() {
             _prefab = await _assetService.Load<GameObject>(_assetReferencePrefab);
         }
 

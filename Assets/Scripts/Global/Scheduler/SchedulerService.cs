@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using Core.Pools;
-using Global.Services.Scheduler.Base;
+using Global.Scheduler.Base;
 
-namespace Global.Services.Scheduler {
+namespace Global.Scheduler {
     public class SchedulerService : ISchedulerService {
         private readonly Dictionary<Guid, SequenceWrapper> _sequences = new();
         private readonly Pool<SequenceWrapper> _pool = new();

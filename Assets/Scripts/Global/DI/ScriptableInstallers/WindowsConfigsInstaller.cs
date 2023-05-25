@@ -2,7 +2,7 @@ using Global.ConfigTemplate;
 using UnityEngine;
 using Zenject;
 
-namespace Global.DI.Installers.ScriptableInstallers {
+namespace Global.DI.ScriptableInstallers {
     [CreateAssetMenu(fileName = "Windows Config", menuName = "Configs/Windows Config")]
     public class WindowsConfigsInstaller : ScriptableObjectInstaller<WindowsConfigsInstaller> {
         public WindowsConfigs WindowsConfig;

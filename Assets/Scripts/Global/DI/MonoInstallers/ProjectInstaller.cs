@@ -1,6 +1,8 @@
 ﻿using Core.AssetManager;
-using Global.Services.Context;
-using Global.Services.Scheduler;
+using Global.Context;
+using Global.Scheduler;
+using Global.Services;
+using Global.Services.Timer;
 using Global.StateMachine;
 using Global.StateMachine.States;
 using Global.Window;
@@ -8,7 +10,7 @@ using Global.Window.Signals;
 using UnityEngine;
 using Zenject;
 
-namespace Global {
+namespace Global.DI.MonoInstallers {
     public class ProjectInstaller : MonoInstaller {
         [SerializeField] private GameObject _sceneLoaderOverlay;
 
@@ -23,6 +25,10 @@ namespace Global {
             InstallFactories();
             InstallSignals();
 
+            Container
+                .BindInterfacesAndSelfTo<TimerService>()
+                .AsSingle();
+            
             Container
                 .BindInterfacesAndSelfTo<GameStateMachine>()
                 .AsSingle();

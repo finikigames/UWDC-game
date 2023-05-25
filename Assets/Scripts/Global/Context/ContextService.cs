@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using Global.Services.Context.Base;
+using Global.Context.Base;
 using Global.StateMachine.Base.Enums;
-using Unity.Collections;
 using Zenject;
 
-namespace Global.Services.Context {
+namespace Global.Context {
     public class ContextService : IContextService,
                                   IDisposable {
         private HashSet<GameContext> _contexts = new ();

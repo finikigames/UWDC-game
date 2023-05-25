@@ -1,5 +1,6 @@
 ﻿using System;
-using Global.Services.Context.Base;
+using Global.Context;
+using Global.Context.Base;
 using Global.StateMachine.Base.Enums;
 using Source.Scripts.Core.StateMachine.States.Base;
 using Zenject;

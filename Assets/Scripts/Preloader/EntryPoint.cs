@@ -1,6 +1,7 @@
 ﻿using Core.Extensions;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
-using Global;
+using Global.Services;
 using Global.StateMachine;
 using Global.StateMachine.Base.Enums;
 using Server.Services;
@@ -21,7 +22,11 @@ namespace Preloader {
             _gameStateMachine = gameStateMachine;
         }
         
-        public async void Initialize() {
+        public void Initialize() {
+            InitializeInternal();
+        }
+
+        private async UniTask InitializeInternal() {
             DOTween.Init();
             
             _getService.Initialize();
