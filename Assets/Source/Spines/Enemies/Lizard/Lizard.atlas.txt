@@ -1,0 +1,244 @@
+
+Lizard.png
+size: 2048,2048
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+1_00000_28
+  rotate: false
+  xy: 1034, 1423
+  size: 44, 61
+  orig: 51, 102
+  offset: 7, 4
+  index: -1
+1_00000_32
+  rotate: false
+  xy: 1034, 1486
+  size: 45, 58
+  orig: 51, 102
+  offset: 6, 3
+  index: -1
+L_eye
+  rotate: false
+  xy: 533, 745
+  size: 26, 27
+  orig: 26, 27
+  offset: 0, 0
+  index: -1
+L_eyebrow
+  rotate: true
+  xy: 1490, 542
+  size: 151, 175
+  orig: 151, 175
+  offset: 0, 0
+  index: -1
+L_eyelid
+  rotate: true
+  xy: 1034, 1392
+  size: 29, 31
+  orig: 29, 31
+  offset: 0, 0
+  index: -1
+L_horn _2
+  rotate: false
+  xy: 360, 294
+  size: 167, 238
+  orig: 167, 238
+  offset: 0, 0
+  index: -1
+L_horn_1
+  rotate: false
+  xy: 1669, 1790
+  size: 205, 250
+  orig: 205, 250
+  offset: 0, 0
+  index: -1
+R_eye
+  rotate: true
+  xy: 533, 688
+  size: 26, 25
+  orig: 26, 25
+  offset: 0, 0
+  index: -1
+R_eyebrow
+  rotate: true
+  xy: 1122, 10
+  size: 101, 105
+  orig: 101, 105
+  offset: 0, 0
+  index: -1
+R_eyelid
+  rotate: false
+  xy: 533, 716
+  size: 26, 27
+  orig: 26, 28
+  offset: 0, 1
+  index: -1
+R_horn_1
+  rotate: false
+  xy: 360, 534
+  size: 171, 238
+  orig: 171, 238
+  offset: 0, 0
+  index: -1
+R_horn_2
+  rotate: false
+  xy: 360, 74
+  size: 158, 218
+  orig: 158, 218
+  offset: 0, 0
+  index: -1
+body_crystal_1
+  rotate: true
+  xy: 1347, 33
+  size: 78, 59
+  orig: 79, 59
+  offset: 0, 0
+  index: -1
+body_crystal_2
+  rotate: true
+  xy: 1229, 16
+  size: 95, 116
+  orig: 95, 116
+  offset: 0, 0
+  index: -1
+body_crystal_3
+  rotate: false
+  xy: 1793, 1481
+  size: 106, 93
+  orig: 106, 93
+  offset: 0, 0
+  index: -1
+crystals_head_1
+  rotate: true
+  xy: 1667, 555
+  size: 138, 175
+  orig: 138, 175
+  offset: 0, 0
+  index: -1
+crystals_neck_1
+  rotate: true
+  xy: 993, 9
+  size: 102, 127
+  orig: 102, 127
+  offset: 0, 0
+  index: -1
+crystals_neck_2
+  rotate: false
+  xy: 1669, 1456
+  size: 122, 118
+  orig: 122, 118
+  offset: 0, 0
+  index: -1
+crystals_neck_3
+  rotate: false
+  xy: 1781, 1328
+  size: 116, 126
+  orig: 116, 126
+  offset: 0, 0
+  index: -1
+head_base
+  rotate: false
+  xy: 1440, 283
+  size: 408, 234
+  orig: 408, 234
+  offset: 0, 0
+  index: -1
+mouth
+  rotate: false
+  xy: 1827, 2
+  size: 210, 279
+  orig: 210, 279
+  offset: 0, 0
+  index: -1
+mouth_glow
+  rotate: false
+  xy: 1669, 1576
+  size: 201, 212
+  orig: 201, 212
+  offset: 0, 0
+  index: -1
+neck_1
+  rotate: true
+  xy: 1490, 983
+  size: 402, 289
+  orig: 402, 289
+  offset: 0, 0
+  index: -1
+neck_2
+  rotate: false
+  xy: 2, 5
+  size: 356, 767
+  orig: 356, 767
+  offset: 0, 0
+  index: -1
+neck_3
+  rotate: true
+  xy: 1034, 519
+  size: 866, 454
+  orig: 866, 454
+  offset: 0, 0
+  index: -1
+neck_4
+  rotate: true
+  xy: 993, 113
+  size: 404, 445
+  orig: 404, 445
+  offset: 0, 0
+  index: -1
+neck_5
+  rotate: false
+  xy: 2, 1546
+  size: 1085, 494
+  orig: 1085, 535
+  offset: 0, 0
+  index: -1
+nose
+  rotate: true
+  xy: 520, 10
+  size: 68, 188
+  orig: 68, 188
+  offset: 0, 0
+  index: -1
+tail_0
+  rotate: false
+  xy: 2, 774
+  size: 558, 770
+  orig: 558, 770
+  offset: 0, 0
+  index: -1
+tail_3
+  rotate: true
+  xy: 533, 80
+  size: 501, 458
+  orig: 501, 458
+  offset: 0, 0
+  index: -1
+tail_4
+  rotate: true
+  xy: 1440, 10
+  size: 271, 385
+  orig: 271, 385
+  offset: 0, 0
+  index: -1
+tail_5
+  rotate: true
+  xy: 1089, 1387
+  size: 653, 578
+  orig: 653, 578
+  offset: 0, 0
+  index: -1
+tail_8
+  rotate: true
+  xy: 562, 583
+  size: 961, 470
+  orig: 961, 775
+  offset: 0, 0
+  index: -1
+teeth
+  rotate: true
+  xy: 1490, 695
+  size: 286, 348
+  orig: 286, 348
+  offset: 0, 0
+  index: -1
