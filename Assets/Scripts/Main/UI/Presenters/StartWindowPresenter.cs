@@ -140,6 +140,8 @@ namespace Main.UI.Presenters {
         }
 
         public override void Dispose() {
+            _timerService.RemoveTimer("updateUsersTimer");
+            
             _nakamaService.UnsubscribeFromMessages(MessagesListener);
             _nakamaService.UnsubscribeFromPartyPresence(PartyPresenceListener);
         }

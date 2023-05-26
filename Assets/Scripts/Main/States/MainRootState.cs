@@ -17,7 +17,8 @@ namespace Main.States {
 
         public override void RegisterState(StateMachine<GameContext, Trigger> stateMachine) {
             stateMachine
-                .RegisterState(GameContext.Main, this);
+                .RegisterState(GameContext.Main, this)
+                .Permit(Trigger.CheckersTrigger, GameContext.Checkers);
         }
         
         private void InitializeState() {
