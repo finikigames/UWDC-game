@@ -4,6 +4,7 @@ using System.Linq;
 using Cysharp.Threading.Tasks;
 using Global.Services;
 using Nakama;
+using Nakama.TinyJson;
 using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -16,9 +17,16 @@ namespace Server.Services {
         private ISocket _socket;
         private ISocketAdapter _adapter;
         private IMatch _match;
+        private IParty _party;
         private Profile _profile;
         private IApiAccount _me;
 
+        private Dictionary<string, IParty> _createdParties;
+
+        public NakamaService() {
+            _createdParties = new Dictionary<string, IParty>();
+        }
+        
         public void ProvideData(Profile userProfile) {
             _profile = userProfile;
         }
@@ -34,7 +42,44 @@ namespace Server.Services {
             EditorApplication.playModeStateChanged += OnPlayModeChanged;
 #endif
         }
+        
+        public async UniTask<IParty> CreateParty() {
+            return await _socket.CreatePartyAsync(false, 2);
+        }
 
+        public async UniTask JoinParty(string partyId) {
+            await _socket.JoinPartyAsync(partyId);
+        }
+        
+        public async UniTask SendPartyToUser(string userId, IParty party) {
+            var content = new Dictionary<string, string>()
+            {
+                {"partyId", party.Id}
+            };
+            
+            var channel = await _socket.JoinChatAsync(userId, ChannelType.DirectMessage);
+            await _socket.WriteChatMessageAsync(channel, content.ToJson());
+            await _socket.LeaveChatAsync(userId);
+            
+            _createdParties.Add(userId, party);
+        }
+
+        public void SubscribeToPartyPresence(Action<IPartyPresenceEvent> callback) {
+            _socket.ReceivedPartyPresence += callback;
+        }
+
+        public void UnsubscribeFromPartyPresence(Action<IPartyPresenceEvent> callback) {
+            _socket.ReceivedPartyPresence -= callback;
+        }
+        
+        public void SubscribeToMessages(Action<IApiChannelMessage> onParty) {
+            _socket.ReceivedChannelMessage += onParty;
+        }
+
+        public void UnsubscribeFromMessages(Action<IApiChannelMessage> onParty) {
+            _socket.ReceivedChannelMessage -= onParty;
+        }
+        
         public async UniTask<IApiAccount> GetUserInfo() {
             return await _client.GetAccountAsync(_session);
         }

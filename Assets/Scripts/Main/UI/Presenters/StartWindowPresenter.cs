@@ -11,7 +11,9 @@ using Main.UI.Data;
 using Main.UI.Views.Base;
 using Main.UI.Views.Implementations;
 using Nakama;
+using Nakama.TinyJson;
 using Server.Services;
+using UnityEngine;
 using UnityEngine.Scripting;
 
 namespace Main.UI.Presenters {
@@ -41,11 +43,34 @@ namespace Main.UI.Presenters {
             _globalGroupInfo = await _nakamaService.GetGroupInfo(_globalGroupName);
 
             _userInfoDatas = new List<UserInfoData>();
+
+            _onUserPlayClick = null;
+            _onUserPlayClick += SendPartyToUser;
             
             View.SetScrollerDelegate(this);
 
+            _nakamaService.SubscribeToMessages(MessagesListener);
+            _nakamaService.SubscribeToPartyPresence(PartyPresenceListener);
+            
             OnUsersUpdate();
             _timerService.StartTimer("updateUsersTimer", 10, OnUsersUpdate, true);
+        }
+
+        private async void SendPartyToUser(string userId) {
+            var party = await _nakamaService.CreateParty();
+            await _nakamaService.SendPartyToUser(userId, party);
+        }
+
+        private void PartyPresenceListener(IPartyPresenceEvent presenceEvent) {
+            
+        }
+
+        private async void MessagesListener(IApiChannelMessage m) {
+            var content = m.Content.FromJson<Dictionary<string, string>>();
+            if (content.TryGetValue("partyId", out var value)) {
+                Debug.Log($"Get a party with a id {value}");
+                await _nakamaService.JoinParty(value);
+            }
         }
 
         private async void OnUsersUpdate() {
@@ -91,6 +116,11 @@ namespace Main.UI.Presenters {
             view.SubscribeOnClick(data.UserId, _onUserPlayClick);
             
             return view;
+        }
+
+        public override void Dispose() {
+            _nakamaService.UnsubscribeFromMessages(MessagesListener);
+            _nakamaService.UnsubscribeFromPartyPresence(PartyPresenceListener);
         }
     }
 }

@@ -2334,6 +2334,19 @@ MonoBehaviour:
   _blackBg: {fileID: 4410677307725540920}
   _group: {fileID: 1954195927424276072}
   _scroller: {fileID: 2666890865276684552}
+  _startButton: {fileID: 1017365147675406295}
+  _allMembersCount: {fileID: 8209483955210910503}
+  _onlineMembersCount: {fileID: 3577399825476387868}
+  _winsCountText: {fileID: 2698171548241356819}
+  _looseCountText: {fileID: 545899418866327984}
+  _timerText: {fileID: 1803108996572433084}
+  _usersRoot: {fileID: 3769091375773640807}
+  _faqRoot: {fileID: 6053707215143632427}
+  _faqButton: {fileID: 2722358770846118961}
+  _usersButton: {fileID: 8695782506477621987}
+  _faqButtonOutline: {fileID: 3613174755357404928}
+  _usersButtonOutline: {fileID: 382116182471924370}
+  _searchInputField: {fileID: 4274072928547032308}
 --- !u!225 &1954195927424276072
 CanvasGroup:
   m_ObjectHideFlags: 0
