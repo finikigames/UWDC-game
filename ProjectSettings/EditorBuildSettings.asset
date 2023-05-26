@@ -12,7 +12,7 @@ EditorBuildSettings:
     path: Assets/Source/Main/Scenes/Main.unity
     guid: 27ed11a24d92b03409eeb337247600fd
   - enabled: 1
-    path: Assets/Source/Game/Scenes/CheckersMain.unity
-    guid: 18bb39378e6c3e04b8d69a1b985bba26
+    path: Assets/Source/Game/Scenes/CheckersMain_online.unity
+    guid: 46b0b9213501d724cbf1675e06b39b31
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: 8749b9a762dd68345974f510fab9896d, type: 2}

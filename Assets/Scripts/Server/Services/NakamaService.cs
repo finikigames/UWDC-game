@@ -13,12 +13,12 @@ using UnityEditor;
 namespace Server.Services {
     public class NakamaService : IDisposable {
         private Client _client;
+        private Profile _profile;
         private ISession _session;
         private ISocket _socket;
         private ISocketAdapter _adapter;
         private IMatch _match;
         private IParty _party;
-        private Profile _profile;
         private IApiAccount _me;
 
         private Dictionary<string, IParty> _createdParties;
@@ -52,8 +52,10 @@ namespace Server.Services {
         }
         
         public async UniTask SendPartyToUser(string userId, IParty party) {
-            var content = new Dictionary<string, string>()
-            {
+            var senderUserId = _profile.UserId;
+            
+            var content = new Dictionary<string, string>() {
+                {"senderUserId", senderUserId},
                 {"partyId", party.Id}
             };
             

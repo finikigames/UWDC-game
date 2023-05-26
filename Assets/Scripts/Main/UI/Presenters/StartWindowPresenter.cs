@@ -4,6 +4,7 @@ using Checkers.UI.Data;
 using Cysharp.Threading.Tasks;
 using EnhancedUI.EnhancedScroller;
 using Global.Context;
+using Global.Services;
 using Global.Services.Timer;
 using Global.StateMachine.Base.Enums;
 using Global.Window.Base;
@@ -26,6 +27,7 @@ namespace Main.UI.Presenters {
         private readonly NakamaService _nakamaService;
         private readonly TimerService _timerService;
         private readonly MainUIConfig _mainUIConfig;
+        private readonly ProfileGetService _profileService;
 
         private string _globalGroupName = "globalGroup";
 
@@ -38,6 +40,7 @@ namespace Main.UI.Presenters {
             _nakamaService = Resolve<NakamaService>(GameContext.Project);
             _timerService = Resolve<TimerService>(GameContext.Project);
             _mainUIConfig = Resolve<MainUIConfig>(GameContext.Main);
+            _profileService = Resolve<ProfileGetService>(GameContext.Project);
         }
 
         protected override async UniTask LoadContent() {
@@ -63,6 +66,9 @@ namespace Main.UI.Presenters {
             var party = await _nakamaService.CreateParty();
             await _nakamaService.CreateMatch(party.Id);
             await _nakamaService.SendPartyToUser(userId, party);
+            
+            FireSignal(new CloseWindowSignal(WindowKey.StartWindow));
+            FireSignal(new ToCheckersMetaSignal{WithPlayer = true});
         }
 
         private void PartyPresenceListener(IPartyPresenceEvent presenceEvent) {
@@ -71,6 +77,13 @@ namespace Main.UI.Presenters {
 
         private async void MessagesListener(IApiChannelMessage m) {
             var content = m.Content.FromJson<Dictionary<string, string>>();
+
+            if (content.TryGetValue("senderUserId", out var currentUserId)) {
+                var profile = _profileService.GetProfile();
+
+                if (profile.UserId == currentUserId) return;
+            }
+            
             if (content.TryGetValue("partyId", out var value)) {
                 Debug.Log($"Get a party with a id {value}");
                 await _nakamaService.JoinParty(value);
