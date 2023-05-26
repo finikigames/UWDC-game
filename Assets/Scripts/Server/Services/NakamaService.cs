@@ -153,7 +153,7 @@ namespace Server.Services {
 #endif
 
         public async UniTask CreateClient() {
-            _client = new Client("http", "localhost", 7350, "defaultkey", UnityWebRequestAdapter.Instance);
+            _client = new Client("https", "main.arcanecrystalsnakama.ru", 7350, "defaultkey", UnityWebRequestAdapter.Instance);
             
 #if UNITY_WEBGL && !UNITY_EDITOR
             _adapter = new JsWebSocketAdapter();
