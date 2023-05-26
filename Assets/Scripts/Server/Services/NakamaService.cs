@@ -66,6 +66,14 @@ namespace Server.Services {
             _createdParties.Add(userId, party);
         }
 
+        public async UniTask JoinTournament(string id) {
+            await _client.JoinTournamentAsync(_session, id);
+        }
+
+        public async UniTask SubmitTournamentScore(string title, Dictionary<string, string> metadata, int score, int subScore) {
+            await _client.WriteTournamentRecordAsync(_session, title, score, subScore, JsonWriter.ToJson(metadata));
+        }
+
         public void SubscribeToPartyPresence(Action<IPartyPresenceEvent> callback) {
             _socket.ReceivedPartyPresence += callback;
         }
@@ -162,15 +170,11 @@ namespace Server.Services {
         }
 
         public async UniTask DeviceAuth() {
-            _session = await _client.AuthenticateDeviceAsync(_profile.UserId);
+            _session = await _client.AuthenticateDeviceAsync(_profile.UserId, _profile.Username);
 
             Debug.Log(_session);
 
-            var account = await _client.GetAccountAsync(_session);
-
-            var userName = account.User.Username == _profile.Username ? null : _profile.Username;
-
-            await _client.UpdateAccountAsync(_session, userName, $"{_profile.FirstName} {_profile.LastName}");
+            await _client.UpdateAccountAsync(_session, null, $"{_profile.FirstName} {_profile.LastName}");
         }
 
         public async UniTask CreateSocket() {
