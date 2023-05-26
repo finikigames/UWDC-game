@@ -4,6 +4,7 @@ namespace Global.Window.Enums {
         StartWindow = 1,
         WinWindow = 2,
         LoseWindow = 3,
-        WaitForPlayerWindow = 4
+        WaitForPlayerWindow = 4,
+        MatchWindow = 5
     }
 }

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   WindowsConfig:
     _windowsConfig:
-    - Uid: 
+    - Uid: c254c909-e28d-47bd-a677-4e5e13ffd0c6
       PrefabReference:
         m_AssetGUID: f7e8efc257f97b54fb918121fb1c5524
         m_SubObjectName: 
@@ -30,7 +30,7 @@ MonoBehaviour:
         GUID: c82be505ecb94ab3bd382d7be35cf95a
         _typeNameAndAssembly: Main.UI.Presenters.StartWindowPresenter, Main
         _suppressLogs: 0
-    - Uid: 
+    - Uid: 0bfc3ebc-c481-466d-a89a-2b3095b58fc9
       PrefabReference:
         m_AssetGUID: b06c44258e0b8d84885aa06e1f086d93
         m_SubObjectName: 
@@ -46,7 +46,7 @@ MonoBehaviour:
         GUID: dd48e669f17f9d44185dade796ab9db6
         _typeNameAndAssembly: Main.UI.Presenters.WinWindow.WinWindowPresenter, Main
         _suppressLogs: 0
-    - Uid: 
+    - Uid: 9693ef00-137b-4136-bf1a-10297bda2569
       PrefabReference:
         m_AssetGUID: c93890c436820f74e9d5ec9fbd1190cb
         m_SubObjectName: 
@@ -63,7 +63,7 @@ MonoBehaviour:
         _typeNameAndAssembly: Main.UI.Presenters.LoseWindow.LoseWindowPresenter,
           Main
         _suppressLogs: 0
-    - Uid: 
+    - Uid: 9c724ba6-fa68-49a9-8fac-d8b4ce394a62
       PrefabReference:
         m_AssetGUID: 0e9a6832be6ecb34583447e348dba5bb
         m_SubObjectName: 
@@ -78,5 +78,22 @@ MonoBehaviour:
         GuidAssignmentFailed: 0
         GUID: 639e99663e3a4ae4586908a407fc0d7f
         _typeNameAndAssembly: Main.UI.Presenters.WaitForPlayerWindow.WaitForPlayerWindowPresenter,
+          Main
+        _suppressLogs: 0
+    - Uid: 5070039c-b824-4d74-aca6-6c85864fa821
+      PrefabReference:
+        m_AssetGUID: 98fa0999422925a4990032b76e00cf9d
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_EditorAssetChanged: 0
+      Key: 5
+      Priority: 0
+      IsFullScreen: 1
+      CanClose: 0
+      Context: 2
+      _controller:
+        GuidAssignmentFailed: 0
+        GUID: 8c7907bfffa958b4eb7ac434b1e19e4b
+        _typeNameAndAssembly: Main.UI.Presenters.MatchWindow.MatchWindowPresenter,
           Main
         _suppressLogs: 0
