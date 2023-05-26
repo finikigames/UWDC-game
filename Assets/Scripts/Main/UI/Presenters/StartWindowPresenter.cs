@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using Checkers.UI.Data;
 using Cysharp.Threading.Tasks;
 using EnhancedUI.EnhancedScroller;
 using Global.Context;
 using Global.Services.Timer;
 using Global.StateMachine.Base.Enums;
 using Global.Window.Base;
+using Global.Window.Enums;
+using Global.Window.Signals;
 using Main.ConfigTemplate;
 using Main.UI.Data;
 using Main.UI.Views.Base;
@@ -58,6 +61,7 @@ namespace Main.UI.Presenters {
 
         private async void SendPartyToUser(string userId) {
             var party = await _nakamaService.CreateParty();
+            await _nakamaService.CreateMatch(party.Id);
             await _nakamaService.SendPartyToUser(userId, party);
         }
 
@@ -70,6 +74,10 @@ namespace Main.UI.Presenters {
             if (content.TryGetValue("partyId", out var value)) {
                 Debug.Log($"Get a party with a id {value}");
                 await _nakamaService.JoinParty(value);
+                await _nakamaService.JoinMatch(value);
+                
+                FireSignal(new CloseWindowSignal(WindowKey.StartWindow));
+                FireSignal(new ToCheckersMetaSignal{WithPlayer = true});
             }
         }
 

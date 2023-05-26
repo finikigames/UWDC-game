@@ -2,6 +2,8 @@
 using Checkers.UI.Data;
 using Core.Extensions;
 using Cysharp.Threading.Tasks;
+using Global.StateMachine;
+using Global.StateMachine.Base.Enums;
 using UnityEngine.SceneManagement;
 using Zenject;
 
@@ -9,9 +11,12 @@ namespace Checkers {
     public class CheckersInitialize : IInitializable,
                                       IDisposable {
         private readonly SignalBus _signalBus;
+        private readonly GameStateMachine _gameStateMachine;
 
-        public CheckersInitialize(SignalBus signalBus) {
+        public CheckersInitialize(SignalBus signalBus,
+                                  GameStateMachine gameStateMachine) {
             _signalBus = signalBus;
+            _gameStateMachine = gameStateMachine;
         }
         
         public void Initialize() {
@@ -22,7 +27,11 @@ namespace Checkers {
             var currentScene = SceneManager.GetActiveScene();
 
             PlayerPrefsX.SetBool("WithPlayer", signal.WithPlayer);
-            await UnityExtensions.LoadSceneAsync("CheckersMain_online", LoadSceneMode.Additive);
+            await SceneManager.LoadSceneAsync("CheckersMain_online", LoadSceneMode.Additive);
+
+            await _gameStateMachine.Fire(Trigger.CheckersTrigger);
+
+            await SceneManager.UnloadSceneAsync(currentScene);
         }
         
         public void Dispose() {

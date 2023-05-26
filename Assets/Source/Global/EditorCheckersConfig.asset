@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: EditorCheckersConfig
   m_EditorClassIdentifier: 
   CheckersConfig:
-    UserId: 2222222222
+    UserId: 2222222227
     FirstName: Anton
     LastName: Sukharev
-    Username: antontidev2
+    Username: 7

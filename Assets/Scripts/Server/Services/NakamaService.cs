@@ -59,7 +59,7 @@ namespace Server.Services {
             
             var channel = await _socket.JoinChatAsync(userId, ChannelType.DirectMessage);
             await _socket.WriteChatMessageAsync(channel, content.ToJson());
-            await _socket.LeaveChatAsync(userId);
+            await _socket.LeaveChatAsync(channel.Id);
             
             _createdParties.Add(userId, party);
         }
