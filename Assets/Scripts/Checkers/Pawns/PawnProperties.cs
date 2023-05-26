@@ -30,9 +30,6 @@ public class PawnProperties : MonoBehaviour, IPawnProperties
 
     private void CreatePromotionParticles()
     {
-        GameObject instantiatedParticles = Instantiate(PromotionParticles, transform);
-        var particlesDuration = PromotionParticles.GetComponent<ParticleSystem>().main.duration;
-        Destroy(instantiatedParticles, particlesDuration * 5);
     }
 
     private IEnumerator AddCrown()
