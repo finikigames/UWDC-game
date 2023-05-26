@@ -1,5 +1,4 @@
-﻿using Core.Extensions;
-using Cysharp.Threading.Tasks;
+﻿using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Global.Services;
 using Global.StateMachine;
@@ -39,11 +38,11 @@ namespace Preloader {
             await _nakamaService.CommonInitialize();
 
             var currentScene = SceneManager.GetActiveScene().buildIndex;
-            await UnityExtensions.LoadSceneAsync("Main", LoadSceneMode.Additive);
+            await SceneManager.LoadSceneAsync("Main", LoadSceneMode.Additive);
 
             await _gameStateMachine.Fire(Trigger.MainTrigger);
 
-            await UnityExtensions.UnloadSceneAsync(currentScene);
+            await SceneManager.UnloadSceneAsync(currentScene);
         }
     }
 }
