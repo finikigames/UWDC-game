@@ -20,6 +20,8 @@ namespace Server.Services {
         private IMatch _match;
         private IParty _party;
         private IApiAccount _me;
+        private IChannel _globalChannel;
+        private IApiGroup _apiGroup;
 
         private Dictionary<string, IParty> _createdParties;
 
@@ -59,13 +61,16 @@ namespace Server.Services {
                 {"partyId", party.Id}
             };
             
-            var channel = await _socket.JoinChatAsync(userId, ChannelType.DirectMessage);
-            await _socket.WriteChatMessageAsync(channel, content.ToJson());
-            await _socket.LeaveChatAsync(channel.Id);
+            await _socket.WriteChatMessageAsync(_globalChannel, content.ToJson());
             
             _createdParties.Add(userId, party);
         }
 
+        public async UniTask<IChannel> JoinChat(string groupId) {
+            _globalChannel = await _socket.JoinChatAsync(groupId, ChannelType.Group, true, false);
+            return _globalChannel;
+        }
+        
         public async UniTask JoinTournament(string id) {
             await _client.JoinTournamentAsync(_session, id);
         }
@@ -101,8 +106,8 @@ namespace Server.Services {
                     return group;
                 }
             }
-            var createdGroup = await _client.CreateGroupAsync(_session, groupName);
-            return createdGroup;
+            _apiGroup = await _client.CreateGroupAsync(_session, groupName);
+            return _apiGroup;
         }
         
         public async UniTask JoinGroup(string groupId) {

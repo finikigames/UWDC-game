@@ -45,6 +45,7 @@ namespace Main.UI.Presenters {
 
         protected override async UniTask LoadContent() {
             var group = await _nakamaService.CreateGroup(_globalGroupName);
+            await _nakamaService.JoinChat(group.Id);
             await _nakamaService.JoinGroup(group.Id);
             _globalGroupInfo = await _nakamaService.GetGroupInfo(_globalGroupName);
 
