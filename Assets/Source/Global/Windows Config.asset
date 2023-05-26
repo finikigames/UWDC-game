@@ -63,3 +63,20 @@ MonoBehaviour:
         _typeNameAndAssembly: Main.UI.Presenters.LoseWindow.LoseWindowPresenter,
           Main
         _suppressLogs: 0
+    - Uid: 
+      PrefabReference:
+        m_AssetGUID: 0e9a6832be6ecb34583447e348dba5bb
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_EditorAssetChanged: 0
+      Key: 4
+      Priority: 0
+      IsFullScreen: 1
+      CanClose: 1
+      Context: 2
+      _controller:
+        GuidAssignmentFailed: 0
+        GUID: 639e99663e3a4ae4586908a407fc0d7f
+        _typeNameAndAssembly: Main.UI.Presenters.WaitForPlayerWindow.WaitForPlayerWindowPresenter,
+          Main
+        _suppressLogs: 0
