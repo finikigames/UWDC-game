@@ -30,3 +30,36 @@ MonoBehaviour:
         GUID: c82be505ecb94ab3bd382d7be35cf95a
         _typeNameAndAssembly: Main.UI.Presenters.StartWindowPresenter, Main
         _suppressLogs: 0
+    - Uid: 
+      PrefabReference:
+        m_AssetGUID: b06c44258e0b8d84885aa06e1f086d93
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_EditorAssetChanged: 0
+      Key: 2
+      Priority: 0
+      IsFullScreen: 1
+      CanClose: 1
+      Context: 2
+      _controller:
+        GuidAssignmentFailed: 0
+        GUID: dd48e669f17f9d44185dade796ab9db6
+        _typeNameAndAssembly: Main.UI.Presenters.WinWindow.WinWindowPresenter, Main
+        _suppressLogs: 0
+    - Uid: 
+      PrefabReference:
+        m_AssetGUID: c93890c436820f74e9d5ec9fbd1190cb
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_EditorAssetChanged: 0
+      Key: 3
+      Priority: 0
+      IsFullScreen: 1
+      CanClose: 1
+      Context: 2
+      _controller:
+        GuidAssignmentFailed: 0
+        GUID: c8523a926be0eb248bddfc41d417fbef
+        _typeNameAndAssembly: Main.UI.Presenters.LoseWindow.LoseWindowPresenter,
+          Main
+        _suppressLogs: 0
