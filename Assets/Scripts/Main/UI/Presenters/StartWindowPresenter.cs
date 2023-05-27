@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Checkers.UI.Data;
+using Core.Ticks.Interfaces;
 using Cysharp.Threading.Tasks;
 using EnhancedUI.EnhancedScroller;
 using Global.Context;
@@ -23,11 +24,13 @@ using UnityEngine.Scripting;
 namespace Main.UI.Presenters {
     [Preserve]
     public class StartWindowPresenter : BaseWindowPresenter<IStartWindow, StartWindowData>,
-                                        IEnhancedScrollerDelegate {
+                                        IEnhancedScrollerDelegate,
+                                        IUpdatable {
         private readonly NakamaService _nakamaService;
         private readonly TimerService _timerService;
         private readonly MainUIConfig _mainUIConfig;
         private readonly ProfileGetService _profileService;
+        private readonly IUpdateService _updateService;
 
         private string _globalGroupName = "globalGroup";
 
@@ -36,11 +39,15 @@ namespace Main.UI.Presenters {
 
         private Action<string> _onUserPlayClick;
 
+        private bool _needPartyLoad;
+        private string _partyId;
+
         public StartWindowPresenter(ContextService service) : base(service) {
             _nakamaService = Resolve<NakamaService>(GameContext.Project);
             _timerService = Resolve<TimerService>(GameContext.Project);
             _mainUIConfig = Resolve<MainUIConfig>(GameContext.Main);
             _profileService = Resolve<ProfileGetService>(GameContext.Project);
+            _updateService = Resolve<IUpdateService>(GameContext.Project);
         }
 
         protected override async UniTask LoadContent() {
@@ -51,6 +58,8 @@ namespace Main.UI.Presenters {
 
             _userInfoDatas = new List<UserInfoData>();
 
+            _updateService.RegisterUpdate(this);
+            
             _onUserPlayClick = null;
             _onUserPlayClick += SendPartyToUser;
             
@@ -58,6 +67,8 @@ namespace Main.UI.Presenters {
 
             _nakamaService.SubscribeToMessages(MessagesListener);
             _nakamaService.SubscribeToPartyPresence(PartyPresenceListener);
+            
+            
             
             OnUsersUpdate();
             _timerService.StartTimer("updateUsersTimer", 10, OnUsersUpdate, true);
@@ -86,15 +97,27 @@ namespace Main.UI.Presenters {
             }
             
             if (content.TryGetValue("partyId", out var value)) {
+                _partyId = value;
+                _needPartyLoad = true;
                 Debug.Log($"Get a party with a id {value}");
-                await _nakamaService.JoinParty(value);
-                await _nakamaService.JoinMatch(value);
-                
-                FireSignal(new CloseWindowSignal(WindowKey.StartWindow));
-                FireSignal(new ToCheckersMetaSignal{WithPlayer = true});
             }
         }
 
+        public void CustomUpdate() {
+            if (!_needPartyLoad) return;
+            _needPartyLoad = false;
+
+            LoadParty();
+        }
+
+        private async UniTask LoadParty() {
+            await _nakamaService.JoinParty(_partyId);
+            await _nakamaService.CreateMatch(_partyId);
+                
+            FireSignal(new CloseWindowSignal(WindowKey.StartWindow));
+            FireSignal(new ToCheckersMetaSignal{WithPlayer = true});
+        }
+        
         private async void OnUsersUpdate() {
             await GetUsers();
         }
@@ -142,6 +165,8 @@ namespace Main.UI.Presenters {
 
         public override void Dispose() {
             _timerService.RemoveTimer("updateUsersTimer");
+            
+            _updateService.UnregisterUpdate(this);
             
             _nakamaService.UnsubscribeFromMessages(MessagesListener);
             _nakamaService.UnsubscribeFromPartyPresence(PartyPresenceListener);

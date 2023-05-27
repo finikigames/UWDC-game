@@ -1,7 +1,6 @@
 ﻿namespace Core.Ticks.Interfaces
 {
-    public interface IUpdatable
-    {
+    public interface IUpdatable {
         void CustomUpdate();
     }
 }

@@ -67,7 +67,7 @@ namespace Server.Services {
         }
 
         public async UniTask<IChannel> JoinChat(string groupId) {
-            _globalChannel = await _socket.JoinChatAsync(groupId, ChannelType.Group, true, false);
+            _globalChannel = await _socket.JoinChatAsync(groupId, ChannelType.Group, true);
             return _globalChannel;
         }
         
@@ -160,7 +160,7 @@ namespace Server.Services {
 #endif
 
         public async UniTask CreateClient() {
-            _client = new Client("https", "main.arcanecrystalsnakama.ru", 7350, "defaultkey", UnityWebRequestAdapter.Instance);
+            _client = new Client("https", "main.arcanecrystalsnakama.ru", 7350, "defaultkey");
             
 #if UNITY_WEBGL && !UNITY_EDITOR
             _adapter = new JsWebSocketAdapter();

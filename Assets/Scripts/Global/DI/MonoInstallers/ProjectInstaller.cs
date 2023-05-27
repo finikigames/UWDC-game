@@ -1,4 +1,5 @@
 ﻿using Core.AssetManager;
+using Core.Ticks;
 using Global.Context;
 using Global.Scheduler;
 using Global.Services;
@@ -13,7 +14,8 @@ using Zenject;
 namespace Global.DI.MonoInstallers {
     public class ProjectInstaller : MonoInstaller {
         [SerializeField] private GameObject _sceneLoaderOverlay;
-
+        [SerializeField] private UpdateService _updateService;
+        
         public override void InstallBindings() {
             SignalBusInstaller.Install(Container);
 
@@ -25,6 +27,11 @@ namespace Global.DI.MonoInstallers {
             InstallFactories();
             InstallSignals();
 
+            Container
+                .BindInterfacesAndSelfTo<UpdateService>()
+                .FromInstance(_updateService)
+                .AsSingle();
+            
             Container
                 .BindInterfacesAndSelfTo<TimerService>()
                 .AsSingle();
