@@ -156,7 +156,6 @@ namespace Checkers.Services {
 
             switch (state.OpCode) {
                 case (long) CheckersMatchState.Turn: {
-                    _hasInput = true;
                     var turnData = JsonConvert.DeserializeObject<TurnData>(content);
 
                     Debug.Log($"Received raw data with from {turnData.From} and to {turnData.To}");
@@ -164,6 +163,7 @@ namespace Checkers.Services {
                     
                     Debug.Log($"Inverted data with from {_turnData.From} and to {_turnData.To}");
 
+                    _hasInput = true;
                     break;
                 }
                 case (long) CheckersMatchState.WhiteTurnEnded: {
@@ -176,8 +176,8 @@ namespace Checkers.Services {
         }
 
         private TurnData InvertTurnData(TurnData turnData) {
-            var invertedFrom = new Coords((sbyte)(8 - turnData.From.Column),(sbyte)(8 - turnData.From.Row));
-            var invertedTo = new Coords((sbyte)(8 - turnData.To.Column), (sbyte)(9 - turnData.To.Row));
+            var invertedFrom = new Coords((sbyte)(7 - turnData.From.Row), (sbyte)(7 - turnData.From.Column));
+            var invertedTo = new Coords((sbyte)(7 - turnData.To.Row), (sbyte)(7 - turnData.To.Column));
 
             return new TurnData {
                 From = invertedFrom,
