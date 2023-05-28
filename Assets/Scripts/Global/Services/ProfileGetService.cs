@@ -10,17 +10,11 @@ namespace Global.Services {
         
 #if UNITY_EDITOR
         private readonly EditorCheckersConfig _editorConfig;
-#endif
         
-        public ProfileGetService(
-#if UNITY_EDITOR
-            EditorCheckersConfig editorConfig
-#endif
-            ) {
-#if UNITY_EDITOR
+        public ProfileGetService(EditorCheckersConfig editorConfig) {
             _editorConfig = editorConfig;
-#endif
         }
+#endif
 
         public Profile GetProfile() {
             return _profile;

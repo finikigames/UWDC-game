@@ -2,7 +2,6 @@
 using Core.Extensions;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
-using Global.Extensions;
 using Global.Scheduler.Base;
 using UnityEngine;
 using Zenject;
@@ -30,28 +29,18 @@ namespace Checkers.Services {
             _sceneSettings.EnemyHealthSlider.maxValue = 12;
             _sceneSettings.EnemyHealthSlider.value = 12;
             
-            _sceneSettings.EnemyAnimation.ResetAnimation("idle", true);
         }
 
         private void OnPawnCheck(PawnColor color, GameObject pawn) {
             var copy = Object.Instantiate(pawn, pawn.transform.position, pawn.transform.rotation);
             if (color == PawnColor.Black) {
-                _sceneSettings.EnemyAnimation.ResetAnimation("attack");
-                _sceneSettings.EnemyAnimation.DoAfterComplete(() => _sceneSettings.EnemyAnimation.ResetAnimation("idle", true));
-                
                 _sceneSettings.HeroHealthSlider.value -= 1;
 
                 SendPawn(_sceneSettings.HeroTransform.position, copy);
             }
             else {
                 _sceneSettings.EnemyHealthSlider.value -= 1;
-
-                _sceneSettings.EnemyAnimation.ResetAnimation("hurt");
-                _sceneSettings.EnemyAnimation.DoAfterComplete(() => _sceneSettings.EnemyAnimation.ResetAnimation("idle", true));
-
-                var position = _sceneSettings.EnemyAnimation.GetComponent<MeshRenderer>().bounds.center;
-                
-                SendPawn(position, copy);
+                SendPawn(_sceneSettings.HeroTransform.position, copy);
             }
             
             Object.Destroy(pawn);

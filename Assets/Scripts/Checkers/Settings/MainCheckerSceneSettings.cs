@@ -1,10 +1,8 @@
-﻿using Spine.Unity;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 namespace Checkers.Settings {
     public class MainCheckerSceneSettings : MonoBehaviour {
-        public SkeletonAnimation EnemyAnimation;
         public Slider HeroHealthSlider;
         public Slider EnemyHealthSlider;
         public Transform HeroTransform;

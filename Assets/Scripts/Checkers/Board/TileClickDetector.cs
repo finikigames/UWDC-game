@@ -17,10 +17,10 @@ public class TileClickDetector : MonoBehaviour
 
     public void ChildPawnClicked()
     {
-        OnMouseDown();
+        MouseDown();
     }
 
-    private void OnMouseDown()
+    public void MouseDown()
     {
         if (tileProperties.IsOccupied())
             pawnMover.PawnClicked(tileProperties.GetPawn());
@@ -38,6 +38,6 @@ public class TileClickDetector : MonoBehaviour
 
     public void ClickTile()
     {
-        OnMouseDown();
+        MouseDown();
     }
 }

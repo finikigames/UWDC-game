@@ -112,15 +112,7 @@ namespace Zenject.Internal
             using (ProfileTimers.CreateTimedBlock("Searching Hierarchy"))
 #endif
             {
-                var animators = root.GetComponentsInChildren<Animator>(true);
-
-                foreach (var animator in animators)
-                {
-                    if (animator.gameObject.GetComponent<ZenjectStateMachineBehaviourAutoInjecter>() == null)
-                    {
-                        animator.gameObject.AddComponent<ZenjectStateMachineBehaviourAutoInjecter>();
-                    }
-                }
+              
             }
         }
 

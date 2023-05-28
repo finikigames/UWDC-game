@@ -52,8 +52,8 @@ namespace Main.UI.Presenters {
 
         protected override async UniTask LoadContent() {
             var group = await _nakamaService.CreateGroup(_globalGroupName);
-            await _nakamaService.JoinChat(group.Id);
             await _nakamaService.JoinGroup(group.Id);
+            await _nakamaService.JoinChat(group.Id);
             _globalGroupInfo = await _nakamaService.GetGroupInfo(_globalGroupName);
 
             _userInfoDatas = new List<UserInfoData>();
@@ -67,8 +67,6 @@ namespace Main.UI.Presenters {
 
             _nakamaService.SubscribeToMessages(MessagesListener);
             _nakamaService.SubscribeToPartyPresence(PartyPresenceListener);
-            
-            
             
             OnUsersUpdate();
             _timerService.StartTimer("updateUsersTimer", 10, OnUsersUpdate, true);
@@ -87,7 +85,7 @@ namespace Main.UI.Presenters {
             
         }
 
-        private async void MessagesListener(IApiChannelMessage m) {
+        private void MessagesListener(IApiChannelMessage m) {
             var content = m.Content.FromJson<Dictionary<string, string>>();
 
             if (content.TryGetValue("senderUserId", out var currentUserId)) {

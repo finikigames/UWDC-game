@@ -4,7 +4,6 @@ using Core.Extensions;
 using Core.Primitives;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
-using Global.Extensions;
 using Global.Scheduler.Base;
 using Nakama;
 using Newtonsoft.Json;
@@ -32,6 +31,7 @@ namespace Checkers.Services {
         private readonly NakamaService _nakamaService;
         private readonly CheckersConfig _checkersConfig;
         private PawnColor _mainColor;
+        private Camera _cam;
 
         private TurnData _turnData;
         private bool _hasInput;
@@ -66,8 +66,6 @@ namespace Checkers.Services {
 
             _sceneSettings.EnemyHealthSlider.maxValue = 12;
             _sceneSettings.EnemyHealthSlider.value = 12;
-            
-            _sceneSettings.EnemyAnimation.ResetAnimation("idle", true);
 
             _sceneSettings.PawnMover.OnTurnEnd += () => {
 
@@ -96,6 +94,22 @@ namespace Checkers.Services {
         }
 
         public void Tick() {
+            if (Input.GetMouseButtonDown(0))
+            {
+                var mouseInput = Input.mousePosition;
+
+                var worldPosition = Camera.main.ScreenToWorldPoint(mouseInput);
+
+                var column = Mathf.RoundToInt(worldPosition.x);
+                var row = Mathf.RoundToInt(worldPosition.z);
+
+                var tileGetter = _sceneSettings.Getter;
+
+                var tile = tileGetter.GetTile(column, row);
+                var clickDetector = tile.GetComponent<TileClickDetector>();
+                clickDetector.MouseDown();
+            }
+
             if (!_hasInput) return;
 
             _hasInput = false;
@@ -141,8 +155,6 @@ namespace Checkers.Services {
         private void OnPawnCheck(PawnColor color, GameObject pawn) {
             var copy = Object.Instantiate(pawn, pawn.transform.position, pawn.transform.rotation);
             if (color == PawnColor.Black) {
-                _sceneSettings.EnemyAnimation.ResetAnimation("attack");
-                _sceneSettings.EnemyAnimation.DoAfterComplete(() => _sceneSettings.EnemyAnimation.ResetAnimation("idle", true));
                 
                 _sceneSettings.HeroHealthSlider.value -= 1;
 
@@ -151,12 +163,7 @@ namespace Checkers.Services {
             else {
                 _sceneSettings.EnemyHealthSlider.value -= 1;
 
-                _sceneSettings.EnemyAnimation.ResetAnimation("hurt");
-                _sceneSettings.EnemyAnimation.DoAfterComplete(() => _sceneSettings.EnemyAnimation.ResetAnimation("idle", true));
-
-                var position = _sceneSettings.EnemyAnimation.GetComponent<MeshRenderer>().bounds.center;
-                
-                SendPawn(position, copy);
+                SendPawn(_sceneSettings.HeroTransform.position, copy);
             }
             
             Object.Destroy(pawn);
