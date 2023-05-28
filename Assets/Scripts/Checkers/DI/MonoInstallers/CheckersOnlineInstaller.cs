@@ -22,6 +22,10 @@ namespace Checkers.DI.MonoInstallers {
                 .BindInterfacesAndSelfTo<CheckersRootState>()
                 .AsSingle()
                 .NonLazy();
+
+            Container
+                .BindInterfacesAndSelfTo<MainInitialize>()
+                .AsSingle();
         }
     }
 }

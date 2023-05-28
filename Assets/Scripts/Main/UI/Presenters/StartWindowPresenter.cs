@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using Checkers.Enums;
-using Checkers.UI.Data;
-using Core.Extensions;
 using Core.Ticks.Interfaces;
 using Cysharp.Threading.Tasks;
 using EnhancedUI.EnhancedScroller;
 using Global.ConfigTemplate;
 using Global.Context;
+using Global.Enums;
 using Global.Services;
 using Global.Services.Timer;
 using Global.StateMachine.Base.Enums;

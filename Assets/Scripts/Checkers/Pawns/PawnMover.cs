@@ -2,11 +2,11 @@
 using System.Collections;
 using Checkers.AI;
 using Checkers.Board;
-using Checkers.Enums;
 using Checkers.Interfaces;
 using Checkers.Services;
 using Checkers.Structs;
 using Core.Primitives;
+using Global.Enums;
 using UnityEngine;
 
 namespace Checkers.Pawns

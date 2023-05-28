@@ -1,5 +1,5 @@
-﻿using Checkers.Enums;
-using Checkers.Structs;
+﻿using Checkers.Structs;
+using Global.Enums;
 using UnityEngine;
 
 namespace Checkers.Interfaces

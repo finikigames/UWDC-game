@@ -1,8 +1,8 @@
 ﻿using System;
 using Checkers.AI;
-using Checkers.Enums;
 using Checkers.Interfaces;
 using Checkers.Pawns;
+using Global.Enums;
 using UnityEngine;
 using UnityEngine.Serialization;
 

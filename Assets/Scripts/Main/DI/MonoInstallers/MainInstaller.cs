@@ -1,5 +1,6 @@
 ﻿using Main.Services.Startup;
 using Main.States;
+using Main.UI.Data;
 using Zenject;
 
 namespace Main.DI.MonoInstallers {
@@ -12,6 +13,14 @@ namespace Main.DI.MonoInstallers {
             Container
                 .BindInterfacesAndSelfTo<MainRootState>()
                 .AsSingle();
+            
+            Container
+                .BindInterfacesAndSelfTo<CheckersInitialize>()
+                .AsSingle()
+                .NonLazy();
+
+            Container
+                .DeclareSignal<ToCheckersMetaSignal>();
         }
     }
 }

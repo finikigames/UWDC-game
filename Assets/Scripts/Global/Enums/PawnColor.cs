@@ -1,4 +1,4 @@
-﻿namespace Checkers.Enums
+﻿namespace Global.Enums
 {
     public enum PawnColor
     {

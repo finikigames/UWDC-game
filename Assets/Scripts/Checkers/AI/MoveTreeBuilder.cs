@@ -2,9 +2,9 @@
 using System.Linq;
 using Checkers.AI.Pawns;
 using Checkers.Board;
-using Checkers.Enums;
 using Checkers.Interfaces;
 using Checkers.Structs;
+using Global.Enums;
 using UnityEngine;
 
 namespace Checkers.AI

@@ -1,8 +1,8 @@
-﻿using Checkers.Enums;
-using Checkers.Settings;
+﻿using Checkers.Settings;
 using Core.Extensions;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using Global.Enums;
 using Global.Scheduler.Base;
 using UnityEngine;
 using Zenject;

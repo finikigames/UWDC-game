@@ -1,6 +1,6 @@
 ﻿using Checkers.Board;
-using Checkers.Enums;
 using Checkers.Interfaces;
+using Global.Enums;
 using UnityEngine;
 
 namespace Checkers.AI.Pawns

@@ -1,13 +1,13 @@
 ﻿using System;
-using Checkers.UI.Data;
 using Core.Extensions;
 using Cysharp.Threading.Tasks;
 using Global.StateMachine;
 using Global.StateMachine.Base.Enums;
+using Main.UI.Data;
 using UnityEngine.SceneManagement;
 using Zenject;
 
-namespace Checkers {
+namespace Main {
     public class CheckersInitialize : IInitializable,
                                       IDisposable {
         private readonly SignalBus _signalBus;

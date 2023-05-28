@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using Checkers.Audio;
 using Checkers.Board;
-using Checkers.Enums;
 using Checkers.Interfaces;
 using Checkers.Structs;
+using Global.Enums;
 using UnityEngine;
 
 namespace Checkers.Pawns

@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using Checkers.Board;
 using Checkers.ConfigTemplate;
-using Checkers.Enums;
 using Checkers.Settings;
 using Checkers.UI.Data;
 using Core.Extensions;
@@ -9,6 +8,7 @@ using Core.Primitives;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Global.ConfigTemplate;
+using Global.Enums;
 using Global.Scheduler.Base;
 using Global.Window.Enums;
 using Global.Window.Signals;
@@ -60,7 +60,7 @@ namespace Checkers.Services {
         }
         
         public void Initialize() {
-            _signalBus.Fire(new OpenWindowSignal(WindowKey.MatchWindow, new MatchWindowData()));
+            //_signalBus.Fire(new OpenWindowSignal(WindowKey.MatchWindow, new MatchWindowData()));
             
             _mainColor = (PawnColor)_appConfig.PawnColor;
             

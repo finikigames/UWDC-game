@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using Checkers.Enums;
 using Checkers.Interfaces;
 using Checkers.Pawns;
 using Checkers.Structs;
+using Global.Enums;
 using UnityEngine;
 
 namespace Checkers.Board
