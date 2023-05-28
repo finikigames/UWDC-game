@@ -125,9 +125,11 @@ namespace Checkers.Services {
             var fromCoords = _turnData.From;
             var tileFrom = _sceneSettings.Getter.GetTile(fromCoords.Column, fromCoords.Row);
 
-            tileFrom.GetComponent<TileClickDetector>().MouseDown();
-            tileTo.GetComponent<TileClickDetector>().MouseDown();
-            
+            _schedulerService.StartSequence()
+                .AppendCallback(() => 
+                    tileFrom.GetComponent<TileClickDetector>().MouseDown())
+                .Append(0.2f, () => 
+                    tileTo.GetComponent<TileClickDetector>().MouseDown());
         }
 
         private void CheckInput() {
