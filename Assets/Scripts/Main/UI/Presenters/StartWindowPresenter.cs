@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using Checkers.Enums;
 using Checkers.UI.Data;
+using Core.Extensions;
 using Core.Ticks.Interfaces;
 using Cysharp.Threading.Tasks;
 using EnhancedUI.EnhancedScroller;
@@ -75,6 +77,7 @@ namespace Main.UI.Presenters {
         private async void SendPartyToUser(string userId) {
             var party = await _nakamaService.CreateParty();
             await _nakamaService.CreateMatch(party.Id);
+            PlayerPrefsX.SetEnum("YourColor", PawnColor.White);
             await _nakamaService.SendPartyToUser(userId, party);
             
             FireSignal(new CloseWindowSignal(WindowKey.StartWindow));
@@ -97,6 +100,8 @@ namespace Main.UI.Presenters {
             if (content.TryGetValue("partyId", out var value)) {
                 _partyId = value;
                 _needPartyLoad = true;
+                
+                PlayerPrefsX.SetEnum("YourColor", PawnColor.Black);
                 Debug.Log($"Get a party with a id {value}");
             }
         }

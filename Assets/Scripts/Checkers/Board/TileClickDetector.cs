@@ -31,14 +31,6 @@ namespace Checkers.Board
                 pawnMover.TileClicked(this.gameObject);
         }
 
-        public void ManualTileClick() {
-            pawnMover.TileClicked(this.gameObject);
-        }
-
-        public void ManualPawnClick() {
-            pawnMover.PawnClicked(tileProperties.GetPawn());
-        }
-
         public void ClickTile()
         {
             MouseDown();
