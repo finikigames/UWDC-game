@@ -95,7 +95,7 @@ namespace Checkers.Services {
                 
                 var json = JsonConvert.SerializeObject(turnData);
 
-                Debug.Log($"Send turn with data {turnData}");
+                Debug.Log($"Send turn with data from {turnData.From} and to {turnData.To}");
                 _nakamaService.SendMatchStateAsync(matchId, (long) CheckersMatchState.Turn, json);
             };
         }
