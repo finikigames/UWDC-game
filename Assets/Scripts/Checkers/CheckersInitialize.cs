@@ -32,6 +32,8 @@ namespace Checkers {
             await _gameStateMachine.Fire(Trigger.CheckersTrigger);
 
             await SceneManager.UnloadSceneAsync(currentScene);
+
+            await _gameStateMachine.Fire(Trigger.AfterSceneLoadTrigger);
         }
         
         public void Dispose() {
