@@ -1,11 +1,11 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using Checkers.UI.Data;
+using Checkers.UI.Views.Base;
+using Cysharp.Threading.Tasks;
 using Global.Context;
 using Global.Window.Base;
-using Main.UI.Data.WinWindow;
-using Main.UI.Views.Base.WinWindow;
 using UnityEngine.Scripting;
 
-namespace Main.UI.Presenters.WinWindow {
+namespace Checkers.UI.Presenters {
     [Preserve]
     public class WinWindowPresenter : BaseWindowPresenter<IWinWindow, WinWindowData> {
         public WinWindowPresenter(ContextService service) : base(service) {

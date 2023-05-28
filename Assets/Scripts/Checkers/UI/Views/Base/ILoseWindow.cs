@@ -1,6 +1,6 @@
 ﻿using Core.MVP.Base.Interfaces;
 
-namespace Main.UI.Views.Base.LoseWindow {
+namespace Checkers.UI.Views.Base {
     public interface ILoseWindow : IWindowView {
     }
 }

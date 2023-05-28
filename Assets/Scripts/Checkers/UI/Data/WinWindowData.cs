@@ -1,6 +1,6 @@
 ﻿using Core.MVP.Base.Interfaces;
 
-namespace Main.UI.Data.WinWindow {
+namespace Checkers.UI.Data {
     public class WinWindowData : IWindowData {
     }
 }

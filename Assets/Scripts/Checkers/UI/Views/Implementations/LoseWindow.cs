@@ -1,11 +1,11 @@
-﻿using Global.VisibilityMechanisms;
+﻿using Checkers.UI.Views.Base;
+using Global.VisibilityMechanisms;
 using Global.Window.Base;
-using Main.UI.Views.Base.WinWindow;
 using UnityEngine;
 
-namespace Main.UI.Views.Implementations.WinWindow {
-    public class WinWindow : BaseWindow, 
-                             IWinWindow {
+namespace Checkers.UI.Views.Implementations {
+    public class LoseWindow : BaseWindow, 
+                              ILoseWindow {
         [SerializeField] private CanvasGroup _group;
 
         protected override void OnEnable() {

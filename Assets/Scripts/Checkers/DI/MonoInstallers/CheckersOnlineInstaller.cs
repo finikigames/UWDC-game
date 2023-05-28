@@ -1,6 +1,7 @@
 ﻿using Checkers.Services;
 using Checkers.Settings;
 using Checkers.States;
+using Checkers.UI.Data;
 using Global;
 using Zenject;
 
@@ -26,6 +27,9 @@ namespace Checkers.DI.MonoInstallers {
             Container
                 .BindInterfacesAndSelfTo<MainInitialize>()
                 .AsSingle();
+
+            Container
+                .DeclareSignal<ToMainSignal>();
         }
     }
 }

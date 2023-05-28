@@ -202,15 +202,17 @@ namespace Checkers.Services {
             copy.transform.DOPath(waypoints, 1, PathType.CubicBezier, PathMode.Ignore).SetEase(Ease.Linear).onComplete += () => { Object.Destroy(copy); };
         }
 
-        private async void OnEndGame(PawnColor color) {
-            _schedulerService
-                .StartSequence()
-                .Append(0.3f, () => { StartAsync(); });
-        }
-
-        private async UniTask StartAsync() {
-            await UnityExtensions.LoadSceneAsync("Simple");
-            await UnityExtensions.LoadSceneAsync("CheckersMain");
+        private void OnEndGame(PawnColor color) {
+            if (color == _mainColor) {
+                _schedulerService
+                    .StartSequence()
+                    .Append(0.3f, () => { _signalBus.Fire(new OpenWindowSignal(WindowKey.WinWindow, new WinWindowData()));});
+            }
+            else {
+                _schedulerService
+                    .StartSequence()
+                    .Append(0.3f, () => { _signalBus.Fire(new OpenWindowSignal(WindowKey.LoseWindow, new LoseWindowData()));});
+            }
         }
     }
 }
