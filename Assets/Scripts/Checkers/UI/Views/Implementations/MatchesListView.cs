@@ -1,5 +1,5 @@
 ﻿using System;
-using Checkers.UI.Views.Interfaces;
+using Checkers.UI.Views.Base;
 using Cysharp.Threading.Tasks;
 using EnhancedUI.EnhancedScroller;
 using Global.VisibilityMechanisms;

@@ -1,83 +1,87 @@
-﻿using UnityEngine;
+﻿using Checkers.Interfaces;
+using UnityEngine;
 
-public class BorderGenerator : MonoBehaviour
+namespace Checkers.Board
 {
-    public GameObject Border;
-    public GameObject Corner;
-
-    private int boardSize;
-    private GameObject borderGameObject;
-    private Vector3 currentPosition;
-    private Quaternion currentRotation;
-    private Vector3 currentDirection;
-
-    private void Awake()
+    public class BorderGenerator : MonoBehaviour
     {
-        ITilesGenerator tilesGenerator = GetComponent<ITilesGenerator>();
-        boardSize = tilesGenerator.BoardSize;
-    }
+        public GameObject Border;
+        public GameObject Corner;
 
-    private void Start()
-    {
-        CreateBorderGameObject();
-        AssignInitialValues();
-        CreateBorder();
-    }
+        private int boardSize;
+        private GameObject borderGameObject;
+        private Vector3 currentPosition;
+        private Quaternion currentRotation;
+        private Vector3 currentDirection;
 
-    private void CreateBorderGameObject()
-    {
-        borderGameObject = new GameObject("Border");
-        borderGameObject.transform.parent = this.gameObject.transform;
-        borderGameObject.transform.position = (Vector3.left + Vector3.back);
-    }
+        private void Awake()
+        {
+            ITilesGenerator tilesGenerator = GetComponent<ITilesGenerator>();
+            boardSize = tilesGenerator.BoardSize;
+        }
 
-    private void AssignInitialValues()
-    {
-        currentPosition = borderGameObject.transform.position;
-        currentRotation = borderGameObject.transform.rotation;
-        currentDirection = Vector3.forward;
-    }
+        private void Start()
+        {
+            CreateBorderGameObject();
+            AssignInitialValues();
+            CreateBorder();
+        }
 
-    private void CreateBorder()
-    {
-        for (var side = 0; side < 4; ++side)
-            CreaterBorderLine();
-    }
+        private void CreateBorderGameObject()
+        {
+            borderGameObject = new GameObject("Border");
+            borderGameObject.transform.parent = this.gameObject.transform;
+            borderGameObject.transform.position = (Vector3.left + Vector3.back);
+        }
 
-    private void CreaterBorderLine()
-    {
-        CreateCornerElement();
-        for (var i = 0; i < boardSize; ++i)
-            CreateBorderElement();
-        RotateBy90Degrees();
-    }
+        private void AssignInitialValues()
+        {
+            currentPosition = borderGameObject.transform.position;
+            currentRotation = borderGameObject.transform.rotation;
+            currentDirection = Vector3.forward;
+        }
 
-    private void CreateCornerElement()
-    {
-        CreateElement(Corner);
-    }
+        private void CreateBorder()
+        {
+            for (var side = 0; side < 4; ++side)
+                CreaterBorderLine();
+        }
 
-    private void CreateElement(GameObject objectToCreate)
-    {
-        GameObject instantiatedCorner = Instantiate(objectToCreate, currentPosition,
-            objectToCreate.transform.rotation * currentRotation, borderGameObject.transform);
-        IncrementCurrentPosition();
-    }
+        private void CreaterBorderLine()
+        {
+            CreateCornerElement();
+            for (var i = 0; i < boardSize; ++i)
+                CreateBorderElement();
+            RotateBy90Degrees();
+        }
 
-    private void IncrementCurrentPosition()
-    {
-        currentPosition += currentDirection;
-    }
+        private void CreateCornerElement()
+        {
+            CreateElement(Corner);
+        }
 
-    private void CreateBorderElement()
-    {
-        CreateElement(Border);
-    }
+        private void CreateElement(GameObject objectToCreate)
+        {
+            GameObject instantiatedCorner = Instantiate(objectToCreate, currentPosition,
+                objectToCreate.transform.rotation * currentRotation, borderGameObject.transform);
+            IncrementCurrentPosition();
+        }
 
-    private void RotateBy90Degrees()
-    {
-        Quaternion rotationBy90Degrees = Quaternion.Euler(0, 90, 0);
-        currentDirection = rotationBy90Degrees * currentDirection;
-        currentRotation *= rotationBy90Degrees;
+        private void IncrementCurrentPosition()
+        {
+            currentPosition += currentDirection;
+        }
+
+        private void CreateBorderElement()
+        {
+            CreateElement(Border);
+        }
+
+        private void RotateBy90Degrees()
+        {
+            Quaternion rotationBy90Degrees = Quaternion.Euler(0, 90, 0);
+            currentDirection = rotationBy90Degrees * currentDirection;
+            currentRotation *= rotationBy90Degrees;
+        }
     }
 }

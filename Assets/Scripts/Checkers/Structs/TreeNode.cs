@@ -1,25 +1,28 @@
 ﻿using System.Collections.Generic;
 
-public class TreeNode<T>
+namespace Checkers.Structs
 {
-    public T Value { get; set; }
-    public LinkedList<TreeNode<T>> Children { get; }
-
-    public TreeNode(T value)
+    public class TreeNode<T>
     {
-        Value = value;
-        Children = new LinkedList<TreeNode<T>>();
-    }
+        public T Value { get; set; }
+        public LinkedList<TreeNode<T>> Children { get; }
 
-    public TreeNode<T> AddChild(T child)
-    {
-        TreeNode<T> childNode = new TreeNode<T>(child);
-        Children.AddLast(childNode);
-        return childNode;
-    }
+        public TreeNode(T value)
+        {
+            Value = value;
+            Children = new LinkedList<TreeNode<T>>();
+        }
 
-    public bool RemoveChild(TreeNode<T> child)
-    {
-        return Children.Remove(child);
+        public TreeNode<T> AddChild(T child)
+        {
+            TreeNode<T> childNode = new TreeNode<T>(child);
+            Children.AddLast(childNode);
+            return childNode;
+        }
+
+        public bool RemoveChild(TreeNode<T> child)
+        {
+            return Children.Remove(child);
+        }
     }
 }

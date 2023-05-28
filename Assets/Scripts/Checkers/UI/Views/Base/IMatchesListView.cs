@@ -2,7 +2,7 @@
 using Core.MVP.Base.Interfaces;
 using EnhancedUI.EnhancedScroller;
 
-namespace Checkers.UI.Views.Interfaces {
+namespace Checkers.UI.Views.Base {
     public interface IMatchesListView : IWindowView {
         Action OnMatchCreate { get; set; }
         Action OnMatchJoin { get; set; }

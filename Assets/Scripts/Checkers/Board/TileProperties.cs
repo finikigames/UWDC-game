@@ -1,19 +1,24 @@
-﻿using UnityEngine;
+﻿using Checkers.Interfaces;
+using Checkers.Structs;
+using UnityEngine;
 
-public class TileProperties : MonoBehaviour
+namespace Checkers.Board
 {
-    public bool IsOccupied()
+    public class TileProperties : MonoBehaviour
     {
-        return GetComponentInChildren<IPawnProperties>() != null;
-    }
+        public bool IsOccupied()
+        {
+            return GetComponentInChildren<IPawnProperties>() != null;
+        }
 
-    public GameObject GetPawn()
-    {
-        return GetComponentInChildren<IPawnProperties>().gameObject;
-    }
+        public GameObject GetPawn()
+        {
+            return GetComponentInChildren<IPawnProperties>().gameObject;
+        }
 
-    public TileIndex GetTileIndex()
-    {
-        return new TileIndex(transform.parent.GetSiblingIndex(), transform.GetSiblingIndex());
+        public TileIndex GetTileIndex()
+        {
+            return new TileIndex(transform.parent.GetSiblingIndex(), transform.GetSiblingIndex());
+        }
     }
 }

@@ -40,7 +40,7 @@ MonoBehaviour:
       Priority: 0
       IsFullScreen: 1
       CanClose: 1
-      Context: 2
+      Context: 4
       _controller:
         GuidAssignmentFailed: 0
         GUID: dd48e669f17f9d44185dade796ab9db6
@@ -56,7 +56,7 @@ MonoBehaviour:
       Priority: 0
       IsFullScreen: 1
       CanClose: 1
-      Context: 2
+      Context: 4
       _controller:
         GuidAssignmentFailed: 0
         GUID: c8523a926be0eb248bddfc41d417fbef
@@ -89,15 +89,14 @@ MonoBehaviour:
       Key: 5
       Priority: 0
       IsFullScreen: 1
-      CanClose: 0
-      Context: 2
+      CanClose: 1
+      Context: 4
       _controller:
         GuidAssignmentFailed: 0
         GUID: 8c7907bfffa958b4eb7ac434b1e19e4b
-        _typeNameAndAssembly: Main.UI.Presenters.MatchWindow.MatchWindowPresenter,
-          Main
+        _typeNameAndAssembly: Checkers.UI.Presenters.MatchWindowPresenter, Checkers
         _suppressLogs: 0
-    - Uid: 
+    - Uid: e45ca311-cbc1-4ed1-9e1a-f696ef8fb4ef
       PrefabReference:
         m_AssetGUID: 3bbe2ccbf00883e40bf431cc3eebefb4
         m_SubObjectName: 
@@ -107,10 +106,9 @@ MonoBehaviour:
       Priority: 0
       IsFullScreen: 0
       CanClose: 1
-      Context: 2
+      Context: 4
       _controller:
         GuidAssignmentFailed: 0
         GUID: cdd8efa8d0274bf4095a9910b33c9dfd
-        _typeNameAndAssembly: Main.UI.Presenters.LoseWindow.RulesWindowPresenter,
-          Main
+        _typeNameAndAssembly: Checkers.UI.Presenters.RulesWindowPresenter, Checkers
         _suppressLogs: 0

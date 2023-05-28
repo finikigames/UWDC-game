@@ -1,16 +1,21 @@
-﻿using UnityEngine;
+﻿using Checkers.Enums;
+using Checkers.Structs;
+using UnityEngine;
 
-public interface IPawnProperties
+namespace Checkers.Interfaces
 {
-    GameObject gameObject { get; }
-    PawnColor PawnColor { get; set; }
-    bool IsKing { get; set; }
+    public interface IPawnProperties
+    {
+        GameObject gameObject { get; }
+        PawnColor PawnColor { get; set; }
+        bool IsKing { get; set; }
 
-    TileIndex GetTileIndex();
+        TileIndex GetTileIndex();
 
-    void PromoteToKing();
+        void PromoteToKing();
 
-    void AddPawnSelection();
+        void AddPawnSelection();
 
-    void RemovePawnSelection();
+        void RemovePawnSelection();
+    }
 }

@@ -1,25 +1,32 @@
-﻿using UnityEngine;
+﻿using Checkers.Board;
+using Checkers.Enums;
+using Checkers.Interfaces;
+using Checkers.Structs;
+using UnityEngine;
 
-public class AIPawnProperties : MonoBehaviour, IPawnProperties
+namespace Checkers.AI.Pawns
 {
-    public PawnColor PawnColor { get; set; }
-    public bool IsKing { get; set; }
-
-    public TileIndex GetTileIndex()
+    public class AIPawnProperties : MonoBehaviour, IPawnProperties
     {
-        return GetComponentInParent<TileProperties>().GetTileIndex();
-    }
+        public PawnColor PawnColor { get; set; }
+        public bool IsKing { get; set; }
 
-    public void PromoteToKing()
-    {
-        IsKing = true;
-    }
+        public TileIndex GetTileIndex()
+        {
+            return GetComponentInParent<TileProperties>().GetTileIndex();
+        }
 
-    public void AddPawnSelection()
-    {
-    }
+        public void PromoteToKing()
+        {
+            IsKing = true;
+        }
 
-    public void RemovePawnSelection()
-    {
+        public void AddPawnSelection()
+        {
+        }
+
+        public void RemovePawnSelection()
+        {
+        }
     }
 }

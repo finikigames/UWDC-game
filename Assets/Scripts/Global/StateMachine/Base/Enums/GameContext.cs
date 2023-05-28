@@ -4,7 +4,6 @@
         Preloader,
         Main,
         Project,
-        CampaignMode,
         Checkers
     }
 }

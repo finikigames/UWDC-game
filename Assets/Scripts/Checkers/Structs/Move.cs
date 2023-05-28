@@ -1,17 +1,20 @@
 ﻿using UnityEngine;
 
-public class Move
+namespace Checkers.Structs
 {
-    public TileIndex From { get; }
-    public TileIndex To { get; }
-    public GameObject CapturedPawn { get; set; }
-    public bool IsMulticapturing { get; set; }
-    public bool WasPawnPromoted { get; set; }
-    public int Score { get; set; }
-
-    public Move(TileIndex from, TileIndex to)
+    public class Move
     {
-        From = from;
-        To = to;
+        public TileIndex From { get; }
+        public TileIndex To { get; }
+        public GameObject CapturedPawn { get; set; }
+        public bool IsMulticapturing { get; set; }
+        public bool WasPawnPromoted { get; set; }
+        public int Score { get; set; }
+
+        public Move(TileIndex from, TileIndex to)
+        {
+            From = from;
+            To = to;
+        }
     }
 }

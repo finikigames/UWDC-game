@@ -1,10 +1,15 @@
-﻿using Checkers.ConfigTemplate;
+﻿using Checkers.Board;
+using Checkers.ConfigTemplate;
+using Checkers.Enums;
 using Checkers.Settings;
+using Checkers.UI.Data;
 using Core.Extensions;
 using Core.Primitives;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Global.Scheduler.Base;
+using Global.Window.Enums;
+using Global.Window.Signals;
 using Nakama;
 using Newtonsoft.Json;
 using Server.Services;
@@ -29,9 +34,10 @@ namespace Checkers.Services {
         private readonly MainCheckerSceneSettings _sceneSettings;
         private readonly ISchedulerService _schedulerService;
         private readonly NakamaService _nakamaService;
+        private readonly SignalBus _signalBus;
         private readonly CheckersConfig _checkersConfig;
         private PawnColor _mainColor;
-        private Camera _cam;
+        private UnityEngine.Camera _cam;
 
         private TurnData _turnData;
         private bool _hasInput;
@@ -39,14 +45,18 @@ namespace Checkers.Services {
         public MainCheckersOnlineService(MainCheckerSceneSettings sceneSettings,
                                          ISchedulerService schedulerService, 
                                          NakamaService nakamaService,
-                                         CheckersConfig checkersConfig) {
+                                         CheckersConfig checkersConfig,
+                                         SignalBus signalBus) {
             _sceneSettings = sceneSettings;
             _schedulerService = schedulerService;
             _nakamaService = nakamaService;
+            _signalBus = signalBus;
             _checkersConfig = checkersConfig;
         }
         
         public void Initialize() {
+            _signalBus.Fire(new OpenWindowSignal(WindowKey.MatchWindow, new MatchWindowData()));
+            
             _mainColor = PlayerPrefsX.GetEnum<PawnColor>("YourColor");
             
             var turnHandler = _sceneSettings.TurnHandler;
@@ -94,21 +104,7 @@ namespace Checkers.Services {
         }
 
         public void Tick() {
-            if (Input.GetMouseButtonDown(0))
-            {
-                var mouseInput = Input.mousePosition;
-
-                var worldPosition = Camera.main.ScreenToWorldPoint(mouseInput);
-
-                var column = Mathf.RoundToInt(worldPosition.x);
-                var row = Mathf.RoundToInt(worldPosition.z);
-
-                var tileGetter = _sceneSettings.Getter;
-
-                var tile = tileGetter.GetTile(column, row);
-                var clickDetector = tile.GetComponent<TileClickDetector>();
-                clickDetector.MouseDown();
-            }
+            CheckInput();
 
             if (!_hasInput) return;
 
@@ -123,6 +119,24 @@ namespace Checkers.Services {
             tileFrom.GetComponent<TileClickDetector>().ManualPawnClick();
             tileTo.GetComponent<TileClickDetector>().ManualTileClick();
             
+        }
+
+        private void CheckInput() {
+            if (!Input.GetMouseButtonDown(0)) return;
+            
+            var mouseInput = Input.mousePosition;
+
+            var worldPosition = UnityEngine.Camera.main.ScreenToWorldPoint(mouseInput);
+
+            var column = Mathf.RoundToInt(worldPosition.x);
+            var row = Mathf.RoundToInt(worldPosition.z);
+
+            if ((column < 0 || column > 8) || (row < 0 || row > 8)) return;
+            var tileGetter = _sceneSettings.Getter;
+
+            var tile = tileGetter.GetTile(column, row);
+            var clickDetector = tile.GetComponent<TileClickDetector>();
+            clickDetector.MouseDown();
         }
 
         private void OnMatchState(IMatchState state) {

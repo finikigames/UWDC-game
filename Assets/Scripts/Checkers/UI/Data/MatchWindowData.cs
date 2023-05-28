@@ -1,6 +1,6 @@
 ﻿using Core.MVP.Base.Interfaces;
 
-namespace Main.UI.Data.MatchWindow {
+namespace Checkers.UI.Data {
     public class MatchWindowData : IWindowData {
     }
 }

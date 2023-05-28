@@ -1,35 +1,40 @@
-﻿using UnityEngine;
+﻿using Checkers.Board;
+using Checkers.Structs;
+using UnityEngine;
 
-public class CPUPlayer : MonoBehaviour
+namespace Checkers.AI
 {
-    public MoveTreeBuilder MoveTreeBuilder;
-
-    private TileGetter tileGetter;
-    private TurnHandler turnHandler;
-
-    private void Start()
+    public class CPUPlayer : MonoBehaviour
     {
-        tileGetter = GetComponent<TileGetter>();
-        turnHandler = GetComponent<TurnHandler>();
-    }
+        public MoveTreeBuilder MoveTreeBuilder;
 
-    public void DoPlayerMove(Move move)
-    {
-        MoveTreeBuilder.DoPlayerMove(move);
-    }
+        private TileGetter tileGetter;
+        private TurnHandler turnHandler;
 
-    public void DoCPUMove()
-    {
-        if (MoveTreeBuilder.HasNextMove())
-            ChooseAndDoMove();
-    }
+        private void Start()
+        {
+            tileGetter = GetComponent<TileGetter>();
+            turnHandler = GetComponent<TurnHandler>();
+        }
 
-    private void ChooseAndDoMove()
-    {
-        Move move = MoveTreeBuilder.ChooseNextCPUMove();
-        var fromTileClickDetector = tileGetter.GetTile(move.From).GetComponent<TileClickDetector>();
-        var toTileClickDetector = tileGetter.GetTile(move.To).GetComponent<TileClickDetector>();
-        fromTileClickDetector.ClickTile();
-        toTileClickDetector.ClickTile();
+        public void DoPlayerMove(Move move)
+        {
+            MoveTreeBuilder.DoPlayerMove(move);
+        }
+
+        public void DoCPUMove()
+        {
+            if (MoveTreeBuilder.HasNextMove())
+                ChooseAndDoMove();
+        }
+
+        private void ChooseAndDoMove()
+        {
+            Move move = MoveTreeBuilder.ChooseNextCPUMove();
+            var fromTileClickDetector = tileGetter.GetTile(move.From).GetComponent<TileClickDetector>();
+            var toTileClickDetector = tileGetter.GetTile(move.To).GetComponent<TileClickDetector>();
+            fromTileClickDetector.ClickTile();
+            toTileClickDetector.ClickTile();
+        }
     }
 }

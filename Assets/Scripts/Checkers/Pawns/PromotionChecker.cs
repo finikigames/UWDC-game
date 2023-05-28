@@ -1,27 +1,32 @@
-﻿using UnityEngine;
+﻿using Checkers.Enums;
+using Checkers.Interfaces;
+using UnityEngine;
 
-public class PromotionChecker : MonoBehaviour
+namespace Checkers.Pawns
 {
-    private int boardSize;
-
-    private void Start()
+    public class PromotionChecker : MonoBehaviour
     {
-        boardSize = GetComponent<ITilesGenerator>().BoardSize;
-    }
+        private int boardSize;
 
-    public void CheckPromotion(GameObject pawnToCheck)
-    {
-        var pawnProperties = pawnToCheck.GetComponent<IPawnProperties>();
-        if (pawnProperties.IsKing)
-            return;
-        var tileIndex = pawnProperties.GetTileIndex();
-        int promotionRow = GetPromotionRow(pawnProperties);
-        if (tileIndex.Row == promotionRow)
-            pawnProperties.PromoteToKing();
-    }
+        private void Start()
+        {
+            boardSize = GetComponent<ITilesGenerator>().BoardSize;
+        }
 
-    private int GetPromotionRow(IPawnProperties pawnProperties)
-    {
-        return pawnProperties.PawnColor == PawnColor.White ? boardSize - 1 : 0;
+        public void CheckPromotion(GameObject pawnToCheck)
+        {
+            var pawnProperties = pawnToCheck.GetComponent<IPawnProperties>();
+            if (pawnProperties.IsKing)
+                return;
+            var tileIndex = pawnProperties.GetTileIndex();
+            int promotionRow = GetPromotionRow(pawnProperties);
+            if (tileIndex.Row == promotionRow)
+                pawnProperties.PromoteToKing();
+        }
+
+        private int GetPromotionRow(IPawnProperties pawnProperties)
+        {
+            return pawnProperties.PawnColor == PawnColor.White ? boardSize - 1 : 0;
+        }
     }
 }

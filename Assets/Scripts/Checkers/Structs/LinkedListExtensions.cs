@@ -1,10 +1,13 @@
 ﻿using System.Collections.Generic;
 
-public static class LinkedListExtensions
+namespace Checkers.Structs
 {
-    public static void AppendRange<T>(this LinkedList<T> linkedList, IEnumerable<T> elementsToAdd)
+    public static class LinkedListExtensions
     {
-        foreach (T element in elementsToAdd)
-            linkedList.AddLast(element);
+        public static void AppendRange<T>(this LinkedList<T> linkedList, IEnumerable<T> elementsToAdd)
+        {
+            foreach (T element in elementsToAdd)
+                linkedList.AddLast(element);
+        }
     }
 }

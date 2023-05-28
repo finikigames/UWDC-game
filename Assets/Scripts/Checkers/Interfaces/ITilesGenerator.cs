@@ -1,4 +1,7 @@
-﻿public interface ITilesGenerator
+﻿namespace Checkers.Interfaces
 {
-    int BoardSize { get; }
+    public interface ITilesGenerator
+    {
+        int BoardSize { get; }
+    }
 }

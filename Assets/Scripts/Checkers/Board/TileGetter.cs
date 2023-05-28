@@ -1,14 +1,18 @@
-﻿using UnityEngine;
+﻿using Checkers.Structs;
+using UnityEngine;
 
-public class TileGetter : MonoBehaviour
+namespace Checkers.Board
 {
-    public GameObject GetTile(int columnIndex, int rowIndex)
+    public class TileGetter : MonoBehaviour
     {
-        return transform.GetChild(columnIndex).GetChild(rowIndex).gameObject;
-    }
+        public GameObject GetTile(int columnIndex, int rowIndex)
+        {
+            return transform.GetChild(columnIndex).GetChild(rowIndex).gameObject;
+        }
 
-    public GameObject GetTile(TileIndex tileIndex)
-    {
-        return transform.GetChild(tileIndex.Column).GetChild(tileIndex.Row).gameObject;
+        public GameObject GetTile(TileIndex tileIndex)
+        {
+            return transform.GetChild(tileIndex.Column).GetChild(tileIndex.Row).gameObject;
+        }
     }
 }

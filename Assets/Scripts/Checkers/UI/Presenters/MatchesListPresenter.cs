@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Checkers.ConfigTemplate;
+using Checkers.Enums;
 using Checkers.UI.Data;
+using Checkers.UI.Views.Base;
 using Checkers.UI.Views.Implementations;
-using Checkers.UI.Views.Interfaces;
 using Core.Extensions;
 using Cysharp.Threading.Tasks;
 using EnhancedUI.EnhancedScroller;

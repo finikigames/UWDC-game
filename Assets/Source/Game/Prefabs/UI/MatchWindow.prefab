@@ -266,7 +266,7 @@ RectTransform:
   - {fileID: 2467770943118547332}
   - {fileID: 497724238892488421}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -366,6 +366,7 @@ MonoBehaviour:
   _closeButton: {fileID: 5984532202106531085}
   _blackBg: {fileID: 21575064443772735}
   _group: {fileID: 3281812967459359675}
+  _howToPlayButton: {fileID: 1056037797104345829}
 --- !u!1 &191098414445792479
 GameObject:
   m_ObjectHideFlags: 0

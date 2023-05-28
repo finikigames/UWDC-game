@@ -1,9 +1,13 @@
-﻿using UnityEngine;
+﻿using Checkers.Board;
+using UnityEngine;
 
-public class PawnClickDetector : MonoBehaviour
+namespace Checkers.Pawns
 {
-    private void OnMouseDown()
+    public class PawnClickDetector : MonoBehaviour
     {
-        GetComponentInParent<TileClickDetector>().ChildPawnClicked();
+        private void OnMouseDown()
+        {
+            GetComponentInParent<TileClickDetector>().ChildPawnClicked();
+        }
     }
 }

@@ -1,12 +1,15 @@
-﻿using Global.VisibilityMechanisms;
+﻿using System;
+using Checkers.UI.Views.Base;
+using Global.VisibilityMechanisms;
 using Global.Window.Base;
-using Main.UI.Views.Base.RulesWindow;
 using UnityEngine;
+using UnityEngine.UI;
 
-namespace Main.UI.Views.Implementations.RulesWindow {
-    public class RulesWindow : BaseWindow, 
-                               IRulesWindow {
+namespace Checkers.UI.Views.Implementations {
+    public class MatchWindow : BaseWindow, 
+                               IMatchWindow {
         [SerializeField] private CanvasGroup _group;
+        [SerializeField] private Button _howToPlayButton;
 
         protected override void OnEnable() {
             _showState = Core.MVP.Base.Enums.ShowState.Hidden;
@@ -17,6 +20,11 @@ namespace Main.UI.Views.Implementations.RulesWindow {
             ChangeHideMechanism(new ChainHideMechanism(
                 new FadeHideMechanism(_group),
                 new CustomHideMechanism(HideBlack)));
+        }
+
+        public void SubscribeToHowToPlayButton(Action callback) {
+            _howToPlayButton.onClick.RemoveAllListeners();
+            _howToPlayButton.onClick.AddListener(() => callback?.Invoke());
         }
     }
 }

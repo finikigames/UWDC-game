@@ -1,64 +1,72 @@
 ﻿using System.Collections;
+using Checkers.Audio;
+using Checkers.Board;
+using Checkers.Enums;
+using Checkers.Interfaces;
+using Checkers.Structs;
 using UnityEngine;
 
-public class PawnProperties : MonoBehaviour, IPawnProperties
+namespace Checkers.Pawns
 {
-    public float CrownHeight;
-    public float CrownAppearanceSmoothing;
-    public float PositionDifferenceTolerance;
-    public GameObject Crown;
-    public GameObject PromotionParticles;
-    public GameObject PawnSelection;
-
-    public PawnColor PawnColor { get; set; }
-    public bool IsKing { get; set; }
-
-    private GameObject activePawnSelection;
-
-    public TileIndex GetTileIndex()
+    public class PawnProperties : MonoBehaviour, IPawnProperties
     {
-        return GetComponentInParent<TileProperties>().GetTileIndex();
-    }
+        public float CrownHeight;
+        public float CrownAppearanceSmoothing;
+        public float PositionDifferenceTolerance;
+        public GameObject Crown;
+        public GameObject PromotionParticles;
+        public GameObject PawnSelection;
 
-    public void PromoteToKing()
-    {
-        IsKing = true;
-        CreatePromotionParticles();
-        StartCoroutine(AddCrown());
-        PlayPromotionSound();
-    }
+        public PawnColor PawnColor { get; set; }
+        public bool IsKing { get; set; }
 
-    private void CreatePromotionParticles()
-    {
-    }
+        private GameObject activePawnSelection;
 
-    private IEnumerator AddCrown()
-    {
-        var crownTransform = Instantiate(Crown, transform).transform;
-        Vector3 targetLocalPosition = crownTransform.localPosition + Vector3.up * CrownHeight;
-        while (Vector3.Distance(crownTransform.localPosition, targetLocalPosition) > PositionDifferenceTolerance)
+        public TileIndex GetTileIndex()
         {
-            crownTransform.localPosition = Vector3.Lerp(crownTransform.localPosition, targetLocalPosition,
-                CrownAppearanceSmoothing * Time.deltaTime);
-            yield return null;
+            return GetComponentInParent<TileProperties>().GetTileIndex();
         }
-    }
 
-    private void PlayPromotionSound()
-    {
-        var gameAudio = GameObject.FindGameObjectWithTag("Audio").GetComponent<GameAudio>();
-        gameAudio.PlayPromotionSound();
-    }
+        public void PromoteToKing()
+        {
+            IsKing = true;
+            CreatePromotionParticles();
+            StartCoroutine(AddCrown());
+            PlayPromotionSound();
+        }
 
-    public void AddPawnSelection()
-    {
-        if (activePawnSelection != null) return;
-        activePawnSelection = Instantiate(PawnSelection, transform);
-    }
+        private void CreatePromotionParticles()
+        {
+        }
 
-    public void RemovePawnSelection()
-    {
-        if (activePawnSelection != null)
-            Destroy(activePawnSelection);
+        private IEnumerator AddCrown()
+        {
+            var crownTransform = Instantiate(Crown, transform).transform;
+            Vector3 targetLocalPosition = crownTransform.localPosition + Vector3.up * CrownHeight;
+            while (Vector3.Distance(crownTransform.localPosition, targetLocalPosition) > PositionDifferenceTolerance)
+            {
+                crownTransform.localPosition = Vector3.Lerp(crownTransform.localPosition, targetLocalPosition,
+                    CrownAppearanceSmoothing * Time.deltaTime);
+                yield return null;
+            }
+        }
+
+        private void PlayPromotionSound()
+        {
+            var gameAudio = GameObject.FindGameObjectWithTag("Audio").GetComponent<GameAudio>();
+            gameAudio.PlayPromotionSound();
+        }
+
+        public void AddPawnSelection()
+        {
+            if (activePawnSelection != null) return;
+            activePawnSelection = Instantiate(PawnSelection, transform);
+        }
+
+        public void RemovePawnSelection()
+        {
+            if (activePawnSelection != null)
+                Destroy(activePawnSelection);
+        }
     }
 }

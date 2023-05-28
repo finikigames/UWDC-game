@@ -1,5 +1,8 @@
-﻿public enum PawnColor
+﻿namespace Checkers.Enums
 {
-    White,
-    Black
+    public enum PawnColor
+    {
+        White,
+        Black
+    }
 }

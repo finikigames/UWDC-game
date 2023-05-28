@@ -1,17 +1,20 @@
 ﻿using Core.Extensions;
 using UnityEngine;
 
-public class AIManager : MonoBehaviour
+namespace Checkers.AI
 {
-    public CPUPlayer CPUPlayer;
-
-    private void Awake()
+    public class AIManager : MonoBehaviour
     {
-        bool withPlayer = PlayerPrefsX.GetBool("WithPlayer");
+        public CPUPlayer CPUPlayer;
 
-        if (!withPlayer) {
-            CPUPlayer.enabled = true;
-            gameObject.SetActive(true);
+        private void Awake()
+        {
+            bool withPlayer = PlayerPrefsX.GetBool("WithPlayer");
+
+            if (!withPlayer) {
+                CPUPlayer.enabled = true;
+                gameObject.SetActive(true);
+            }
         }
     }
 }

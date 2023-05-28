@@ -1,43 +1,47 @@
-﻿using UnityEngine;
+﻿using Checkers.Pawns;
+using UnityEngine;
 
-public class TileClickDetector : MonoBehaviour
+namespace Checkers.Board
 {
-    private TileProperties tileProperties;
-    private PawnMover pawnMover;
-
-    private void Awake()
+    public class TileClickDetector : MonoBehaviour
     {
-        tileProperties = GetComponent<TileProperties>();
-    }
+        private TileProperties tileProperties;
+        private PawnMover pawnMover;
 
-    private void Start()
-    {
-        pawnMover = GetComponentInParent<PawnMover>();
-    }
+        private void Awake()
+        {
+            tileProperties = GetComponent<TileProperties>();
+        }
 
-    public void ChildPawnClicked()
-    {
-        MouseDown();
-    }
+        private void Start()
+        {
+            pawnMover = GetComponentInParent<PawnMover>();
+        }
 
-    public void MouseDown()
-    {
-        if (tileProperties.IsOccupied())
-            pawnMover.PawnClicked(tileProperties.GetPawn());
-        else
+        public void ChildPawnClicked()
+        {
+            MouseDown();
+        }
+
+        public void MouseDown()
+        {
+            if (tileProperties.IsOccupied())
+                pawnMover.PawnClicked(tileProperties.GetPawn());
+            else
+                pawnMover.TileClicked(this.gameObject);
+        }
+
+        public void ManualTileClick() {
             pawnMover.TileClicked(this.gameObject);
-    }
+        }
 
-    public void ManualTileClick() {
-        pawnMover.TileClicked(this.gameObject);
-    }
+        public void ManualPawnClick() {
+            pawnMover.PawnClicked(tileProperties.GetPawn());
+        }
 
-    public void ManualPawnClick() {
-        pawnMover.PawnClicked(tileProperties.GetPawn());
-    }
-
-    public void ClickTile()
-    {
-        MouseDown();
+        public void ClickTile()
+        {
+            MouseDown();
+        }
     }
 }

@@ -1,20 +1,23 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class VolumeSlider : MonoBehaviour
+namespace Checkers.Audio
 {
-    public MenuAudio MenuAudio;
-
-    private Slider volumeSlider;
-
-    private void Awake()
+    public class VolumeSlider : MonoBehaviour
     {
-        volumeSlider = GetComponent<Slider>();
-    }
+        public MenuAudio MenuAudio;
 
-    public void UpdateVolume()
-    {
-        int volume = Mathf.RoundToInt(volumeSlider.value);
-        MenuAudio.ChangeVolume(volume);
+        private Slider volumeSlider;
+
+        private void Awake()
+        {
+            volumeSlider = GetComponent<Slider>();
+        }
+
+        public void UpdateVolume()
+        {
+            int volume = Mathf.RoundToInt(volumeSlider.value);
+            MenuAudio.ChangeVolume(volume);
+        }
     }
 }

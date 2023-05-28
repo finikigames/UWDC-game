@@ -1,11 +1,11 @@
-﻿using Global.VisibilityMechanisms;
+﻿using Checkers.UI.Views.Base;
+using Global.VisibilityMechanisms;
 using Global.Window.Base;
-using Main.UI.Views.Base.MatchWindow;
 using UnityEngine;
 
-namespace Main.UI.Views.Implementations.MatchWindow {
-    public class MatchWindow : BaseWindow, 
-                               IMatchWindow {
+namespace Checkers.UI.Views.Implementations {
+    public class RulesWindow : BaseWindow, 
+                               IRulesWindow {
         [SerializeField] private CanvasGroup _group;
 
         protected override void OnEnable() {

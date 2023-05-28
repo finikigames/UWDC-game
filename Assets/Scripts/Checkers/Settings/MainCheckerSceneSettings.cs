@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using Checkers.Board;
+using Checkers.Pawns;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace Checkers.Settings {

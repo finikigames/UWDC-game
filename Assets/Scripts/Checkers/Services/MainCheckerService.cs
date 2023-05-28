@@ -1,4 +1,5 @@
-﻿using Checkers.Settings;
+﻿using Checkers.Enums;
+using Checkers.Settings;
 using Core.Extensions;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;

@@ -1,6 +1,6 @@
 ﻿using Core.MVP.Base.Interfaces;
 
-namespace Main.UI.Views.Base.RulesWindow {
+namespace Checkers.UI.Views.Base {
     public interface IRulesWindow : IWindowView {
     }
 }
