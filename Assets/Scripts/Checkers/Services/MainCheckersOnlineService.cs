@@ -159,10 +159,10 @@ namespace Checkers.Services {
                     _hasInput = true;
                     var turnData = JsonConvert.DeserializeObject<TurnData>(content);
 
+                    Debug.Log($"Received raw data with from {turnData.From} and to {turnData.To}");
                     _turnData = InvertTurnData(turnData);
-                    _turnData = turnData;
                     
-                    Debug.Log("Received data from socket");
+                    Debug.Log($"Inverted data with from {_turnData.From} and to {_turnData.To}");
 
                     break;
                 }
