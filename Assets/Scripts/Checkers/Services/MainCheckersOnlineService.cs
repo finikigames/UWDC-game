@@ -125,6 +125,8 @@ namespace Checkers.Services {
             var fromCoords = _turnData.From;
             var tileFrom = _sceneSettings.Getter.GetTile(fromCoords.Column, fromCoords.Row);
 
+            Debug.Log($"Trying to move tile with coords from {fromCoords} and to coords {toCoords}");
+            
             tileFrom.GetComponent<TileClickDetector>().MouseDown();
             tileTo.GetComponent<TileClickDetector>().MouseDown();
         }
@@ -156,6 +158,8 @@ namespace Checkers.Services {
                     _hasInput = true;
                     var turnData = JsonConvert.DeserializeObject<TurnData>(content);
                     _turnData = turnData;
+                    
+                    Debug.Log("Received data from socket");
 
                     break;
                 }
