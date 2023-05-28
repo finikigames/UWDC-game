@@ -1,4 +1,5 @@
-﻿using Checkers.Board;
+﻿using System.Linq;
+using Checkers.Board;
 using Checkers.ConfigTemplate;
 using Checkers.Enums;
 using Checkers.Settings;
@@ -95,6 +96,10 @@ namespace Checkers.Services {
         }
 
         private void OnMatchPresence(IMatchPresenceEvent obj) {
+            if (obj.Leaves.Any()) {
+                
+            }
+            
             if (_nakamaService.GetCurrentMatchPlayers() >= 2) return;
 
             var signal = new YouAreBlack();
@@ -116,8 +121,8 @@ namespace Checkers.Services {
             var fromCoords = _turnData.From;
             var tileFrom = _sceneSettings.Getter.GetTile(fromCoords.Column, fromCoords.Row);
 
-            tileFrom.GetComponent<TileClickDetector>().ManualPawnClick();
-            tileTo.GetComponent<TileClickDetector>().ManualTileClick();
+            tileFrom.GetComponent<TileClickDetector>().MouseDown();
+            tileTo.GetComponent<TileClickDetector>().MouseDown();
             
         }
 
