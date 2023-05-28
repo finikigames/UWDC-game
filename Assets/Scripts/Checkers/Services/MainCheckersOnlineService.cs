@@ -142,6 +142,10 @@ namespace Checkers.Services {
             var column = Mathf.RoundToInt(worldPosition.x);
             var row = Mathf.RoundToInt(worldPosition.z);
 
+            if (_mainColor == PawnColor.Black) {
+                row = 7 - row;
+                column = 7 - column;
+            }
             if ((column < 0 || column > 8) || (row < 0 || row > 8)) return;
             var tileGetter = _sceneSettings.Getter;
 
