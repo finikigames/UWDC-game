@@ -66,7 +66,7 @@ namespace Checkers.Services {
             
             var turnHandler = _sceneSettings.TurnHandler;
 
-            //RotateBoardToBlack();
+            RotateBoardToBlack();
 
             _sceneSettings.TurnHandler.YourColor = _mainColor;
             
@@ -158,6 +158,8 @@ namespace Checkers.Services {
                 case (long) CheckersMatchState.Turn: {
                     _hasInput = true;
                     var turnData = JsonConvert.DeserializeObject<TurnData>(content);
+
+                    _turnData = InvertTurnData(turnData);
                     _turnData = turnData;
                     
                     Debug.Log("Received data from socket");
@@ -171,6 +173,16 @@ namespace Checkers.Services {
                     break;
                 }
             }
+        }
+
+        private TurnData InvertTurnData(TurnData turnData) {
+            var invertedFrom = new Coords((sbyte)(8 - turnData.From.Column),(sbyte)(8 - turnData.From.Row));
+            var invertedTo = new Coords((sbyte)(8 - turnData.To.Column), (sbyte)(9 - turnData.To.Row));
+
+            return new TurnData {
+                From = invertedFrom,
+                To = invertedTo
+            };
         }
 
         private void RotateBoardToBlack() {
