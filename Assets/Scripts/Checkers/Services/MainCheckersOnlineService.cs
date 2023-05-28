@@ -8,6 +8,7 @@ using Core.Extensions;
 using Core.Primitives;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using Global.ConfigTemplate;
 using Global.Scheduler.Base;
 using Global.Window.Enums;
 using Global.Window.Signals;
@@ -36,6 +37,7 @@ namespace Checkers.Services {
         private readonly ISchedulerService _schedulerService;
         private readonly NakamaService _nakamaService;
         private readonly SignalBus _signalBus;
+        private readonly AppConfig _appConfig;
         private readonly CheckersConfig _checkersConfig;
         private PawnColor _mainColor;
         private UnityEngine.Camera _cam;
@@ -47,18 +49,20 @@ namespace Checkers.Services {
                                          ISchedulerService schedulerService, 
                                          NakamaService nakamaService,
                                          CheckersConfig checkersConfig,
-                                         SignalBus signalBus) {
+                                         SignalBus signalBus,
+                                         AppConfig appConfig) {
             _sceneSettings = sceneSettings;
             _schedulerService = schedulerService;
             _nakamaService = nakamaService;
             _signalBus = signalBus;
+            _appConfig = appConfig;
             _checkersConfig = checkersConfig;
         }
         
         public void Initialize() {
             _signalBus.Fire(new OpenWindowSignal(WindowKey.MatchWindow, new MatchWindowData()));
             
-            _mainColor = PlayerPrefsX.GetEnum<PawnColor>("YourColor");
+            _mainColor = (PawnColor)_appConfig.PawnColor;
             
             var turnHandler = _sceneSettings.TurnHandler;
 

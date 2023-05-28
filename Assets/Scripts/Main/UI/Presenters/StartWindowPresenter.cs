@@ -6,6 +6,7 @@ using Core.Extensions;
 using Core.Ticks.Interfaces;
 using Cysharp.Threading.Tasks;
 using EnhancedUI.EnhancedScroller;
+using Global.ConfigTemplate;
 using Global.Context;
 using Global.Services;
 using Global.Services.Timer;
@@ -33,6 +34,7 @@ namespace Main.UI.Presenters {
         private readonly MainUIConfig _mainUIConfig;
         private readonly ProfileGetService _profileService;
         private readonly IUpdateService _updateService;
+        private readonly AppConfig _appConfig;
 
         private string _globalGroupName = "globalGroup";
 
@@ -50,6 +52,7 @@ namespace Main.UI.Presenters {
             _mainUIConfig = Resolve<MainUIConfig>(GameContext.Main);
             _profileService = Resolve<ProfileGetService>(GameContext.Project);
             _updateService = Resolve<IUpdateService>(GameContext.Project);
+            _appConfig = Resolve<AppConfig>(GameContext.Project);
         }
 
         protected override async UniTask LoadContent() {
@@ -77,7 +80,8 @@ namespace Main.UI.Presenters {
         private async void SendPartyToUser(string userId) {
             var party = await _nakamaService.CreateParty();
             await _nakamaService.CreateMatch(party.Id);
-            PlayerPrefsX.SetEnum("YourColor", PawnColor.White);
+
+            _appConfig.PawnColor = (int)PawnColor.White;
             await _nakamaService.SendPartyToUser(userId, party);
             
             FireSignal(new CloseWindowSignal(WindowKey.StartWindow));
@@ -100,8 +104,8 @@ namespace Main.UI.Presenters {
             if (content.TryGetValue("partyId", out var value)) {
                 _partyId = value;
                 _needPartyLoad = true;
-                
-                PlayerPrefsX.SetEnum("YourColor", PawnColor.Black);
+
+                _appConfig.PawnColor = (int)PawnColor.Black;
                 Debug.Log($"Get a party with a id {value}");
             }
         }
