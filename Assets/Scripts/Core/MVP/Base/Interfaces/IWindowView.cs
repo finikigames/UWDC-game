@@ -6,5 +6,6 @@ namespace Core.MVP.Base.Interfaces {
         void Initialize(string uid);
         Action<string> OnDestroyView { get; set; }
         Action OnClickCloseButton { get; set; }
+        void SubscribeToClose(Action onClose);
     }
 }

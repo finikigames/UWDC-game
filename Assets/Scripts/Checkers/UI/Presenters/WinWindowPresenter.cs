@@ -12,6 +12,11 @@ namespace Checkers.UI.Presenters {
         }
 
         protected override async UniTask LoadContent() {
+            View.SubscribeToClose(ToMain);
+        }
+
+        private void ToMain() {
+            FireSignal(new ToMainSignal());
         }
     }
 }

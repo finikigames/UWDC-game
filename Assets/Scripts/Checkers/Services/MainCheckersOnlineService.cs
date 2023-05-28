@@ -163,7 +163,7 @@ namespace Checkers.Services {
                     var turnData = JsonConvert.DeserializeObject<TurnData>(content);
 
                     Debug.Log($"Received raw data with from {turnData.From} and to {turnData.To}");
-                    _turnData = InvertTurnData(turnData);
+                    _turnData = turnData;
                     
                     Debug.Log($"Inverted data with from {_turnData.From} and to {_turnData.To}");
 
@@ -177,16 +177,6 @@ namespace Checkers.Services {
                     break;
                 }
             }
-        }
-
-        private TurnData InvertTurnData(TurnData turnData) {
-            var invertedFrom = new Coords((sbyte)(7 - turnData.From.Row), (sbyte)(7 - turnData.From.Column));
-            var invertedTo = new Coords((sbyte)(7 - turnData.To.Row), (sbyte)(7 - turnData.To.Column));
-
-            return new TurnData {
-                From = invertedFrom,
-                To = invertedTo
-            };
         }
 
         private void RotateBoardToBlack() {
