@@ -189,6 +189,9 @@ namespace Main.UI.Presenters {
         }
 
         public override void Dispose() {
+            _userInfoDatas.Clear();
+            View.ClearScroller();
+            
             _timerService.RemoveTimer("updateUsersTimer");
             
             _updateService.UnregisterUpdate(this);

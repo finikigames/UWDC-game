@@ -53,6 +53,10 @@ namespace Main.UI.Views.Implementations {
             _scroller.Delegate = deleg;
         }
 
+        public void ClearScroller() {
+            _scroller.ClearAll();
+        }
+
         public void ReloadData() {
             _scroller.ReloadData();
         }

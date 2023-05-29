@@ -44,6 +44,10 @@ namespace Server.Services {
             EditorApplication.playModeStateChanged += OnPlayModeChanged;
 #endif
         }
+
+        public async UniTask RemoveAllPartiesExcept(IParty party) {
+            
+        }
         
         public async UniTask<IParty> CreateParty() {
             return await _socket.CreatePartyAsync(false, 2);
@@ -137,6 +141,9 @@ namespace Server.Services {
 
         public async UniTask<IApiGroupUserList> GetGroupUsers(string groupName, int limit, string cursor = "") {
             return await _client.ListGroupUsersAsync(_session, groupName, 2, limit, cursor);
+        }
+
+        public async UniTask UpdateUserStatus() {
         }
         
         public async UniTask<List<IGroupUserListGroupUser>> GetGroupUsersWithoutMe(string groupName, int limit, string cursor = "") {

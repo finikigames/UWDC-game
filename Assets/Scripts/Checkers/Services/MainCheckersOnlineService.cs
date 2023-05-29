@@ -102,15 +102,8 @@ namespace Checkers.Services {
 
         private void OnMatchPresence(IMatchPresenceEvent obj) {
             if (obj.Leaves.Any()) {
-                
+                _signalBus.Fire(new OpenWindowSignal(WindowKey.WinWindow, new WinWindowData()));
             }
-            
-            if (_nakamaService.GetCurrentMatchPlayers() >= 2) return;
-
-            var signal = new YouAreBlack();
-
-            var json = JsonConvert.SerializeObject(signal);
-            _nakamaService.SendMatchStateAsync(obj.MatchId, (long) CheckersMatchState.Started, json);
         }
 
         public void Tick() {
