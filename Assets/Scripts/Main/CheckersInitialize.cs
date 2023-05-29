@@ -8,7 +8,8 @@ using UnityEngine.SceneManagement;
 using Zenject;
 
 namespace Main {
-    public class CheckersInitialize : IInitializable {
+    public class CheckersInitialize : IInitializable,
+                                      IDisposable {
         private readonly SignalBus _signalBus;
         private readonly GameStateMachine _gameStateMachine;
 
@@ -33,6 +34,10 @@ namespace Main {
             await SceneManager.UnloadSceneAsync(currentScene);
 
             await _gameStateMachine.Fire(Trigger.AfterSceneLoadTrigger);
+        }
+
+        public void Dispose() {
+            _signalBus.Unsubscribe<ToCheckersMetaSignal>(async signal => await LoadYourAsyncScene(signal));
         }
     }
 }
