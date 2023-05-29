@@ -10,8 +10,7 @@ using UnityEngine.SceneManagement;
 using Zenject;
 
 namespace Checkers {
-    public class MainInitialize : IInitializable,
-                                  IDisposable {
+    public class MainInitialize : IInitializable {
         private readonly SignalBus _signalBus;
         private readonly GameStateMachine _gameStateMachine;
         private readonly NakamaService _nakamaService;
@@ -40,10 +39,6 @@ namespace Checkers {
             await _gameStateMachine.Fire(Trigger.MainTrigger);
 
             await SceneManager.UnloadSceneAsync(currentScene);
-        }
-        
-        public void Dispose() {
-            _signalBus.TryUnsubscribe<ToMainSignal>(async _ => await LoadYourAsyncScene());
         }
     }
 }

@@ -149,6 +149,10 @@ namespace Checkers.Services {
             if ((column < 0 || column > 7) || (row < 0 || row > 7)) return;
             var tileGetter = _sceneSettings.Getter;
 
+            if (_appConfig.PawnColor == (int) PawnColor.Black) {
+                column = 7 - column;
+                row = 7 - row;
+            }
             var tile = tileGetter.GetTile(column, row);
             var clickDetector = tile.GetComponent<TileClickDetector>();
             clickDetector.MouseDown();
