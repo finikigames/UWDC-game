@@ -21,18 +21,20 @@ using Nakama.TinyJson;
 using Server.Services;
 using UnityEngine;
 using UnityEngine.Scripting;
+using Zenject;
 
 namespace Main.UI.Presenters {
     [Preserve]
     public class StartWindowPresenter : BaseWindowPresenter<IStartWindow, StartWindowData>,
                                         IEnhancedScrollerDelegate,
                                         IUpdatable {
-        private readonly NakamaService _nakamaService;
-        private readonly TimerService _timerService;
-        private readonly MainUIConfig _mainUIConfig;
-        private readonly ProfileGetService _profileService;
-        private readonly IUpdateService _updateService;
-        private readonly AppConfig _appConfig;
+        private NakamaService _nakamaService;
+        private TimerService _timerService;
+        private MainUIConfig _mainUIConfig;
+        private ProfileGetService _profileService;
+        private IUpdateService _updateService;
+        private AppConfig _appConfig;
+        private SignalBus _signalBus;
 
         private string _globalGroupName = "globalGroup";
 
@@ -43,8 +45,13 @@ namespace Main.UI.Presenters {
 
         private bool _needPartyLoad;
         private string _partyId;
+        private string _inviteDisplayName;
 
         public StartWindowPresenter(ContextService service) : base(service) {
+        }
+
+        public override void InitDependencies() {
+            _signalBus = Resolve<SignalBus>(GameContext.Main);
             _nakamaService = Resolve<NakamaService>(GameContext.Project);
             _timerService = Resolve<TimerService>(GameContext.Project);
             _mainUIConfig = Resolve<MainUIConfig>(GameContext.Main);
@@ -88,8 +95,8 @@ namespace Main.UI.Presenters {
             _appConfig.PawnColor = (int)PawnColor.White;
             await _nakamaService.SendPartyToUser(userId, party);
             
-            FireSignal(new CloseWindowSignal(WindowKey.StartWindow));
-            FireSignal(new ToCheckersMetaSignal{WithPlayer = true});
+            //_signalBus.Fire(new CloseWindowSignal(WindowKey.StartWindow));
+            //_signalBus.Fire(new ToCheckersMetaSignal{WithPlayer = true});
         }
 
         private void PartyPresenceListener(IPartyPresenceEvent presenceEvent) {
@@ -107,6 +114,7 @@ namespace Main.UI.Presenters {
             
             if (content.TryGetValue("partyId", out var value)) {
                 _partyId = value;
+                _inviteDisplayName = content["senderDisplayName"];
                 _needPartyLoad = true;
 
                 _appConfig.PawnColor = (int)PawnColor.Black;
@@ -118,15 +126,20 @@ namespace Main.UI.Presenters {
             if (!_needPartyLoad) return;
             _needPartyLoad = false;
 
-            LoadParty();
+            _signalBus.Fire(new OpenWindowSignal(WindowKey.InviteWindow, new InviteWindowData {
+                PartyId = _partyId,
+                DisplayName = _inviteDisplayName
+            }));
+            
+            //LoadParty();
         }
 
         private async UniTask LoadParty() {
             await _nakamaService.JoinParty(_partyId);
             await _nakamaService.CreateMatch(_partyId);
                 
-            FireSignal(new CloseWindowSignal(WindowKey.StartWindow));
-            FireSignal(new ToCheckersMetaSignal{WithPlayer = true});
+            _signalBus.Fire(new CloseWindowSignal(WindowKey.StartWindow));
+            _signalBus.Fire(new ToCheckersMetaSignal{WithPlayer = true});
         }
         
         private async void OnUsersUpdate() {

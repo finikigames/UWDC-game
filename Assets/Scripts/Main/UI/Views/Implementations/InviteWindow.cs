@@ -1,15 +1,15 @@
 ﻿using System;
-using Checkers.UI.Views.Base;
 using Global.VisibilityMechanisms;
 using Global.Window.Base;
+using Main.UI.Views.Base;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Checkers.UI.Views.Implementations {
-    public class WinWindow : BaseWindow, 
-                             IWinWindow {
+namespace Main.UI.Views.Implementations {
+    public class InviteWindow : BaseWindow,
+                                IInviteWindow {
         [SerializeField] private CanvasGroup _group;
-        [SerializeField] private Button _continueButton;
+        [SerializeField] private Button _applyButton;
 
         protected override void OnEnable() {
             _showState = Core.MVP.Base.Enums.ShowState.Hidden;
@@ -22,9 +22,8 @@ namespace Checkers.UI.Views.Implementations {
                 new CustomHideMechanism(HideBlack)));
         }
         
-        public void SubscribeToContinue(Action callback) {
-            _continueButton.onClick.RemoveAllListeners();
-            _continueButton.onClick.AddListener(() => callback?.Invoke());
+        public void SubscribeToApply(Action callback) {
+            _applyButton.onClick.AddListener(() => callback?.Invoke());
         }
     }
 }

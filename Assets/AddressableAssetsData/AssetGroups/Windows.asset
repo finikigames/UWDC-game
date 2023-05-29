@@ -47,6 +47,16 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b163a249a12139d40bc8b742579db677
+    m_Address: Assets/Source/Game/Prefabs/UI/FleeWindow.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a0fce8bdb1e4a7e44bc3e0abe34ffb5f
+    m_Address: Assets/Source/Main/Prefabs/InviteWindow.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: cdd271947a8a11647ab0306c881bac99, type: 2}
   m_SchemaSet:

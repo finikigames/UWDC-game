@@ -31,13 +31,9 @@ namespace Main.UI.Views.Implementations {
 
         protected override void OnEnable() {
             _showState = Core.MVP.Base.Enums.ShowState.Hidden;
-             
-            ChangeShowMechanism(new ChainShowMechanism(
-                new FadeShowMechanism(_group),
-                new CustomShowMechanism(ShowBlack)));
-            ChangeHideMechanism(new ChainHideMechanism(
-                new FadeHideMechanism(_group),
-                new CustomHideMechanism(HideBlack)));
+
+            ChangeShowMechanism(new FadeShowMechanism(_group));
+            ChangeHideMechanism(new FadeHideMechanism(_group));
         }
 
         public void OnTextChange(Action callback)
@@ -63,6 +59,10 @@ namespace Main.UI.Views.Implementations {
 
         public void SetScrollerDelegate(IEnhancedScrollerDelegate deleg) {
             _scroller.Delegate = deleg;
+        }
+
+        public void ClearScroller() {
+            _scroller.ClearAll();
         }
 
         public void ReloadData() {

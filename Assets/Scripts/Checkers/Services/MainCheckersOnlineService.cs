@@ -44,7 +44,8 @@ namespace Checkers.Services {
 
         private TurnData _turnData;
         private bool _hasInput;
-        
+        private bool _someoneLeaved;
+
         public MainCheckersOnlineService(MainCheckerSceneSettings sceneSettings,
                                          ISchedulerService schedulerService, 
                                          NakamaService nakamaService,
@@ -102,20 +103,15 @@ namespace Checkers.Services {
 
         private void OnMatchPresence(IMatchPresenceEvent obj) {
             if (obj.Leaves.Any()) {
-                
+                _someoneLeaved = true;
             }
-            
-            if (_nakamaService.GetCurrentMatchPlayers() >= 2) return;
-
-            var signal = new YouAreBlack();
-
-            var json = JsonConvert.SerializeObject(signal);
-            _nakamaService.SendMatchStateAsync(obj.MatchId, (long) CheckersMatchState.Started, json);
         }
 
         public void Tick() {
             CheckInput();
 
+            CheckLeave();
+            
             if (!_hasInput) return;
 
             _hasInput = false;
@@ -132,6 +128,14 @@ namespace Checkers.Services {
             tileTo.GetComponent<TileClickDetector>().MouseDown();
         }
 
+        private void CheckLeave() {
+            if (!_someoneLeaved) return;
+
+            _someoneLeaved = false;
+            
+            _signalBus.Fire(new OpenWindowSignal(WindowKey.WinWindow, new WinWindowData()));
+        }
+
         private void CheckInput() {
             if (!Input.GetMouseButtonDown(0)) return;
             
@@ -141,14 +145,14 @@ namespace Checkers.Services {
 
             var column = Mathf.RoundToInt(worldPosition.x);
             var row = Mathf.RoundToInt(worldPosition.z);
-
-            if (_mainColor == PawnColor.Black) {
-                row = 7 - row;
-                column = 7 - column;
-            }
-            if ((column < 0 || column > 8) || (row < 0 || row > 8)) return;
+            
+            if ((column < 0 || column > 7) || (row < 0 || row > 7)) return;
             var tileGetter = _sceneSettings.Getter;
 
+            if (_appConfig.PawnColor == (int) PawnColor.Black) {
+                column = 7 - column;
+                row = 7 - row;
+            }
             var tile = tileGetter.GetTile(column, row);
             var clickDetector = tile.GetComponent<TileClickDetector>();
             clickDetector.MouseDown();

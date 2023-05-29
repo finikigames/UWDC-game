@@ -8,6 +8,7 @@ namespace Global.Services {
         }
 
         public void SessionStart() {
+            //Analytics.CustomEvent("sessionStart");
         }
     }
 }

@@ -44,11 +44,35 @@ namespace Server.Services {
             EditorApplication.playModeStateChanged += OnPlayModeChanged;
 #endif
         }
+
+        public IApiAccount GetMe() {
+            return _me;
+        }
+
+        public async UniTask RemoveAllPartiesExcept(IParty party) {
+            
+        }
+
+        public async UniTask LeaveCurrentMatch() {
+            await _socket.LeaveMatchAsync(_match.Id);
+        }
+        
+        public async UniTask RemoveAllParties() {
+            foreach (var partyPair in _createdParties) {
+                await LeaveParty(partyPair.Value.Id);
+            }
+            
+            _createdParties.Clear();
+        }
         
         public async UniTask<IParty> CreateParty() {
             return await _socket.CreatePartyAsync(false, 2);
         }
 
+        public async UniTask LeaveParty(string partyId) {
+            await _socket.LeavePartyAsync(partyId);
+        }
+        
         public async UniTask JoinParty(string partyId) {
             await _socket.JoinPartyAsync(partyId);
         }
@@ -58,7 +82,8 @@ namespace Server.Services {
             
             var content = new Dictionary<string, string>() {
                 {"senderUserId", senderUserId},
-                {"partyId", party.Id}
+                {"partyId", party.Id},
+                {"senderDisplayName", _me.User.DisplayName}
             };
             
             await _socket.WriteChatMessageAsync(_globalChannel, content.ToJson());
@@ -138,6 +163,9 @@ namespace Server.Services {
         public async UniTask<IApiGroupUserList> GetGroupUsers(string groupName, int limit, string cursor = "") {
             return await _client.ListGroupUsersAsync(_session, groupName, 2, limit, cursor);
         }
+
+        public async UniTask UpdateUserStatus() {
+        }
         
         public async UniTask<List<IGroupUserListGroupUser>> GetGroupUsersWithoutMe(string groupName, int limit, string cursor = "") {
             var usersList = await _client.ListGroupUsersAsync(_session, groupName, 2, limit, cursor);
@@ -170,8 +198,27 @@ namespace Server.Services {
             Debug.Log(_adapter.GetType());
         }
 
-        public int GetCurrentMatchPlayers() {
+        public List<IUserPresence> GetCurrentMatchPlayers() {
+            return _match.Presences.ToList();
+        }
+        
+        public int GetCurrentMatchPlayersCount() {
             return _match.Presences.Count();
+        }
+
+
+        public IUserPresence GetOpponent() {
+            var presences = GetCurrentMatchPlayers();
+
+            IUserPresence presence = null;
+            foreach (var local in presences) {
+                if (local.UserId != _me.User.Id) {
+                    presence = local;
+                    break;
+                }
+            }
+
+            return presence;
         }
 
         public async UniTask DeviceAuth() {

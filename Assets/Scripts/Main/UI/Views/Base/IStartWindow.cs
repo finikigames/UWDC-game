@@ -7,6 +7,7 @@ namespace Main.UI.Views.Base {
         string SearchingPlayer { get; }
         void Init();
         void OnTextChange(Action callback);
+        void ClearScroller();
         void SetScrollerDelegate(IEnhancedScrollerDelegate deleg);
         void ReloadData();
         void SetAllMembersCount(int count);
