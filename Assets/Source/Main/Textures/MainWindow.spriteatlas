@@ -1,0 +1,85 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: MainWindow
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 1
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings:
+    - serializedVersion: 3
+      m_BuildTarget: DefaultTexturePlatform
+      m_MaxTextureSize: 2048
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: -1
+      m_TextureCompression: 1
+      m_CompressionQuality: 50
+      m_CrunchedCompression: 1
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 0
+      m_IgnorePlatformSupport: 0
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
+    packingSettings:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 1
+      enableTightPacking: 0
+      enableAlphaDilation: 0
+    secondaryTextureSettings: {}
+    variantMultiplier: 1
+    packables:
+    - {fileID: 102900000, guid: 272b5ae5a4d304c4881f88443c68d4c6, type: 3}
+    bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
+    packedSpriteRenderDataKeys:
+    - 4162c90079a910440a40c9c51d6c9ba0: 21300000
+    - bbe9cef001e1a12479d2ddb8baf3c200: 21300000
+    - 691257a2fdeefc344ab82e0d7db62c0c: 21300000
+    - bcd99ad7a100c944a8c86b8e7793d2e0: 21300000
+    - 6f7eaa49bfc23c0488fc77643b504612: 21300000
+    - 99fecff947652ed4e99b8952df3a571e: 21300000
+    - 2f4de2aa479aa004bb6216cd41cee564: 21300000
+    - cb39fffa11a67774aa679ec1d1560896: 21300000
+    - 183c016e3bfb6a742b175af87879e2bf: 21300000
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 21300000, guid: 4162c90079a910440a40c9c51d6c9ba0, type: 3}
+  - {fileID: 21300000, guid: bbe9cef001e1a12479d2ddb8baf3c200, type: 3}
+  - {fileID: 21300000, guid: 691257a2fdeefc344ab82e0d7db62c0c, type: 3}
+  - {fileID: 21300000, guid: bcd99ad7a100c944a8c86b8e7793d2e0, type: 3}
+  - {fileID: 21300000, guid: 6f7eaa49bfc23c0488fc77643b504612, type: 3}
+  - {fileID: 21300000, guid: 99fecff947652ed4e99b8952df3a571e, type: 3}
+  - {fileID: 21300000, guid: 2f4de2aa479aa004bb6216cd41cee564, type: 3}
+  - {fileID: 21300000, guid: cb39fffa11a67774aa679ec1d1560896, type: 3}
+  - {fileID: 21300000, guid: 183c016e3bfb6a742b175af87879e2bf, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - Content Frame_cut
+  - defeats_cut
+  - user_cut
+  - victories_cut
+  - search
+  - Red User
+  - Green User
+  - yes_cut
+  - ion_search
+  m_RenderDataMap: {}
+  m_Tag: MainWindow
+  m_IsVariant: 0

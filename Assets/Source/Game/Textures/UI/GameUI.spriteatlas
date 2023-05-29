@@ -1,0 +1,79 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: GameUI
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 1
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings:
+    - serializedVersion: 3
+      m_BuildTarget: DefaultTexturePlatform
+      m_MaxTextureSize: 2048
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: -1
+      m_TextureCompression: 1
+      m_CompressionQuality: 50
+      m_CrunchedCompression: 1
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 0
+      m_IgnorePlatformSupport: 0
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
+    packingSettings:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 1
+      enableTightPacking: 0
+      enableAlphaDilation: 0
+    secondaryTextureSettings: {}
+    variantMultiplier: 1
+    packables:
+    - {fileID: 102900000, guid: 0798ceefeca97834c8651901f629fc86, type: 3}
+    bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
+    packedSpriteRenderDataKeys:
+    - 1491244288fd11244985dda0244a972d: 21300000
+    - 37d02803fc70e9d44bd78ab99e677c17: 21300000
+    - 355952e391fcc5e4fa7e956c19d7434d: 21300000
+    - c22bb5168c2469a4082a8cec33d59528: 21300000
+    - c46a58a878249e14198d3ac22ce73d7c: 21300000
+    - 99eab62c94ec7444ab1c3c1a6e6b5f94: 21300000
+    - acc6c5bde4f1027478aae26551962586: 21300000
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 21300000, guid: 1491244288fd11244985dda0244a972d, type: 3}
+  - {fileID: 21300000, guid: 37d02803fc70e9d44bd78ab99e677c17, type: 3}
+  - {fileID: 21300000, guid: 355952e391fcc5e4fa7e956c19d7434d, type: 3}
+  - {fileID: 21300000, guid: c22bb5168c2469a4082a8cec33d59528, type: 3}
+  - {fileID: 21300000, guid: c46a58a878249e14198d3ac22ce73d7c, type: 3}
+  - {fileID: 21300000, guid: 99eab62c94ec7444ab1c3c1a6e6b5f94, type: 3}
+  - {fileID: 21300000, guid: acc6c5bde4f1027478aae26551962586, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - bg_violet
+  - bg_win
+  - Red User_cut
+  - bg_loose
+  - Inner content_info_cut
+  - Modal Exit_cut
+  - Green User_cut
+  m_RenderDataMap: {}
+  m_Tag: GameUI
+  m_IsVariant: 0
