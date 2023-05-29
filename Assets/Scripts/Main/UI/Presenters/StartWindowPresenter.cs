@@ -139,15 +139,20 @@ namespace Main.UI.Presenters {
                 var id = user.User.Id;
                 var username = user.User.DisplayName;
 
-                var userInfo = new UserInfoData {
-                    UserId = id,
-                    Username = username
-                };
-                
-                _userInfoDatas.Add(userInfo);
+                if (username.Contains(View.SearchingPlayer))
+                {
+                    var userInfo = new UserInfoData {
+                        UserId = id,
+                        Username = username
+                    };
+
+                    _userInfoDatas.Add(userInfo);
+                }
             }
             
             View.ReloadData();
+            
+            OnUsersUpdate();
         }
 
         public int GetNumberOfCells(EnhancedScroller scroller) {

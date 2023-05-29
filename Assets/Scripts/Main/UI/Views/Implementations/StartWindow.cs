@@ -25,6 +25,8 @@ namespace Main.UI.Views.Implementations {
         [SerializeField] private GameObject _usersButtonOutline;
         [SerializeField] private TMP_InputField _searchInputField;
 
+        public string SearchingPlayer => _searchInputField.text;
+
         protected override void OnEnable() {
             _showState = Core.MVP.Base.Enums.ShowState.Hidden;
              
