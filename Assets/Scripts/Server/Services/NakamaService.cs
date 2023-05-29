@@ -49,8 +49,14 @@ namespace Server.Services {
             return _me;
         }
 
-        public async UniTask RemoveAllPartiesExcept(IParty party) {
-            
+        public async UniTask RemoveAllPartiesExcept(string userId) {
+            foreach (var partyPair in _createdParties) {
+                if (partyPair.Key == userId) continue;
+                await LeaveParty(partyPair.Value.Id);
+            }
+
+            _createdParties = _createdParties.Where(a => a.Key == userId)
+                .ToDictionary(pair => pair.Key, pair => pair.Value);
         }
 
         public async UniTask LeaveCurrentMatch() {
@@ -76,6 +82,18 @@ namespace Server.Services {
         public async UniTask JoinParty(string partyId) {
             await _socket.JoinPartyAsync(partyId);
         }
+
+        public async UniTask SendUserConfirmation(string partyId, string userId) {
+            var senderUserId = _profile.UserId;
+            
+            var content = new Dictionary<string, string>() {
+                {"senderUserId", senderUserId},
+                {"approveMatchInvite", partyId},
+                {"senderDisplayName", _me.User.DisplayName}
+            };
+            
+            await _socket.WriteChatMessageAsync(_globalChannel, content.ToJson());
+        }
         
         public async UniTask SendPartyToUser(string userId, IParty party) {
             var senderUserId = _profile.UserId;
@@ -87,7 +105,8 @@ namespace Server.Services {
             };
             
             await _socket.WriteChatMessageAsync(_globalChannel, content.ToJson());
-            
+
+            if (_createdParties.ContainsKey(userId)) return;
             _createdParties.Add(userId, party);
         }
 

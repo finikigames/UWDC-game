@@ -43,9 +43,11 @@ namespace Main.UI.Presenters {
 
         private Action<string> _onUserPlayClick;
 
-        private bool _needPartyLoad;
+        private bool _unhandledInvite;
+        private bool _needLoad;
         private string _partyId;
         private string _inviteDisplayName;
+        private string _approveSenderId;
 
         public StartWindowPresenter(ContextService service) : base(service) {
         }
@@ -110,11 +112,16 @@ namespace Main.UI.Presenters {
 
                 if (profile.UserId == currentUserId) return;
             }
+
+            if (content.TryGetValue("approveMatchInvite", out var matchAndPartyId)) {
+                _needLoad = true;
+                _approveSenderId = content["senderUserId"];
+            }
             
             if (content.TryGetValue("partyId", out var value)) {
                 _partyId = value;
                 _inviteDisplayName = content["senderDisplayName"];
-                _needPartyLoad = true;
+                _unhandledInvite = true;
 
                 _appConfig.PawnColor = (int)PawnColor.Black;
                 Debug.Log($"Get a party with a id {value}");
@@ -122,21 +129,30 @@ namespace Main.UI.Presenters {
         }
 
         public void CustomUpdate() {
-            if (!_needPartyLoad) return;
-            _needPartyLoad = false;
+            CheckInvite();
+
+            CheckNeedLoad();
+        }
+
+        private async void CheckNeedLoad() {
+            if (!_needLoad) return;
+            _needLoad = false;
+
+            await _nakamaService.RemoveAllPartiesExcept(_approveSenderId);
+            await LoadParty();
+        }
+
+        private void CheckInvite() {
+            if (!_unhandledInvite) return;
+            _unhandledInvite = false;
 
             _signalBus.Fire(new OpenWindowSignal(WindowKey.InviteWindow, new InviteWindowData {
                 PartyId = _partyId,
                 DisplayName = _inviteDisplayName
             }));
-            
-            //LoadParty();
         }
 
         private async UniTask LoadParty() {
-            await _nakamaService.JoinParty(_partyId);
-            await _nakamaService.CreateMatch(_partyId);
-                
             _signalBus.Fire(new CloseWindowSignal(WindowKey.StartWindow));
             _signalBus.Fire(new ToCheckersMetaSignal{WithPlayer = true});
         }

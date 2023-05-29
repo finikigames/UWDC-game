@@ -111,7 +111,7 @@ MonoBehaviour:
         GUID: cdd8efa8d0274bf4095a9910b33c9dfd
         _typeNameAndAssembly: Checkers.UI.Presenters.RulesWindowPresenter, Checkers
         _suppressLogs: 0
-    - Uid: e45ca311-cbc1-4ed1-9e1a-f696ef8fb4ef
+    - Uid: 
       PrefabReference:
         m_AssetGUID: b163a249a12139d40bc8b742579db677
         m_SubObjectName: 
@@ -126,4 +126,20 @@ MonoBehaviour:
         GuidAssignmentFailed: 0
         GUID: e1611414fd4248e7a1e34c6019a1ab9e
         _typeNameAndAssembly: Checkers.UI.Presenters.FleeWindowPresenter, Checkers
+        _suppressLogs: 0
+    - Uid: 
+      PrefabReference:
+        m_AssetGUID: a0fce8bdb1e4a7e44bc3e0abe34ffb5f
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_EditorAssetChanged: 0
+      Key: 8
+      Priority: 0
+      IsFullScreen: 0
+      CanClose: 1
+      Context: 2
+      _controller:
+        GuidAssignmentFailed: 0
+        GUID: 442e82239c56459e8aa5af76da613c56
+        _typeNameAndAssembly: Main.UI.Presenters.InviteWindowPresenter, Main
         _suppressLogs: 0

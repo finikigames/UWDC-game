@@ -149,6 +149,7 @@ GameObject:
   - component: {fileID: 6390578648605838016}
   - component: {fileID: 4446746928903645952}
   - component: {fileID: 8388096159299366600}
+  - component: {fileID: 6730690804303714071}
   m_Layer: 5
   m_Name: InviteWindow
   m_TagString: Untagged
@@ -199,7 +200,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_TargetDisplay: 0
 --- !u!114 &6390578648605838016
 MonoBehaviour:
@@ -256,8 +257,23 @@ MonoBehaviour:
   Uid: 
   _buttons: []
   _headerText: {fileID: 370266393311543808}
-  _closeButton: {fileID: 8205530471829379660}
+  _closeButton: {fileID: 5293829939643997731}
   _blackBg: {fileID: 3754311458262628226}
+  _group: {fileID: 6730690804303714071}
+  _applyButton: {fileID: 8205530471829379660}
+  _mainText: {fileID: 8514771569089723389}
+--- !u!225 &6730690804303714071
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2506250970528840963}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &3059530046976377339
 GameObject:
   m_ObjectHideFlags: 0
@@ -488,7 +504,7 @@ GameObject:
   - component: {fileID: 2562858600930488763}
   - component: {fileID: 5293829939643997731}
   m_Layer: 5
-  m_Name: FleeButton
+  m_Name: CloseButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1019,7 +1035,7 @@ GameObject:
   - component: {fileID: 359181997941107288}
   - component: {fileID: 8205530471829379660}
   m_Layer: 5
-  m_Name: ReturnButton
+  m_Name: ApplyButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
