@@ -3,6 +3,7 @@ using EnhancedUI.EnhancedScroller;
 
 namespace Main.UI.Views.Base {
     public interface IStartWindow : IWindowView {
+        string SearchingPlayer { get; }
         void Init();
         void SetScrollerDelegate(IEnhancedScrollerDelegate deleg);
         void ReloadData();

@@ -145,18 +145,26 @@ namespace Main.UI.Presenters {
                 var id = user.User.Id;
                 var username = user.User.DisplayName;
 
-                var userInfo = new UserInfoData {
-                    UserId = id,
-                    Username = username
-                };
+                var usernameLower = username.ToLower();
+                var searchingLower = View.SearchingPlayer.ToLower();
                 
+                if (usernameLower.Contains(searchingLower))
+                {
+                    var userInfo = new UserInfoData {
+                        UserId = id,
+                        Username = username
+                    };
+
+                    _userInfoDatas.Add(userInfo);
+                }
                 onlineCounter++;
-                _userInfoDatas.Add(userInfo);
             }
-            
+
             View.SetAllMembersCount(users.Count);
             View.SetOnlineMembersCount(onlineCounter);
             View.ReloadData();
+            
+            OnUsersUpdate();
         }
 
         public int GetNumberOfCells(EnhancedScroller scroller) {
