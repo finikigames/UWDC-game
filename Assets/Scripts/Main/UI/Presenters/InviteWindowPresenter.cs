@@ -21,7 +21,7 @@ namespace Main.UI.Presenters {
 
         public override void InitDependencies() {
             _nakamaService = Resolve<NakamaService>(GameContext.Project);
-            _signalBus = Resolve<SignalBus>(GameContext.Project);
+            _signalBus = Resolve<SignalBus>(GameContext.Main);
         }
 
         protected override async UniTask LoadContent() {
