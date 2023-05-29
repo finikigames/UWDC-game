@@ -45,6 +45,10 @@ namespace Server.Services {
 #endif
         }
 
+        public IApiAccount GetMe() {
+            return _me;
+        }
+
         public async UniTask RemoveAllPartiesExcept(IParty party) {
             
         }
@@ -193,8 +197,27 @@ namespace Server.Services {
             Debug.Log(_adapter.GetType());
         }
 
-        public int GetCurrentMatchPlayers() {
+        public List<IUserPresence> GetCurrentMatchPlayers() {
+            return _match.Presences.ToList();
+        }
+        
+        public int GetCurrentMatchPlayersCount() {
             return _match.Presences.Count();
+        }
+
+
+        public IUserPresence GetOpponent() {
+            var presences = GetCurrentMatchPlayers();
+
+            IUserPresence presence = null;
+            foreach (var local in presences) {
+                if (local.UserId != _me.User.Id) {
+                    presence = local;
+                    break;
+                }
+            }
+
+            return presence;
         }
 
         public async UniTask DeviceAuth() {

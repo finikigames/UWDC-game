@@ -6,5 +6,7 @@ namespace Checkers.UI.Views.Base {
         void ProvideCamera(UnityEngine.Camera camera);
         void SubscribeToHowToPlayButton(Action callback);
         void SubscribeToFleeButton(Action callback);
+        void SetYourName(string yourName);
+        void SetOpponentName(string opponentName);
     }
 }

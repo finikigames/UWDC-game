@@ -28,7 +28,6 @@ namespace Checkers.UI.Presenters {
             });
             View.SubscribeToFleeButton(() => {
                 FireSignal(new CloseWindowSignal(WindowKey.FleeWindow));
-                FireSignal(new CloseWindowSignal(WindowKey.MatchWindow));
                 FireSignal(new ToMainSignal());
             });
         }

@@ -370,6 +370,8 @@ MonoBehaviour:
   _howToPlayButton: {fileID: 1056037797104345829}
   _fleeButton: {fileID: 5984532202106531085}
   _canvas: {fileID: 5005076574479469687}
+  _opponentName: {fileID: 2964681631717951336}
+  _yourName: {fileID: 4483697255139853468}
 --- !u!1 &191098414445792479
 GameObject:
   m_ObjectHideFlags: 0
@@ -476,7 +478,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: maksim 5
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 5eb2b0123bf8b7342bd950ebbcba7fcb, type: 2}
   m_sharedMaterial: {fileID: 3505185436155619562, guid: 5eb2b0123bf8b7342bd950ebbcba7fcb, type: 2}
@@ -503,7 +505,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 72
+  m_fontSize: 56
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -914,7 +916,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: maksim 5
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 5eb2b0123bf8b7342bd950ebbcba7fcb, type: 2}
   m_sharedMaterial: {fileID: 3505185436155619562, guid: 5eb2b0123bf8b7342bd950ebbcba7fcb, type: 2}
@@ -941,7 +943,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 72
+  m_fontSize: 56
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -3679,7 +3681,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &488823898803420954
 RectTransform:
   m_ObjectHideFlags: 0

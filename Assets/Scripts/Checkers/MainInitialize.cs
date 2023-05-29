@@ -3,6 +3,8 @@ using Checkers.UI.Data;
 using Cysharp.Threading.Tasks;
 using Global.StateMachine;
 using Global.StateMachine.Base.Enums;
+using Global.Window.Enums;
+using Global.Window.Signals;
 using Server.Services;
 using UnityEngine.SceneManagement;
 using Zenject;
@@ -29,6 +31,7 @@ namespace Checkers {
         public async UniTask LoadYourAsyncScene() {
             var currentScene = SceneManager.GetActiveScene();
             
+            _signalBus.Fire(new CloseWindowSignal(WindowKey.MatchWindow));
             await _nakamaService.RemoveAllParties();
             await _nakamaService.LeaveCurrentMatch();
             

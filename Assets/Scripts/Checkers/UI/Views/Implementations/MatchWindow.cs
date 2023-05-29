@@ -2,6 +2,7 @@
 using Checkers.UI.Views.Base;
 using Global.VisibilityMechanisms;
 using Global.Window.Base;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,6 +13,8 @@ namespace Checkers.UI.Views.Implementations {
         [SerializeField] private Button _howToPlayButton;
         [SerializeField] private Button _fleeButton;
         [SerializeField] private Canvas _canvas;
+        [SerializeField] private TextMeshProUGUI _opponentName;
+        [SerializeField] private TextMeshProUGUI _yourName;
 
         protected override void OnEnable() {
             _showState = Core.MVP.Base.Enums.ShowState.Hidden;
@@ -36,6 +39,14 @@ namespace Checkers.UI.Views.Implementations {
         public void SubscribeToFleeButton(Action callback) {
             _fleeButton.onClick.RemoveAllListeners();
             _fleeButton.onClick.AddListener(() => callback?.Invoke());
+        }
+
+        public void SetYourName(string yourName) {
+            _yourName.text = yourName;
+        }
+
+        public void SetOpponentName(string opponentName) {
+            _opponentName.text = opponentName;
         }
     }
 }
