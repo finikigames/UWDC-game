@@ -29,6 +29,7 @@ namespace Main.UI.Presenters {
             
             View.SubscribeToApply(async () => {
                 var userId = _nakamaService.GetMe().User.Id;
+                await _nakamaService.CreateMatch(WindowData.PartyId);
                 await _nakamaService.SendUserConfirmation(WindowData.PartyId, userId);
                 _signalBus.Fire(new CloseWindowSignal(WindowKey.InviteWindow));
                 _signalBus.Fire(new CloseWindowSignal(WindowKey.StartWindow));
