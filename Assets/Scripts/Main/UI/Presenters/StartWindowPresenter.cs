@@ -53,6 +53,11 @@ namespace Main.UI.Presenters {
             _appConfig = Resolve<AppConfig>(GameContext.Project);
         }
 
+        public override async UniTask InitializeOnce()
+        {
+            View.Init();
+        }
+
         protected override async UniTask LoadContent() {
             var group = await _nakamaService.CreateGroup(_globalGroupName);
             await _nakamaService.JoinGroup(group.Id);
@@ -133,21 +138,33 @@ namespace Main.UI.Presenters {
 
             _userInfoDatas.Clear();
             
+            int onlineCounter = 0;
             foreach (var user in users) {
                 if (!user.User.Online) continue;
 
                 var id = user.User.Id;
                 var username = user.User.DisplayName;
 
-                var userInfo = new UserInfoData {
-                    UserId = id,
-                    Username = username
-                };
+                var usernameLower = username.ToLower();
+                var searchingLower = View.SearchingPlayer.ToLower();
                 
-                _userInfoDatas.Add(userInfo);
+                if (usernameLower.Contains(searchingLower))
+                {
+                    var userInfo = new UserInfoData {
+                        UserId = id,
+                        Username = username
+                    };
+
+                    _userInfoDatas.Add(userInfo);
+                }
+                onlineCounter++;
             }
-            
+
+            View.SetAllMembersCount(users.Count);
+            View.SetOnlineMembersCount(onlineCounter);
             View.ReloadData();
+            
+            OnUsersUpdate();
         }
 
         public int GetNumberOfCells(EnhancedScroller scroller) {
