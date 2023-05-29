@@ -8,17 +8,20 @@ using Global.Window.Enums;
 using Global.Window.Signals;
 using Server.Services;
 using UnityEngine.Scripting;
+using Zenject;
 
 namespace Checkers.UI.Presenters {
     [Preserve]
     public class FleeWindowPresenter : BaseWindowPresenter<IFleeWindow, FleeWindowData> {
         private NakamaService _nakamaService;
+        private SignalBus _signalBus;
 
         public FleeWindowPresenter(ContextService service) : base(service) {
         }
 
         public override void InitDependencies() {
             _nakamaService = Resolve<NakamaService>(GameContext.Project);
+            _signalBus = Resolve<SignalBus>(GameContext.Checkers);
         }
 
         protected override async UniTask LoadContent() {
@@ -27,8 +30,8 @@ namespace Checkers.UI.Presenters {
                 View.Hide(null);
             });
             View.SubscribeToFleeButton(() => {
-                FireSignal(new CloseWindowSignal(WindowKey.FleeWindow));
-                FireSignal(new ToMainSignal());
+                _signalBus.Fire(new CloseWindowSignal(WindowKey.FleeWindow));
+                _signalBus.Fire(new ToMainSignal());
             });
         }
     }
