@@ -19,6 +19,7 @@ namespace Main.UI.Views.Implementations {
         [SerializeField] private TextMeshProUGUI _timerText;
         [SerializeField] private GameObject _usersRoot;
         [SerializeField] private GameObject _faqRoot;
+        [SerializeField] private RectTransform _faqLayout;
         [SerializeField] private Button _faqButton;
         [SerializeField] private Button _usersButton;
         [SerializeField] private GameObject _faqButtonOutline;
@@ -36,12 +37,42 @@ namespace Main.UI.Views.Implementations {
                 new CustomHideMechanism(HideBlack)));
         }
 
+        public void Init()
+        {
+            ChooseTab(true);
+            LayoutRebuilder.ForceRebuildLayoutImmediate(_faqLayout);
+            
+            _faqButton.onClick.AddListener(() => {
+                ChooseTab(true);
+            });
+            
+            _usersButton.onClick.AddListener(() => {
+                ChooseTab(false);
+            });
+        }
+
         public void SetScrollerDelegate(IEnhancedScrollerDelegate deleg) {
             _scroller.Delegate = deleg;
         }
 
         public void ReloadData() {
             _scroller.ReloadData();
+        }
+
+        public void SetAllMembersCount(int count) {
+            _allMembersCount.text = count.ToString();
+        }
+
+        public void SetOnlineMembersCount(int count) {
+            _onlineMembersCount.text = count.ToString();
+        }
+
+        private void ChooseTab(bool isFaq) {
+            _faqRoot.SetActive(isFaq);
+            _usersRoot.SetActive(!isFaq);
+            
+            _faqButtonOutline.SetActive(isFaq);
+            _usersButtonOutline.SetActive(!isFaq);
         }
     }
 }

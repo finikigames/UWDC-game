@@ -53,6 +53,11 @@ namespace Main.UI.Presenters {
             _appConfig = Resolve<AppConfig>(GameContext.Project);
         }
 
+        public override async UniTask InitializeOnce()
+        {
+            View.Init();
+        }
+
         protected override async UniTask LoadContent() {
             var group = await _nakamaService.CreateGroup(_globalGroupName);
             await _nakamaService.JoinGroup(group.Id);
@@ -133,6 +138,7 @@ namespace Main.UI.Presenters {
 
             _userInfoDatas.Clear();
             
+            int onlineCounter = 0;
             foreach (var user in users) {
                 if (!user.User.Online) continue;
 
@@ -144,9 +150,12 @@ namespace Main.UI.Presenters {
                     Username = username
                 };
                 
+                onlineCounter++;
                 _userInfoDatas.Add(userInfo);
             }
             
+            View.SetAllMembersCount(users.Count);
+            View.SetOnlineMembersCount(onlineCounter);
             View.ReloadData();
         }
 
