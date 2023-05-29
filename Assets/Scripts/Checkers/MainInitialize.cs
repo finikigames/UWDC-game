@@ -1,14 +1,12 @@
 ﻿using System;
 using Checkers.UI.Data;
-using Core.Extensions;
 using Cysharp.Threading.Tasks;
 using Global.StateMachine;
 using Global.StateMachine.Base.Enums;
 using UnityEngine.SceneManagement;
 using Zenject;
 
-namespace Checkers
-{
+namespace Checkers {
     public class MainInitialize : IInitializable,
                                   IDisposable {
         private readonly SignalBus _signalBus;
@@ -35,7 +33,7 @@ namespace Checkers
         }
         
         public void Dispose() {
-            _signalBus.TryUnsubscribe<ToMainSignal>(async signal => await LoadYourAsyncScene());
+            _signalBus.TryUnsubscribe<ToMainSignal>(async _ => await LoadYourAsyncScene());
         }
     }
 }

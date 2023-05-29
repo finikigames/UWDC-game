@@ -6,13 +6,12 @@ using UnityEngine;
 using UnityEngine.UI;
 
 namespace Checkers.UI.Views.Implementations {
-    public class MatchWindow : BaseWindow, 
-                               IMatchWindow {
+    public class FleeWindow : BaseWindow,
+                              IFleeWindow {
         [SerializeField] private CanvasGroup _group;
-        [SerializeField] private Button _howToPlayButton;
         [SerializeField] private Button _fleeButton;
-        [SerializeField] private Canvas _canvas;
-
+        [SerializeField] private Button _returnButton;
+        
         protected override void OnEnable() {
             _showState = Core.MVP.Base.Enums.ShowState.Hidden;
              
@@ -24,13 +23,10 @@ namespace Checkers.UI.Views.Implementations {
                 new CustomHideMechanism(HideBlack)));
         }
 
-        public void ProvideCamera(UnityEngine.Camera camera) {
-            _canvas.worldCamera = camera;
-        }
-
-        public void SubscribeToHowToPlayButton(Action callback) {
-            _howToPlayButton.onClick.RemoveAllListeners();
-            _howToPlayButton.onClick.AddListener(() => callback?.Invoke());
+        public void SubscribeToReturnButton(Action callback) {
+            _returnButton.onClick.RemoveAllListeners();
+            _returnButton.onClick.AddListener(() => callback?.Invoke());
+            
         }
 
         public void SubscribeToFleeButton(Action callback) {

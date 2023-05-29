@@ -31,8 +31,14 @@ namespace Global.Window {
             SubscribeSignals();
         }
         
-        public void RegisterContainers(Dictionary<UIContainerType, GameObject> containers) {
-            _containers = containers;
+        public void RegisterContainers(List<UIContainerToGameObjectElement> containers) {
+            _containers ??= new Dictionary<UIContainerType, GameObject>();
+            
+            foreach (var element in containers) {
+                if (_containers.ContainsKey(element.Key)) continue;
+                
+                _containers.Add(element.Key, element.Holder);
+            }
         }
 
         private async void OpenWindow(WindowKey key, IWindowData data) {

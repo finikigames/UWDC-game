@@ -27,12 +27,12 @@ namespace Main.UI.Presenters {
     public class StartWindowPresenter : BaseWindowPresenter<IStartWindow, StartWindowData>,
                                         IEnhancedScrollerDelegate,
                                         IUpdatable {
-        private readonly NakamaService _nakamaService;
-        private readonly TimerService _timerService;
-        private readonly MainUIConfig _mainUIConfig;
-        private readonly ProfileGetService _profileService;
-        private readonly IUpdateService _updateService;
-        private readonly AppConfig _appConfig;
+        private NakamaService _nakamaService;
+        private TimerService _timerService;
+        private MainUIConfig _mainUIConfig;
+        private ProfileGetService _profileService;
+        private IUpdateService _updateService;
+        private AppConfig _appConfig;
 
         private string _globalGroupName = "globalGroup";
 
@@ -45,6 +45,9 @@ namespace Main.UI.Presenters {
         private string _partyId;
 
         public StartWindowPresenter(ContextService service) : base(service) {
+        }
+
+        public override void InitDependencies() {
             _nakamaService = Resolve<NakamaService>(GameContext.Project);
             _timerService = Resolve<TimerService>(GameContext.Project);
             _mainUIConfig = Resolve<MainUIConfig>(GameContext.Main);

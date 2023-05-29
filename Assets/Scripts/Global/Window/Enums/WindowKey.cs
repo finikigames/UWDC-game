@@ -5,6 +5,7 @@ namespace Global.Window.Enums {
         LoseWindow = 3,
         WaitForPlayerWindow = 4,
         MatchWindow = 5,
-        RulesWindow = 6
+        RulesWindow = 6,
+        FleeWindow = 7
     }
 }

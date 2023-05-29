@@ -85,6 +85,7 @@ namespace Global.VisibilityMechanisms {
         }
         
         public virtual async UniTask Hide() {
+            Hide(null);
         }
     }
 }
