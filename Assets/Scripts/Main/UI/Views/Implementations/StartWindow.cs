@@ -45,7 +45,7 @@ namespace Main.UI.Views.Implementations {
         {
             _searchInputField.onValueChanged.RemoveAllListeners();
                 
-            ChooseTab(true);
+            ChooseTab(false);
             LayoutRebuilder.ForceRebuildLayoutImmediate(_faqLayout);
             
             _faqButton.onClick.AddListener(() => {
