@@ -139,7 +139,10 @@ namespace Main.UI.Presenters {
                 var id = user.User.Id;
                 var username = user.User.DisplayName;
 
-                if (username.Contains(View.SearchingPlayer))
+                var usernameLower = username.ToLower();
+                var searchingLower = View.SearchingPlayer.ToLower();
+                
+                if (usernameLower.Contains(searchingLower))
                 {
                     var userInfo = new UserInfoData {
                         UserId = id,
