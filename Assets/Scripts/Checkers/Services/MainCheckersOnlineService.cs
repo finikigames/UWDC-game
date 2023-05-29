@@ -138,7 +138,8 @@ namespace Checkers.Services {
 
         private void CheckInput() {
             if (!Input.GetMouseButtonDown(0)) return;
-            
+
+            if (_sceneSettings.TurnHandler.Turn != _mainColor) return;
             var mouseInput = Input.mousePosition;
 
             var worldPosition = UnityEngine.Camera.main.ScreenToWorldPoint(mouseInput);

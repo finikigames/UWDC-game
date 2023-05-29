@@ -37,10 +37,6 @@ namespace Checkers.Board
             cpuPlayer = GetComponent<CPUPlayer>();
         }
 
-        public void SetNextTurn(PawnColor color) {
-            Turn = color;
-        }
-
         public void NextTurn()
         {
             Turn = Turn == PawnColor.White ? PawnColor.Black : PawnColor.White;
