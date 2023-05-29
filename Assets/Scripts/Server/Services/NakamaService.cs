@@ -48,11 +48,27 @@ namespace Server.Services {
         public async UniTask RemoveAllPartiesExcept(IParty party) {
             
         }
+
+        public async UniTask LeaveCurrentMatch() {
+            await _socket.LeaveMatchAsync(_match.Id);
+        }
+        
+        public async UniTask RemoveAllParties() {
+            foreach (var partyPair in _createdParties) {
+                await LeaveParty(partyPair.Value.Id);
+            }
+            
+            _createdParties.Clear();
+        }
         
         public async UniTask<IParty> CreateParty() {
             return await _socket.CreatePartyAsync(false, 2);
         }
 
+        public async UniTask LeaveParty(string partyId) {
+            await _socket.LeavePartyAsync(partyId);
+        }
+        
         public async UniTask JoinParty(string partyId) {
             await _socket.JoinPartyAsync(partyId);
         }

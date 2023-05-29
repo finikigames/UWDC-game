@@ -3,6 +3,7 @@ using Checkers.UI.Data;
 using Cysharp.Threading.Tasks;
 using Global.StateMachine;
 using Global.StateMachine.Base.Enums;
+using Server.Services;
 using UnityEngine.SceneManagement;
 using Zenject;
 
@@ -11,11 +12,14 @@ namespace Checkers {
                                   IDisposable {
         private readonly SignalBus _signalBus;
         private readonly GameStateMachine _gameStateMachine;
+        private readonly NakamaService _nakamaService;
 
         public MainInitialize(SignalBus signalBus,
-            GameStateMachine gameStateMachine) {
+                              GameStateMachine gameStateMachine,
+                              NakamaService nakamaService) {
             _signalBus = signalBus;
             _gameStateMachine = gameStateMachine;
+            _nakamaService = nakamaService;
         }
         
         public void Initialize() {
@@ -24,7 +28,10 @@ namespace Checkers {
         
         public async UniTask LoadYourAsyncScene() {
             var currentScene = SceneManager.GetActiveScene();
-
+            
+            await _nakamaService.RemoveAllParties();
+            await _nakamaService.LeaveCurrentMatch();
+            
             await SceneManager.LoadSceneAsync("Main", LoadSceneMode.Additive);
 
             await _gameStateMachine.Fire(Trigger.MainTrigger);
