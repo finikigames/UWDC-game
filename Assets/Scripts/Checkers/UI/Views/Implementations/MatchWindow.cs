@@ -10,6 +10,7 @@ namespace Checkers.UI.Views.Implementations {
                                IMatchWindow {
         [SerializeField] private CanvasGroup _group;
         [SerializeField] private Button _howToPlayButton;
+        [SerializeField] private Canvas _canvas;
 
         protected override void OnEnable() {
             _showState = Core.MVP.Base.Enums.ShowState.Hidden;
@@ -20,6 +21,10 @@ namespace Checkers.UI.Views.Implementations {
             ChangeHideMechanism(new ChainHideMechanism(
                 new FadeHideMechanism(_group),
                 new CustomHideMechanism(HideBlack)));
+        }
+
+        public void ProvideCamera(UnityEngine.Camera camera) {
+            _canvas.worldCamera = camera;
         }
 
         public void SubscribeToHowToPlayButton(Action callback) {

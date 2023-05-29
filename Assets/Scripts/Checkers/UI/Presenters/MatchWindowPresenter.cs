@@ -15,6 +15,7 @@ namespace Checkers.UI.Presenters {
 
         protected override async UniTask LoadContent() {
             View.SubscribeToHowToPlayButton(OnHowToPlayClick);
+            View.ProvideCamera(UnityEngine.Camera.main);
         }
 
         private void OnHowToPlayClick() {
