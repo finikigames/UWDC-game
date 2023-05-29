@@ -21,6 +21,7 @@ using Nakama.TinyJson;
 using Server.Services;
 using UnityEngine;
 using UnityEngine.Scripting;
+using Zenject;
 
 namespace Main.UI.Presenters {
     [Preserve]
@@ -33,6 +34,7 @@ namespace Main.UI.Presenters {
         private ProfileGetService _profileService;
         private IUpdateService _updateService;
         private AppConfig _appConfig;
+        private SignalBus _signalBus;
 
         private string _globalGroupName = "globalGroup";
 
@@ -48,6 +50,7 @@ namespace Main.UI.Presenters {
         }
 
         public override void InitDependencies() {
+            _signalBus = Resolve<SignalBus>(GameContext.Main);
             _nakamaService = Resolve<NakamaService>(GameContext.Project);
             _timerService = Resolve<TimerService>(GameContext.Project);
             _mainUIConfig = Resolve<MainUIConfig>(GameContext.Main);
@@ -90,8 +93,8 @@ namespace Main.UI.Presenters {
             _appConfig.PawnColor = (int)PawnColor.White;
             await _nakamaService.SendPartyToUser(userId, party);
             
-            FireSignal(new CloseWindowSignal(WindowKey.StartWindow));
-            FireSignal(new ToCheckersMetaSignal{WithPlayer = true});
+            _signalBus.Fire(new CloseWindowSignal(WindowKey.StartWindow));
+            _signalBus.Fire(new ToCheckersMetaSignal{WithPlayer = true});
         }
 
         private void PartyPresenceListener(IPartyPresenceEvent presenceEvent) {
@@ -127,8 +130,8 @@ namespace Main.UI.Presenters {
             await _nakamaService.JoinParty(_partyId);
             await _nakamaService.CreateMatch(_partyId);
                 
-            FireSignal(new CloseWindowSignal(WindowKey.StartWindow));
-            FireSignal(new ToCheckersMetaSignal{WithPlayer = true});
+            _signalBus.Fire(new CloseWindowSignal(WindowKey.StartWindow));
+            _signalBus.Fire(new ToCheckersMetaSignal{WithPlayer = true});
         }
         
         private async void OnUsersUpdate() {
