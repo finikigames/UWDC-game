@@ -20,7 +20,11 @@ namespace Main {
         }
         
         public void Initialize() {
-            _signalBus.Subscribe<ToCheckersMetaSignal>(async signal => await LoadYourAsyncScene(signal));
+            _signalBus.Subscribe<ToCheckersMetaSignal>(LoadSceneInternal);
+        }
+
+        private async void LoadSceneInternal(ToCheckersMetaSignal signal) {
+            await LoadYourAsyncScene(signal);
         }
 
         public async UniTask LoadYourAsyncScene(ToCheckersMetaSignal signal) {
@@ -37,7 +41,7 @@ namespace Main {
         }
 
         public void Dispose() {
-            _signalBus.Unsubscribe<ToCheckersMetaSignal>(async signal => await LoadYourAsyncScene(signal));
+            _signalBus.Unsubscribe<ToCheckersMetaSignal>(LoadSceneInternal);
         }
     }
 }
