@@ -45,6 +45,7 @@ namespace Main.UI.Presenters {
 
         private bool _needPartyLoad;
         private string _partyId;
+        private string _inviteDisplayName;
 
         public StartWindowPresenter(ContextService service) : base(service) {
         }
@@ -93,8 +94,8 @@ namespace Main.UI.Presenters {
             _appConfig.PawnColor = (int)PawnColor.White;
             await _nakamaService.SendPartyToUser(userId, party);
             
-            _signalBus.Fire(new CloseWindowSignal(WindowKey.StartWindow));
-            _signalBus.Fire(new ToCheckersMetaSignal{WithPlayer = true});
+            //_signalBus.Fire(new CloseWindowSignal(WindowKey.StartWindow));
+            //_signalBus.Fire(new ToCheckersMetaSignal{WithPlayer = true});
         }
 
         private void PartyPresenceListener(IPartyPresenceEvent presenceEvent) {
@@ -112,6 +113,7 @@ namespace Main.UI.Presenters {
             
             if (content.TryGetValue("partyId", out var value)) {
                 _partyId = value;
+                _inviteDisplayName = content["senderDisplayName"];
                 _needPartyLoad = true;
 
                 _appConfig.PawnColor = (int)PawnColor.Black;
@@ -123,7 +125,12 @@ namespace Main.UI.Presenters {
             if (!_needPartyLoad) return;
             _needPartyLoad = false;
 
-            LoadParty();
+            _signalBus.Fire(new OpenWindowSignal(WindowKey.InviteWindow, new InviteWindowData {
+                PartyId = _partyId,
+                DisplayName = _inviteDisplayName
+            }));
+            
+            //LoadParty();
         }
 
         private async UniTask LoadParty() {

@@ -82,7 +82,8 @@ namespace Server.Services {
             
             var content = new Dictionary<string, string>() {
                 {"senderUserId", senderUserId},
-                {"partyId", party.Id}
+                {"partyId", party.Id},
+                {"senderDisplayName", _me.User.DisplayName}
             };
             
             await _socket.WriteChatMessageAsync(_globalChannel, content.ToJson());

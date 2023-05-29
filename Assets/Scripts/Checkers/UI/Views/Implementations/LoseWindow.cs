@@ -23,6 +23,7 @@ namespace Checkers.UI.Views.Implementations {
         }
 
         public void SubscribeToContinue(Action callback) {
+            _continueButton.onClick.RemoveAllListeners();
             _continueButton.onClick.AddListener(() => callback?.Invoke());
         }
     }
