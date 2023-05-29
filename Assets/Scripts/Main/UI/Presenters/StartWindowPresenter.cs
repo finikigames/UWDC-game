@@ -137,7 +137,7 @@ namespace Main.UI.Presenters {
                 if (!user.User.Online) continue;
 
                 var id = user.User.Id;
-                var username = user.User.Username;
+                var username = user.User.DisplayName;
 
                 var userInfo = new UserInfoData {
                     UserId = id,
