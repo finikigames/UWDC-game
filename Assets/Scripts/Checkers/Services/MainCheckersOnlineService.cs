@@ -44,7 +44,8 @@ namespace Checkers.Services {
 
         private TurnData _turnData;
         private bool _hasInput;
-        
+        private bool _someoneLeaved;
+
         public MainCheckersOnlineService(MainCheckerSceneSettings sceneSettings,
                                          ISchedulerService schedulerService, 
                                          NakamaService nakamaService,
@@ -102,13 +103,15 @@ namespace Checkers.Services {
 
         private void OnMatchPresence(IMatchPresenceEvent obj) {
             if (obj.Leaves.Any()) {
-                _signalBus.Fire(new OpenWindowSignal(WindowKey.WinWindow, new WinWindowData()));
+                _someoneLeaved = true;
             }
         }
 
         public void Tick() {
             CheckInput();
 
+            CheckLeave();
+            
             if (!_hasInput) return;
 
             _hasInput = false;
@@ -123,6 +126,14 @@ namespace Checkers.Services {
             
             tileFrom.GetComponent<TileClickDetector>().MouseDown();
             tileTo.GetComponent<TileClickDetector>().MouseDown();
+        }
+
+        private void CheckLeave() {
+            if (!_someoneLeaved) return;
+
+            _someoneLeaved = false;
+            
+            _signalBus.Fire(new OpenWindowSignal(WindowKey.WinWindow, new WinWindowData()));
         }
 
         private void CheckInput() {
