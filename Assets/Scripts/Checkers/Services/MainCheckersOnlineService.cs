@@ -218,7 +218,7 @@ namespace Checkers.Services {
         }
 
         private void OnEndGame(PawnColor color) {
-            if (color == _mainColor) {
+            if (color != _mainColor) {
                 _schedulerService
                     .StartSequence()
                     .Append(0.3f, () => { _signalBus.Fire(new OpenWindowSignal(WindowKey.WinWindow, new WinWindowData()));});
