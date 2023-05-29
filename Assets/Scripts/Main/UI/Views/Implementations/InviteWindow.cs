@@ -25,6 +25,7 @@ namespace Main.UI.Views.Implementations {
         }
         
         public void SubscribeToApply(Action callback) {
+            _applyButton.onClick.RemoveAllListeners();
             _applyButton.onClick.AddListener(() => callback?.Invoke());
         }
 
