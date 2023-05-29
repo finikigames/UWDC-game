@@ -56,6 +56,7 @@ namespace Main.UI.Presenters {
         public override async UniTask InitializeOnce()
         {
             View.Init();
+            View.OnTextChange(OnUsersUpdate);
         }
 
         protected override async UniTask LoadContent() {
@@ -163,8 +164,6 @@ namespace Main.UI.Presenters {
             View.SetAllMembersCount(users.Count);
             View.SetOnlineMembersCount(onlineCounter);
             View.ReloadData();
-            
-            OnUsersUpdate();
         }
 
         public int GetNumberOfCells(EnhancedScroller scroller) {

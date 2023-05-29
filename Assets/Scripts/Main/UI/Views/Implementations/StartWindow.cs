@@ -1,4 +1,5 @@
-﻿using EnhancedUI.EnhancedScroller;
+﻿using System;
+using EnhancedUI.EnhancedScroller;
 using Global.VisibilityMechanisms;
 using Global.Window.Base;
 using Main.UI.Views.Base;
@@ -39,8 +40,15 @@ namespace Main.UI.Views.Implementations {
                 new CustomHideMechanism(HideBlack)));
         }
 
+        public void OnTextChange(Action callback)
+        {
+            _searchInputField.onValueChanged.AddListener(str => callback?.Invoke());
+        }
+
         public void Init()
         {
+            _searchInputField.onValueChanged.RemoveAllListeners();
+                
             ChooseTab(true);
             LayoutRebuilder.ForceRebuildLayoutImmediate(_faqLayout);
             
