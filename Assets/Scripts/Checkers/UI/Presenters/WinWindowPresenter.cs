@@ -3,6 +3,8 @@ using Checkers.UI.Views.Base;
 using Cysharp.Threading.Tasks;
 using Global.Context;
 using Global.Window.Base;
+using Global.Window.Enums;
+using Global.Window.Signals;
 using UnityEngine.Scripting;
 
 namespace Checkers.UI.Presenters {
@@ -12,10 +14,11 @@ namespace Checkers.UI.Presenters {
         }
 
         protected override async UniTask LoadContent() {
-            View.SubscribeToClose(ToMain);
+            View.SubscribeToContinue(ToMain);
         }
 
         private void ToMain() {
+            FireSignal(new CloseWindowSignal(WindowKey.WinWindow));
             FireSignal(new ToMainSignal());
         }
     }
