@@ -9,8 +9,8 @@ namespace Checkers.Pawns
     {
         public int PawnRows { get; private set; } = 3;
         public GameObject Pawn;
-        public Material WhiteMaterial;
-        public Material BlackMaterial;
+        public Sprite WhiteSprite;
+        public Sprite BlackSprite;
 
         private TileGetter tileGetter;
         private int boardSize;
@@ -43,8 +43,8 @@ namespace Checkers.Pawns
         {
             Transform tileTransform = tileGetter.GetTile(columnIndex, rowIndex).transform;
             GameObject instantiatedPawn = Instantiate(Pawn, tileTransform.position, Pawn.transform.rotation, tileTransform);
-            instantiatedPawn.GetComponent<Renderer>().material =
-                pawnColor == PawnColor.White ? WhiteMaterial : BlackMaterial;
+            instantiatedPawn.GetComponentInChildren<SpriteRenderer>().sprite =
+                pawnColor == PawnColor.White ? WhiteSprite : BlackSprite;
             instantiatedPawn.GetComponent<IPawnProperties>().PawnColor = pawnColor;
         }
 

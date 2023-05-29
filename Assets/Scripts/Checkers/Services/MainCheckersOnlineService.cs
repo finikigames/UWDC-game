@@ -60,7 +60,7 @@ namespace Checkers.Services {
         }
         
         public void Initialize() {
-            //_signalBus.Fire(new OpenWindowSignal(WindowKey.MatchWindow, new MatchWindowData()));
+            _signalBus.Fire(new OpenWindowSignal(WindowKey.MatchWindow, new MatchWindowData()));
             
             _mainColor = (PawnColor)_appConfig.PawnColor;
             

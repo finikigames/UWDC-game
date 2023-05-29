@@ -7,8 +7,6 @@ namespace Checkers.Board
     {
         public int BoardSize { get; private set; } = 8;
         public GameObject Tile;
-        public Material WhiteMaterial;
-        public Material BlackMaterial;
 
         private void Start()
         {
@@ -51,8 +49,6 @@ namespace Checkers.Board
                 columnTransform.position + Vector3.forward * rowIndex, Tile.transform.rotation,
                 columnTransform);
             instantiatedTile.name = "Tile" + rowIndex;
-            instantiatedTile.GetComponent<Renderer>().material =
-                (columnIndex + rowIndex) % 2 != 0 ? WhiteMaterial : BlackMaterial;
         }
     }
 }

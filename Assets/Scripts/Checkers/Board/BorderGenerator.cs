@@ -22,9 +22,9 @@ namespace Checkers.Board
 
         private void Start()
         {
-            CreateBorderGameObject();
-            AssignInitialValues();
-            CreateBorder();
+            //CreateBorderGameObject();
+            //AssignInitialValues();
+            //CreateBorder();
         }
 
         private void CreateBorderGameObject()
