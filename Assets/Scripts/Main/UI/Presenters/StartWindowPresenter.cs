@@ -112,12 +112,15 @@ namespace Main.UI.Presenters {
         private void MessagesListener(IApiChannelMessage m) {
             var content = m.Content.FromJson<Dictionary<string, string>>();
 
+            var profile = _nakamaService.GetMe();
             if (content.TryGetValue("senderUserId", out var currentUserId)) {
-                var profile = _profileService.GetProfile();
-
-                if (profile.UserId == currentUserId) return;
+                if (profile.User.Id == currentUserId) return;
             }
 
+            if (content.TryGetValue("targetUserId", out var targetUserId)) {
+                if (profile.User.Id != targetUserId) return;
+            }
+            
             if (content.TryGetValue("approveMatchInvite", out var matchAndPartyId)) {
                 _needLoad = true;
                 _approveSenderId = content["senderUserId"];

@@ -84,24 +84,23 @@ namespace Server.Services {
         }
 
         public async UniTask SendUserConfirmation(string partyId, string userId) {
-            var senderUserId = _profile.UserId;
+            var senderUserId = _me.User.Id;
             
             var content = new Dictionary<string, string>() {
                 {"senderUserId", senderUserId},
                 {"approveMatchInvite", partyId},
-                {"senderDisplayName", _me.User.DisplayName}
+                {"targetUserId", userId}
             };
             
             await _socket.WriteChatMessageAsync(_globalChannel, content.ToJson());
         }
         
         public async UniTask SendPartyToUser(string userId, IParty party) {
-            var senderUserId = _profile.UserId;
-            
             var content = new Dictionary<string, string>() {
-                {"senderUserId", senderUserId},
+                {"senderUserId", _me.User.Id},
                 {"partyId", party.Id},
-                {"senderDisplayName", _me.User.DisplayName}
+                {"senderDisplayName", _me.User.DisplayName},
+                {"targetUserId", userId}
             };
             
             await _socket.WriteChatMessageAsync(_globalChannel, content.ToJson());
