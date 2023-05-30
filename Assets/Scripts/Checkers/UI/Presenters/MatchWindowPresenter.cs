@@ -49,6 +49,7 @@ namespace Checkers.UI.Presenters {
             
             View.ProvideCamera(UnityEngine.Camera.main);
             _needNicknameInitialize = true;
+            View.ResetBars();
 
             _sceneSettings.PawnMover.OnTurnEnd += TurnChange;
             _sceneSettings.TurnHandler.OnEndGame += (s) => _timerService.RemoveTimer(TurnId);
@@ -89,7 +90,7 @@ namespace Checkers.UI.Presenters {
             
             bool isPlayer = _sceneSettings.TurnHandler.Turn == _sceneSettings.TurnHandler.YourColor;
             
-            View.GetLostCheker(isPlayer);
+            View.GetLostCheсker(isPlayer);
         }
 
         private void TurnChange() {

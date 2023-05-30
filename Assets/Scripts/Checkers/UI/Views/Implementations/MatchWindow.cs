@@ -52,7 +52,7 @@ namespace Checkers.UI.Views.Implementations {
             _opponentName.text = opponentName;
         }
 
-        public void GetLostCheker(bool isPlayer) {
+        public void GetLostCheсker(bool isPlayer) {
             var bar = isPlayer ? _playerChekersBar : _opponentChekersBar;
             bar.DecreaseСhecker();
         }
