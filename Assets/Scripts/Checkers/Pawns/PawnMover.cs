@@ -93,7 +93,6 @@ namespace Checkers.Pawns
             lastClickedTile = tile;
             if (IsMoveNoncapturingAndValid()) {
                 MovePawn();
-            
             }
             else if (IsMoveCapturingAndValid()) {
                 CapturePawn();
@@ -114,14 +113,14 @@ namespace Checkers.Pawns
 
         private void MovePawn()
         {
-            SendTurnEvent();
+            SendTurnEvent(false);
             SendMoveToCPU();
             ChangeMovedPawnParent();
             StartCoroutine(AnimatePawnMove());
             RemoveLastClickedPawnSelection();
         }
 
-        private void SendTurnEvent() {
+        private void SendTurnEvent(bool isCapture) {
             var toIndex = lastClickedTile.GetComponent<TileProperties>().GetTileIndex();
             var fromIndex = lastClickedPawn.GetComponent<IPawnProperties>().GetTileIndex();
 
@@ -137,7 +136,8 @@ namespace Checkers.Pawns
 
             var turnData = new TurnData {
                 To = toCoords,
-                From = fromCoords
+                From = fromCoords,
+                Capture = isCapture
             };
 
             OnTurn?.Invoke(turnData);
@@ -198,7 +198,7 @@ namespace Checkers.Pawns
 
         private void CapturePawn()
         {
-            SendTurnEvent();
+            SendTurnEvent(true);
             SendMoveToCPU();
             ChangeMovedPawnParent();
             StartCoroutine(AnimatePawnCapture());

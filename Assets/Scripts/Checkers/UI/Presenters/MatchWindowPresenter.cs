@@ -1,4 +1,6 @@
-﻿using Checkers.UI.Data;
+﻿using Checkers.Services;
+using Checkers.Settings;
+using Checkers.UI.Data;
 using Checkers.UI.Views.Base;
 using Core.Ticks.Interfaces;
 using Cysharp.Threading.Tasks;
@@ -20,6 +22,7 @@ namespace Checkers.UI.Presenters {
         private NakamaService _nakamaService;
         private AppConfig _appConfig;
         private IUpdateService _updateService;
+        private MainCheckerSceneSettings _sceneSettings;
         
         private bool _needNicknameInitialize;
 
@@ -30,21 +33,18 @@ namespace Checkers.UI.Presenters {
             _nakamaService = Resolve<NakamaService>(GameContext.Project);
             _appConfig = Resolve<AppConfig>(GameContext.Project);
             _updateService = Resolve<IUpdateService>(GameContext.Project);
+            _sceneSettings = Resolve<MainCheckerSceneSettings>(GameContext.Checkers);
+
+            _sceneSettings.PawnMover.OnTurn += CaptureCheker;
         }
 
         protected override async UniTask LoadContent() {
             _updateService.RegisterUpdate(this);
-            _nakamaService.SubscribeToMatchPresence(OnMatchPresence);
 
             View.SubscribeToHowToPlayButton(OnHowToPlayClick);
             View.SubscribeToFleeButton(OnFleeClick);
             
             View.ProvideCamera(UnityEngine.Camera.main);
-        }
-
-        private void OnMatchPresence(IMatchPresenceEvent obj) {
-            if (_nakamaService.GetCurrentMatchPlayersCount() != 2) return;
-
             _needNicknameInitialize = true;
         }
 
@@ -57,7 +57,7 @@ namespace Checkers.UI.Presenters {
         }
 
         public void CustomUpdate() {
-            if (!_needNicknameInitialize) return;
+            if (_nakamaService.GetCurrentMatchPlayersCount() != 2 && !_needNicknameInitialize) return;
 
             _needNicknameInitialize = false;
             
@@ -76,6 +76,14 @@ namespace Checkers.UI.Presenters {
 
         public override void Dispose() {
             _updateService.UnregisterUpdate(this);
+        }
+
+        private void CaptureCheker(TurnData turnData) {
+            if (!turnData.Capture) return;
+            
+            bool isPlayer = _sceneSettings.TurnHandler.Turn == _sceneSettings.TurnHandler.YourColor;
+            
+            View.GetLostCheker(isPlayer);
         }
     }
 }

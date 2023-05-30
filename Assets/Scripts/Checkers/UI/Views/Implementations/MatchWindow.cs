@@ -15,6 +15,8 @@ namespace Checkers.UI.Views.Implementations {
         [SerializeField] private Canvas _canvas;
         [SerializeField] private TextMeshProUGUI _opponentName;
         [SerializeField] private TextMeshProUGUI _yourName;
+        [SerializeField] private PlayerChekersBar _opponentChekersBar;
+        [SerializeField] private PlayerChekersBar _playerChekersBar;
 
         protected override void OnEnable() {
             _showState = Core.MVP.Base.Enums.ShowState.Hidden;
@@ -47,6 +49,11 @@ namespace Checkers.UI.Views.Implementations {
 
         public void SetOpponentName(string opponentName) {
             _opponentName.text = opponentName;
+        }
+
+        public void GetLostCheker(bool isPlayer) {
+            var bar = isPlayer ? _playerChekersBar : _opponentChekersBar;
+            bar.DecreaseСhecker();
         }
     }
 }

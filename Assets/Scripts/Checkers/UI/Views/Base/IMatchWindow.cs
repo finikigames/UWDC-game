@@ -8,5 +8,6 @@ namespace Checkers.UI.Views.Base {
         void SubscribeToFleeButton(Action callback);
         void SetYourName(string yourName);
         void SetOpponentName(string opponentName);
+        void GetLostCheker(bool isPlayer);
     }
 }
