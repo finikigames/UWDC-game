@@ -19,10 +19,14 @@ namespace Global.Services.Timer {
         }
 
         public void RemoveTimer(string timerId) {
-            _timers.Remove(timerId);
+            _timersToDelete.Add(timerId);
         }
 
         public void Tick() {
+            foreach (var key in _timersToDelete) {
+                _timers.Remove(key);
+            }
+            
             foreach (var timerPair in _timers) {
                 timerPair.Value.Process();
 
