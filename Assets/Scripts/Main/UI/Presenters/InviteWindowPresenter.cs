@@ -31,9 +31,9 @@ namespace Main.UI.Presenters {
             var data = WindowData.DisplayName;
             
             View.SubscribeToApply(async () => {
-                var userId = _nakamaService.GetMe().User.Id;
+                var senderUserId = WindowData.SenderId;
                 await _nakamaService.CreateMatch(WindowData.PartyId);
-                await _nakamaService.SendUserConfirmation(WindowData.PartyId, userId);
+                await _nakamaService.SendUserConfirmation(WindowData.PartyId, senderUserId);
                 _signalBus.Fire(new CloseWindowSignal(WindowKey.InviteWindow));
                 _signalBus.Fire(new CloseWindowSignal(WindowKey.StartWindow));
                 _signalBus.Fire(new ToCheckersMetaSignal{WithPlayer = true});

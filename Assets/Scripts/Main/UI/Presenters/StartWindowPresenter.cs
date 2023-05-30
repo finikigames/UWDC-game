@@ -49,6 +49,7 @@ namespace Main.UI.Presenters {
         private string _partyId;
         private string _inviteDisplayName;
         private string _approveSenderId;
+        private string _inviteSenderUserId;
 
         public StartWindowPresenter(ContextService service) : base(service) {
         }
@@ -113,8 +114,8 @@ namespace Main.UI.Presenters {
             var content = m.Content.FromJson<Dictionary<string, string>>();
 
             var profile = _nakamaService.GetMe();
-            if (content.TryGetValue("senderUserId", out var currentUserId)) {
-                if (profile.User.Id == currentUserId) return;
+            if (content.TryGetValue("senderUserId", out var senderUserId)) {
+                if (profile.User.Id == senderUserId) return;
             }
 
             if (content.TryGetValue("targetUserId", out var targetUserId)) {
@@ -128,6 +129,7 @@ namespace Main.UI.Presenters {
             
             if (content.TryGetValue("partyId", out var value)) {
                 _partyId = value;
+                _inviteSenderUserId = senderUserId;
                 _inviteDisplayName = content["senderDisplayName"];
                 _unhandledInvite = true;
 
@@ -156,7 +158,8 @@ namespace Main.UI.Presenters {
 
             _signalBus.Fire(new OpenWindowSignal(WindowKey.InviteWindow, new InviteWindowData {
                 PartyId = _partyId,
-                DisplayName = _inviteDisplayName
+                DisplayName = _inviteDisplayName,
+                SenderId = _inviteSenderUserId
             }));
         }
 
