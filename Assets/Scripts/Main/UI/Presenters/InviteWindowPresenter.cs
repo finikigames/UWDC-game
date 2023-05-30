@@ -1,4 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
+using Global.ConfigTemplate;
 using Global.Context;
 using Global.StateMachine.Base.Enums;
 using Global.Window.Base;
@@ -15,6 +16,7 @@ namespace Main.UI.Presenters {
     public class InviteWindowPresenter : BaseWindowPresenter<IInviteWindow, InviteWindowData> {
         private NakamaService _nakamaService;
         private SignalBus _signalBus;
+        private AppConfig _appConfig;
 
         public InviteWindowPresenter(ContextService service) : base(service) {
         }
@@ -22,6 +24,7 @@ namespace Main.UI.Presenters {
         public override void InitDependencies() {
             _nakamaService = Resolve<NakamaService>(GameContext.Project);
             _signalBus = Resolve<SignalBus>(GameContext.Main);
+            _appConfig = Resolve<AppConfig>(GameContext.Project);
         }
 
         protected override async UniTask LoadContent() {
@@ -36,6 +39,7 @@ namespace Main.UI.Presenters {
                 _signalBus.Fire(new ToCheckersMetaSignal{WithPlayer = true});
             });
             View.ChangeName(data);
+            _appConfig.Opponent = WindowData.DisplayName;
         }
     }
 }

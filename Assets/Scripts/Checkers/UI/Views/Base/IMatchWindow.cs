@@ -9,5 +9,7 @@ namespace Checkers.UI.Views.Base {
         void SetYourName(string yourName);
         void SetOpponentName(string opponentName);
         void GetLostCheker(bool isPlayer);
+        void SetTimerTime(int time);
+        void ResetBars();
     }
 }

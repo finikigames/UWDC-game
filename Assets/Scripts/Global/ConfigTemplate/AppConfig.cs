@@ -5,5 +5,6 @@ namespace Global.ConfigTemplate {
     public class AppConfig
     {
         public int PawnColor;
+        public string Opponent;
     }
 }

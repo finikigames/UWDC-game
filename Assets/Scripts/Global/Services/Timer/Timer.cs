@@ -8,13 +8,15 @@ namespace Global.Services.Timer {
         public bool IsLoop;
 
         private readonly Action OnEnd;
+        private readonly Action<int> OnTick;
         private float _initialTime;
 
-        public Timer(float time, Action callback, bool isLoop = false) {
+        public Timer(float time, Action callback, bool isLoop = false, Action<int> callbackTick = null) {
             TimeLeft = time;
             _initialTime = time;
             IsLoop = isLoop;
             OnEnd = callback;
+            OnTick = callbackTick;
         }
 
         public void SetTime(float time) {
@@ -31,6 +33,7 @@ namespace Global.Services.Timer {
             if (TimerEnded) return;
             
             TimeLeft -= UnityEngine.Time.deltaTime;
+            OnTick?.Invoke((int)Math.Ceiling(TimeLeft));
 
             if (TimeLeft <= 0) {
                 EndTimer();

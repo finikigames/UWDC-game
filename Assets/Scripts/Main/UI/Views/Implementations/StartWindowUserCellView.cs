@@ -15,9 +15,12 @@ namespace Main.UI.Views.Implementations {
             _userNickname.text = nickname;
         }
         
-        public void SubscribeOnClick(string userId, Action<string> callback) {
+        public void SubscribeOnClick(string userId, Action<string> callback, Action<string> nameCallback) {
             _clickButton.onClick.RemoveAllListeners();
-            _clickButton.onClick.AddListener(() => callback?.Invoke(userId));
+            _clickButton.onClick.AddListener(() => {
+                callback?.Invoke(userId);
+                nameCallback?.Invoke(_userNickname.text);
+            });
         }
     }
 }

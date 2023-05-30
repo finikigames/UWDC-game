@@ -42,6 +42,7 @@ namespace Main.UI.Presenters {
         private IApiGroup _globalGroupInfo;
 
         private Action<string> _onUserPlayClick;
+        private Action<string> _onOpponentFind;
 
         private bool _unhandledInvite;
         private bool _needLoad;
@@ -81,6 +82,9 @@ namespace Main.UI.Presenters {
             _onUserPlayClick = null;
             _onUserPlayClick += SendPartyToUser;
             
+            _onOpponentFind = null;
+            _onOpponentFind += (name) => _appConfig.Opponent = name;
+            
             View.SetScrollerDelegate(this);
 
             _nakamaService.SubscribeToMessages(MessagesListener);
@@ -96,7 +100,7 @@ namespace Main.UI.Presenters {
 
             _appConfig.PawnColor = (int)PawnColor.White;
             await _nakamaService.SendPartyToUser(userId, party);
-            
+
             //_signalBus.Fire(new CloseWindowSignal(WindowKey.StartWindow));
             //_signalBus.Fire(new ToCheckersMetaSignal{WithPlayer = true});
         }
@@ -208,7 +212,7 @@ namespace Main.UI.Presenters {
 
             var data = _userInfoDatas[dataIndex];
             view.SetNickname(data.Username);
-            view.SubscribeOnClick(data.UserId, _onUserPlayClick);
+            view.SubscribeOnClick(data.UserId, _onUserPlayClick, _onOpponentFind);
             
             return view;
         }

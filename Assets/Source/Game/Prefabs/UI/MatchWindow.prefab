@@ -372,6 +372,7 @@ MonoBehaviour:
   _canvas: {fileID: 5005076574479469687}
   _opponentName: {fileID: 2964681631717951336}
   _yourName: {fileID: 4483697255139853468}
+  _turnTimer: {fileID: 4360064199505195860}
   _opponentChekersBar: {fileID: 4616279217869756817}
   _playerChekersBar: {fileID: 4344791992757091153}
 --- !u!1 &191098414445792479
@@ -2606,7 +2607,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _checkersContainer: {fileID: 784172083445797663}
-  _layoutGroup: {fileID: 7080567983993043236}
 --- !u!1 &6016484539396824552
 GameObject:
   m_ObjectHideFlags: 0
@@ -3695,7 +3695,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _checkersContainer: {fileID: 55377025454155289}
-  _layoutGroup: {fileID: 7623952239425787213}
 --- !u!1 &8746890937326864981
 GameObject:
   m_ObjectHideFlags: 0
@@ -3713,7 +3712,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &488823898803420954
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3762,7 +3761,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 30
+  m_text: 12
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 5eb2b0123bf8b7342bd950ebbcba7fcb, type: 2}
   m_sharedMaterial: {fileID: 3505185436155619562, guid: 5eb2b0123bf8b7342bd950ebbcba7fcb, type: 2}

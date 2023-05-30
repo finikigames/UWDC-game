@@ -12,8 +12,8 @@ namespace Global.Services.Timer {
             _timersToDelete = new HashSet<string>();
         }
 
-        public void StartTimer(string timerId, float time, Action onEnd, bool isLoop = false) {
-            var timer = new Timer(time, onEnd, isLoop);
+        public void StartTimer(string timerId, float time, Action onEnd, bool isLoop = false, Action<int> onTick = null) {
+            var timer = new Timer(time, onEnd, isLoop, onTick);
             
             _timers.Add(timerId, timer);
         }

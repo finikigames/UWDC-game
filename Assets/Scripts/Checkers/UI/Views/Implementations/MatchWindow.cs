@@ -15,6 +15,7 @@ namespace Checkers.UI.Views.Implementations {
         [SerializeField] private Canvas _canvas;
         [SerializeField] private TextMeshProUGUI _opponentName;
         [SerializeField] private TextMeshProUGUI _yourName;
+        [SerializeField] private TextMeshProUGUI _turnTimer;
         [SerializeField] private PlayerChekersBar _opponentChekersBar;
         [SerializeField] private PlayerChekersBar _playerChekersBar;
 
@@ -54,6 +55,15 @@ namespace Checkers.UI.Views.Implementations {
         public void GetLostCheker(bool isPlayer) {
             var bar = isPlayer ? _playerChekersBar : _opponentChekersBar;
             bar.DecreaseСhecker();
+        }
+
+        public void SetTimerTime(int time) {
+            _turnTimer.text = time.ToString();
+        }
+
+        public void ResetBars() {
+            _playerChekersBar.ResetBar();
+            _opponentChekersBar.ResetBar();
         }
     }
 }
