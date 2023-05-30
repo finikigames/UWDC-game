@@ -22,11 +22,15 @@ namespace Global.Services.Timer {
             _timersToDelete.Add(timerId);
         }
 
+        public void ResetTimer(string timerId) {
+            _timers[timerId].ResetTimer();
+        }
+
         public void Tick() {
             foreach (var key in _timersToDelete) {
                 _timers.Remove(key);
             }
-            
+
             foreach (var timerPair in _timers) {
                 timerPair.Value.Process();
 

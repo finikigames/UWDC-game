@@ -38,7 +38,7 @@ namespace Checkers.UI.Presenters {
             _sceneSettings = Resolve<MainCheckerSceneSettings>(GameContext.Checkers);
             _timerService = Resolve<TimerService>(GameContext.Project);
 
-            _sceneSettings.PawnMover.OnTurn += CaptureCheker;
+            _sceneSettings.PawnMover.OnTurn += CaptureChecker;
         }
 
         protected override async UniTask LoadContent() {
@@ -52,7 +52,7 @@ namespace Checkers.UI.Presenters {
 
             _sceneSettings.PawnMover.OnTurnEnd += TurnChange;
             _sceneSettings.TurnHandler.OnEndGame += (s) => _timerService.RemoveTimer(TurnId);
-            TurnChange();
+            _timerService.StartTimer(TurnId, 10f, TurnTimeOut, false, View.SetTimerTime);
         }
 
         private void OnFleeClick() {
@@ -84,7 +84,7 @@ namespace Checkers.UI.Presenters {
             _timerService.RemoveTimer(TurnId);
         }
 
-        private void CaptureCheker(TurnData turnData) {
+        private void CaptureChecker(TurnData turnData) {
             if (!turnData.Capture) return;
             
             bool isPlayer = _sceneSettings.TurnHandler.Turn == _sceneSettings.TurnHandler.YourColor;
@@ -93,8 +93,7 @@ namespace Checkers.UI.Presenters {
         }
 
         private void TurnChange() {
-            _timerService.RemoveTimer(TurnId);
-            _timerService.StartTimer(TurnId, 10f, TurnTimeOut, false, View.SetTimerTime);
+            _timerService.ResetTimer(TurnId);
         }
 
         private void TurnTimeOut() {
