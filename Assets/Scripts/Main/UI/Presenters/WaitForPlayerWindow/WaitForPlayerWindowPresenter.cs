@@ -83,6 +83,12 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
         }
 
         private async UniTask AsyncLoad() {
+            string matchId = string.Empty;
+            foreach (var user in _matched.Users) {
+                matchId += user.Presence.Username;
+            }
+            await _nakamaService.CreateMatch(matchId);
+            
             View.HideReturnButton();
 
             var users = _matched.Users;
@@ -107,27 +113,25 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
             View.SetOpponentName(opponentUserInfo.DisplayName);
             
             _nakamaService.SubscribeToMessages(OnChatMessage);
-            CloseThisWindow();
 
             var value = Random.Range(0, 1000000);
             _matchmakingValue = value;
             _opponentId = opponentId;
-            _nakamaService.SendMatchmakingInfo(opponentId, _matchmakingValue.ToString());
+            await _nakamaService.SendMatchmakingInfo(opponentId, _matchmakingValue.ToString());
 
             _timerService.StartTimer("waiting_for_play", 5, null, false, time => View.SetTimerText(time.ToString()));
             
             _schedulerService
                 .StartSequence()
                 .Append(5, () => {
+                    CloseThisWindow();
                     _timerService.RemoveTimer("waiting_for_play");
                     
                     StartLoad();
                 });
         }
 
-        private async UniTask StartLoad() {
-            var matchId = _matched.MatchId;
-            await _nakamaService.CreateMatch(matchId);
+        private void StartLoad() {
             PlayerPrefsX.SetBool("Matchmaking", true);
             _signalBus.Fire(new ToCheckersMetaSignal{WithPlayer = true});
         }

@@ -161,7 +161,7 @@ namespace Server.Services {
         }
 
         public async UniTask SubmitTournamentScore(string id, Dictionary<string, string> metadata, int score, int subScore) {
-            await _client.WriteTournamentRecordAsync(_session, id, score, subScore, JsonWriter.ToJson(metadata));
+            await _client.WriteTournamentRecordAsync(_session, id, score, subScore, metadata == null ? null:  JsonWriter.ToJson(metadata));
         }
 
         public void SubscribeToPartyPresence(Action<IPartyPresenceEvent> callback) {

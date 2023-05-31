@@ -47,7 +47,7 @@ namespace Checkers.UI.Presenters {
                 list.Data.Add(opponentId);
 
                 await _nakamaService.WriteStorageObject("players", "wins", list);
-
+                
                 await _nakamaService.SubmitTournamentScore(_tournamentId, null, list.Data.Count, 0);
             }
         }

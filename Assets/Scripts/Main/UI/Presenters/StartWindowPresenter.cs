@@ -154,8 +154,6 @@ namespace Main.UI.Presenters {
             }
             
             if (content.TryGetValue("partyId", out var value)) {
-                if (_windowService.IsWindowOpened(WindowKey.WaitForPlayerWindow)) return;
-                
                 _partyId = value;
                 _inviteSenderUserId = senderUserId;
                 _inviteDisplayName = content["senderDisplayName"];
