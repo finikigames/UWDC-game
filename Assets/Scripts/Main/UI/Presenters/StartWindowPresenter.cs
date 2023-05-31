@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Core.Extensions;
 using Core.Ticks.Interfaces;
 using Cysharp.Threading.Tasks;
 using EnhancedUI.EnhancedScroller;
@@ -195,6 +196,7 @@ namespace Main.UI.Presenters {
         }
 
         private async UniTask LoadParty() {
+            PlayerPrefsX.SetBool("Matchmaking", false);
             _signalBus.Fire(new ToCheckersMetaSignal{WithPlayer = true});
         }
         

@@ -1,4 +1,5 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using Core.Extensions;
+using Cysharp.Threading.Tasks;
 using Global.ConfigTemplate;
 using Global.Context;
 using Global.StateMachine.Base.Enums;
@@ -35,6 +36,7 @@ namespace Main.UI.Presenters {
                 await _nakamaService.CreateMatch(WindowData.PartyId);
                 await _nakamaService.SendUserConfirmation(WindowData.PartyId, senderUserId);
                 _signalBus.Fire(new CloseWindowSignal(WindowKey.InviteWindow));
+                PlayerPrefsX.SetBool("Matchmaking", false);
                 _signalBus.Fire(new ToCheckersMetaSignal{WithPlayer = true});
             });
             View.ChangeName(data);
