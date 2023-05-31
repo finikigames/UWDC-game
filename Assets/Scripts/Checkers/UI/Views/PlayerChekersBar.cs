@@ -1,4 +1,5 @@
-﻿using DG.Tweening;
+﻿using Core.Extensions;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -20,6 +21,10 @@ namespace Checkers.UI.Views {
             var checker = _checkersContainer.GetChild(childIndex);
             checker.gameObject.GetComponent<Image>().DOFade(0, 0.5f);
             _lostCheckers++;
+        }
+
+        public Vector3 GetPosition() {
+            return _checkersContainer.AsRectTransform().position;
         }
     }
 }

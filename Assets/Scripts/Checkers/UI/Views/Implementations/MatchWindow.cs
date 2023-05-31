@@ -53,7 +53,7 @@ namespace Checkers.UI.Views.Implementations {
         }
 
         public void GetLostCheсker(bool isPlayer) {
-            var bar = isPlayer ? _playerChekersBar : _opponentChekersBar;
+            var bar = isPlayer ? _opponentChekersBar : _playerChekersBar;
             bar.DecreaseСhecker();
         }
 
@@ -64,6 +64,12 @@ namespace Checkers.UI.Views.Implementations {
         public void ResetBars() {
             _playerChekersBar.ResetBar();
             _opponentChekersBar.ResetBar();
+        }
+
+        public Vector3 GetSendPawnPosition(bool isPlayer) {
+            var bar = isPlayer ? _playerChekersBar.GetPosition() : _opponentChekersBar.GetPosition();
+            //var position = _canvas.worldCamera.ViewportToWorldPoint(bar);
+            return bar;
         }
     }
 }
