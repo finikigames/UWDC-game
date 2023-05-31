@@ -7,6 +7,7 @@ using Global;
 using Global.ConfigTemplate;
 using Global.Context;
 using Global.Enums;
+using Global.Extensions;
 using Global.Services.Timer;
 using Global.StateMachine.Base.Enums;
 using Global.Window;
@@ -100,11 +101,7 @@ namespace Main.UI.Presenters {
 
             var tournament = await _nakamaService.GetTournament(_tournamentId);
 
-            var startTime = DateTimeOffset.Parse(tournament.StartTime).ToUnixTimeSeconds();
-            var endTime = startTime + tournament.Duration;
-            var nowTime = ((DateTimeOffset) DateTime.Now).ToUnixTimeSeconds();
-
-            var whenEnded = endTime - nowTime;
+            var whenEnded = tournament.GetRemainingTime();
             
             _timerService.StartTimer("tournamentTime", whenEnded, () => {
                 View.SetTimeTournament("Недоступно");

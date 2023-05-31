@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
+using Global.Extensions;
 using Global.Services;
 using Nakama;
 using Nakama.TinyJson;
@@ -24,6 +25,7 @@ namespace Server.Services {
         private IApiAccount _me;
         private IChannel _globalChannel;
         private IApiGroup _apiGroup;
+        private IApiTournament _tournament;
 
         private Dictionary<string, IParty> _createdParties;
 
@@ -150,6 +152,7 @@ namespace Server.Services {
             foreach (var tournament in list.Tournaments) {
                 if (tournament.Id != id) continue;
 
+                _tournament = tournament;
                 return tournament;
             }
 
@@ -161,6 +164,7 @@ namespace Server.Services {
         }
 
         public async UniTask SubmitTournamentScore(string id, Dictionary<string, string> metadata, int score, int subScore) {
+            if (!_tournament.IsActive()) return;
             await _client.WriteTournamentRecordAsync(_session, id, score, subScore, metadata == null ? null:  JsonWriter.ToJson(metadata));
         }
 
