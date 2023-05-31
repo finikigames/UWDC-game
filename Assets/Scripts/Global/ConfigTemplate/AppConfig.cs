@@ -1,11 +1,11 @@
 ﻿using System;
+using UnityEngine.Serialization;
 
 namespace Global.ConfigTemplate {
     [Serializable]
-    public class AppConfig
-    {
+    public class AppConfig {
         public int PawnColor;
-        public string Opponent;
+        [FormerlySerializedAs("Opponent")] public string OpponentDisplayName;
         public string OpponentUserId;
     }
 }

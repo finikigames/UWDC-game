@@ -22,6 +22,7 @@ using Main.UI.Views.Base;
 using Main.UI.Views.Implementations;
 using Nakama;
 using Nakama.TinyJson;
+using Newtonsoft.Json;
 using Server.Services;
 using UnityEngine;
 using UnityEngine.Scripting;
@@ -39,6 +40,7 @@ namespace Main.UI.Presenters {
         private AppConfig _appConfig;
         private SignalBus _signalBus;
         private WindowService _windowService;
+        private GlobalScope _globalScope;
 
         private string _globalGroupName = "globalGroup";
         private string _tournamentId = "4ec4f126-3f9d-11e7-84ef-b7c182b36521";
@@ -46,19 +48,11 @@ namespace Main.UI.Presenters {
         private List<UserInfoData> _userInfoDatas;
         private IApiGroup _globalGroupInfo;
 
-        private Action<string> _onUserPlayClick;
-        private Action<string> _onOpponentFind;
-        private Action<StartWindowUserCellView> _onSendInvite;
+        private Action<UserInfoData, StartWindowUserCellView> _onSendInviteClick;
 
-        private bool _unhandledInvite;
-        private bool _needLoad;
-        private string _partyId;
-        private string _inviteDisplayName;
+        private bool _approvedMatchAndNeedLoad;
         private string _approveSenderId;
-        private string _inviteSenderUserId;
-
-        private HashSet<StartWindowUserCellView> _hashSet = new();
-
+        
         public StartWindowPresenter(ContextService service) : base(service) {
         }
 
@@ -70,6 +64,7 @@ namespace Main.UI.Presenters {
             _updateService = Resolve<IUpdateService>(GameContext.Project);
             _appConfig = Resolve<AppConfig>(GameContext.Project);
             _windowService = Resolve<WindowService>(GameContext.Project);
+            _globalScope = Resolve<GlobalScope>(GameContext.Project);
         }
 
         public override async UniTask InitializeOnce() {
@@ -86,9 +81,6 @@ namespace Main.UI.Presenters {
             _userInfoDatas = new List<UserInfoData>();
 
             _updateService.RegisterUpdate(this);
-            
-            _onUserPlayClick = null;
-            _onUserPlayClick += SendPartyToUser;
 
             await _nakamaService.JoinTournament(_tournamentId);
             
@@ -113,12 +105,9 @@ namespace Main.UI.Presenters {
                 
                 View.SetTimeTournament(timeToDisplay);
             });
-            
-            _onOpponentFind = null;
-            _onOpponentFind += (name) => _appConfig.Opponent = name;
-            
-            _onSendInvite = null;
-            _onSendInvite += SendInvite;
+
+            _onSendInviteClick = null;
+            _onSendInviteClick += OnSendInviteClick;
             
             View.SetScrollerDelegate(this);
 
@@ -127,45 +116,39 @@ namespace Main.UI.Presenters {
             OnUsersUpdate();
             _timerService.StartTimer("updateUsersTimer", 10, OnUsersUpdate, true);
             
-            _hashSet.Clear();
+            _globalScope.SendedInvites.Clear();
         }
 
         private void OnStartClick() {
             _signalBus.Fire(new OpenWindowSignal(WindowKey.WaitForPlayerWindow, new WaitForPlayerWindowData()));
         }
 
-        private async void SendPartyToUser(string userId) {
-            var party = await _nakamaService.CreateParty();
-            await _nakamaService.CreateMatch(party.Id);
-
-            _appConfig.PawnColor = (int)PawnColor.White;
-            await _nakamaService.SendPartyToUser(userId, party);
-        }
-
         private void MessagesListener(IApiChannelMessage m) {
             var content = m.Content.FromJson<Dictionary<string, string>>();
 
             var profile = _nakamaService.GetMe();
+            // Check if ME is sender to prevent getting message by yourself
             if (content.TryGetValue("senderUserId", out var senderUserId)) {
                 if (profile.User.Id == senderUserId) return;
             }
 
+            // Check if this message is addressed for YOU
             if (content.TryGetValue("targetUserId", out var targetUserId)) {
                 if (profile.User.Id != targetUserId) return;
             }
             
+            // Check for approved matches
             if (content.TryGetValue("approveMatchInvite", out var matchAndPartyId)) {
-                _needLoad = true;
+                _approvedMatchAndNeedLoad = true;
                 _approveSenderId = content["senderUserId"];
             }
             
-            if (content.TryGetValue("partyId", out var value)) {
-                _partyId = value;
-                _inviteSenderUserId = senderUserId;
-                _inviteDisplayName = content["senderDisplayName"];
-                _unhandledInvite = true;
+            // Check for incoming invites
+            if (content.TryGetValue("newInvite", out var value)) {
+                var inviteData = JsonConvert.DeserializeObject<InviteData>(value);
+                
+                _globalScope.ReceivedInvites.Add(senderUserId, inviteData);
 
-                _appConfig.PawnColor = (int)PawnColor.Black;
                 Debug.Log($"Get a party with a id {value}");
             }
         }
@@ -177,17 +160,17 @@ namespace Main.UI.Presenters {
         }
 
         private async void CheckNeedLoad() {
-            if (!_needLoad) return;
-            _needLoad = false;
-
+            if (!_approvedMatchAndNeedLoad) return;
+            _approvedMatchAndNeedLoad = false;
+            
             await _nakamaService.RemoveAllPartiesExcept(_approveSenderId);
             await LoadParty();
         }
 
         private void CheckInvite() {
-            if (!_unhandledInvite) return;
-            _unhandledInvite = false;
+            if (_globalScope.ReceivedInvites.Count == 0) return;
 
+            
             _signalBus.Fire(new OpenWindowSignal(WindowKey.InviteWindow, new InviteWindowData {
                 PartyId = _partyId,
                 DisplayName = _inviteDisplayName,
@@ -224,7 +207,7 @@ namespace Main.UI.Presenters {
                 {
                     var userInfo = new UserInfoData {
                         UserId = id,
-                        Username = username
+                        DisplayName = username
                     };
 
                     _userInfoDatas.Add(userInfo);
@@ -245,12 +228,22 @@ namespace Main.UI.Presenters {
             return _mainUIConfig.Prefab.Height;
         }
 
-        private void SendInvite(StartWindowUserCellView view) {
-            if (!_hashSet.Contains(view)) {
-                _hashSet.Add(view);
-            }
-            
+        private async void OnSendInviteClick(UserInfoData data, StartWindowUserCellView view) {
             view.SetSendText();
+
+            var party = await _nakamaService.CreateParty();
+            await _nakamaService.CreateMatch(party.Id);
+
+            _appConfig.PawnColor = (int)PawnColor.White;
+            await _nakamaService.SendPartyToUser(data.UserId, party);
+            
+            var inviteData = new InviteData {
+                UserId = data.UserId,
+                DisplayName = data.DisplayName,
+                MatchId = party.Id
+            };
+            
+            _globalScope.SendedInvites.Add(data.UserId, inviteData);
         }
 
         public EnhancedScrollerCellView GetCellView(EnhancedScroller scroller, int dataIndex, int cellIndex) {
@@ -259,10 +252,10 @@ namespace Main.UI.Presenters {
             var data = _userInfoDatas[dataIndex];
             
             view.Init();
-            view.SetNickname(data.Username);
-            view.SubscribeOnClick(data.UserId, _onUserPlayClick, _onOpponentFind, _onSendInvite);
+            view.SetNickname(data.DisplayName);
+            view.SubscribeOnClick(data, _onSendInviteClick);
 
-            if (_hashSet.Contains(view)) {
+            if (_globalScope.SendedInvites.ContainsKey(data.UserId)) {
                 view.SetSendText();
             }
 

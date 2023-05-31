@@ -109,7 +109,7 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
             var opponentWinsCount = await _nakamaService.ListStorageObjects<PlayerResults>("players", "wins", opponentId);
             View.SetOpponentWins(opponentWinsCount.Data.Count.ToString());
             
-            _appConfig.Opponent = opponentUserInfo.DisplayName;
+            _appConfig.OpponentDisplayName = opponentUserInfo.DisplayName;
             View.SetOpponentName(opponentUserInfo.DisplayName);
             
             _nakamaService.SubscribeToMessages(OnChatMessage);

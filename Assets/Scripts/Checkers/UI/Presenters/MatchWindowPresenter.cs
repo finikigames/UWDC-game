@@ -74,11 +74,11 @@ namespace Checkers.UI.Presenters {
 
             if (_appConfig.PawnColor == (int) PawnColor.Black) {
                 View.SetOpponentName(me.User.DisplayName);
-                View.SetYourName(_appConfig.Opponent);
+                View.SetYourName(_appConfig.OpponentDisplayName);
             }
             else {
                 View.SetYourName(me.User.DisplayName);
-                View.SetOpponentName(_appConfig.Opponent);
+                View.SetOpponentName(_appConfig.OpponentDisplayName);
             }
         }
 
