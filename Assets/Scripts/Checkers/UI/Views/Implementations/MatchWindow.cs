@@ -63,7 +63,13 @@ namespace Checkers.UI.Views.Implementations {
         public void SetTimerTime(int time) {
             _turnTimer.text = time.ToString();
             
-            if (time <= 5 && !tweenStarted)
+            if (time > 5)
+            {
+                tweenStarted = false;
+                _turnTimer.DOColor(Color.white, 1);
+                _turnTimer.transform.DOScale(1, 1);
+            }
+            else  if (time <= 5 && !tweenStarted)
             {
                 tweenStarted = true;
                 _turnTimer.DOColor(Color.red, 1);
@@ -74,8 +80,6 @@ namespace Checkers.UI.Views.Implementations {
         public void ResetBars() {
             _playerChekersBar.ResetBar();
             _opponentChekersBar.ResetBar();
-
-            tweenStarted = false;
         }
     }
 }
