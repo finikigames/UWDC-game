@@ -74,7 +74,7 @@ namespace Checkers.Services {
             
             _nakamaService.SubscribeToMatchState(OnMatchState);
             _nakamaService.SubscribeToMatchPresence(OnMatchPresence);
-            _sceneSettings.TurnHandler.OnEndGame += (s) => _endGame = true;
+            _sceneSettings.TurnHandler.OnEndGame += (s, r) => _endGame = true;
             
             turnHandler.OnPawnCheck += OnPawnCheck;
             turnHandler.OnEndGame += OnEndGame;
@@ -137,7 +137,7 @@ namespace Checkers.Services {
 
             _someoneLeaved = false;
             
-            _signalBus.Fire(new OpenWindowSignal(WindowKey.WinWindow, new WinWindowData()));
+            _signalBus.Fire(new OpenWindowSignal(WindowKey.WinWindow, new WinWindowData{Reason = WinLoseReason.Concide}));
         }
 
         private void CheckInput() {
@@ -229,16 +229,16 @@ namespace Checkers.Services {
             copy.transform.DOScale(Vector3.one / 1.5f, 1f);
         }
 
-        private void OnEndGame(PawnColor color) {
+        private void OnEndGame(PawnColor color, WinLoseReason reason) {
             if (color != _mainColor) {
                 _schedulerService
                     .StartSequence()
-                    .Append(0.3f, () => { _signalBus.Fire(new OpenWindowSignal(WindowKey.WinWindow, new WinWindowData()));});
+                    .Append(0.3f, () => { _signalBus.Fire(new OpenWindowSignal(WindowKey.WinWindow, new WinWindowData{Reason =  reason}));});
             }
             else {
                 _schedulerService
                     .StartSequence()
-                    .Append(0.3f, () => { _signalBus.Fire(new OpenWindowSignal(WindowKey.LoseWindow, new LoseWindowData()));});
+                    .Append(0.3f, () => { _signalBus.Fire(new OpenWindowSignal(WindowKey.LoseWindow, new LoseWindowData{Reason = reason}));});
             }
         }
     }

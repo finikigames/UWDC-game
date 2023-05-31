@@ -53,7 +53,7 @@ namespace Checkers.UI.Presenters {
             View.ResetBars();
 
             _sceneSettings.PawnMover.OnTurnEnd += TurnChange;
-            _sceneSettings.TurnHandler.OnEndGame += (s) => _timerService.RemoveTimer(TurnId);
+            _sceneSettings.TurnHandler.OnEndGame += (s, r) => _timerService.RemoveTimer(TurnId);
             _timerService.StartTimer(TurnId, 30f, TurnTimeOut, false, View.SetTimerTime);
             
             SetBarsPosition();
@@ -108,7 +108,7 @@ namespace Checkers.UI.Presenters {
 
         private void TurnTimeOut() {
             var winner = _sceneSettings.TurnHandler.Turn == PawnColor.Black ? PawnColor.Black : PawnColor.White;
-            _sceneSettings.TurnHandler.OnEndGame?.Invoke(winner);
+            _sceneSettings.TurnHandler.OnEndGame?.Invoke(winner, WinLoseReason.Timeout);
         }
 
         private async UniTask SetBarsPosition() {

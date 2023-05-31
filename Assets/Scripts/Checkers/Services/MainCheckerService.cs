@@ -4,6 +4,7 @@ using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Global.Enums;
 using Global.Scheduler.Base;
+using Global.Window.Enums;
 using UnityEngine;
 using Zenject;
 
@@ -57,7 +58,7 @@ namespace Checkers.Services {
             copy.transform.DOPath(waypoints, 1, PathType.CubicBezier, PathMode.Ignore).SetEase(Ease.Linear).onComplete += () => { Object.Destroy(copy); };
         }
 
-        private async void OnEndGame(PawnColor color) {
+        private async void OnEndGame(PawnColor color, WinLoseReason reason) {
             _schedulerService
                 .StartSequence()
                 .Append(0.3f, () => { StartAsync(); });
