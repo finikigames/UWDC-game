@@ -24,10 +24,6 @@ using UnityEngine.Scripting;
 using Zenject;
 
 namespace Main.UI.Presenters {
-    public class PlayerResults {
-        public List<string> Data = new ();
-    }
-    
     [Preserve]
     public class StartWindowPresenter : BaseWindowPresenter<IStartWindow, StartWindowData>,
                                         IEnhancedScrollerDelegate,
@@ -86,10 +82,11 @@ namespace Main.UI.Presenters {
             _onUserPlayClick += SendPartyToUser;
 
             var wins = await _nakamaService.ListStorageObjects<PlayerResults>("players", "wins");
-            
-            wins.Data.Add(Guid.NewGuid().ToString());
+            var loses = await _nakamaService.ListStorageObjects<PlayerResults>("players", "loses");
 
-            await _nakamaService.WriteStorageObject("players", "wins", wins);
+            View.SetWinsCount(wins.Data.Count);
+            View.SetLosesCount(loses.Data.Count);
+            
             View.OnStartClick(OnStartClick);
 
             var tournament = await _nakamaService.GetTournament(_tournamentId);
@@ -116,7 +113,6 @@ namespace Main.UI.Presenters {
             View.SetScrollerDelegate(this);
 
             _nakamaService.SubscribeToMessages(MessagesListener);
-            _nakamaService.SubscribeToPartyPresence(PartyPresenceListener);
             
             OnUsersUpdate();
             _timerService.StartTimer("updateUsersTimer", 10, OnUsersUpdate, true);
@@ -132,10 +128,6 @@ namespace Main.UI.Presenters {
 
             _appConfig.PawnColor = (int)PawnColor.White;
             await _nakamaService.SendPartyToUser(userId, party);
-        }
-
-        private void PartyPresenceListener(IPartyPresenceEvent presenceEvent) {
-            
         }
 
         private void MessagesListener(IApiChannelMessage m) {
@@ -257,7 +249,6 @@ namespace Main.UI.Presenters {
             _updateService.UnregisterUpdate(this);
             
             _nakamaService.UnsubscribeFromMessages(MessagesListener);
-            _nakamaService.UnsubscribeFromPartyPresence(PartyPresenceListener);
         }
     }
 }

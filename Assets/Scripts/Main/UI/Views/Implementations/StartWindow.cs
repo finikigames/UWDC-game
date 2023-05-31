@@ -76,6 +76,14 @@ namespace Main.UI.Views.Implementations {
             _scroller.ReloadData();
         }
 
+        public void SetWinsCount(int wins) {
+            _winsCountText.text = wins.ToString();
+        }
+
+        public void SetLosesCount(int loses) {
+            _looseCountText.text = loses.ToString();
+        }
+
         public void SetAllMembersCount(int count) {
             _allMembersCount.text = count.ToString();
         }

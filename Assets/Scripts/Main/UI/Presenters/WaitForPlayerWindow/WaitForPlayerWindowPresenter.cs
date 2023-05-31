@@ -9,7 +9,6 @@ using Main.UI.Data.WaitForPlayerWindow;
 using Main.UI.Views.Base.WaitForPlayerWindow;
 using Nakama;
 using Server.Services;
-using UnityEngine;
 using UnityEngine.Scripting;
 using Zenject;
 
