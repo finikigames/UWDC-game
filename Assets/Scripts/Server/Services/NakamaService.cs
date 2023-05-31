@@ -50,7 +50,7 @@ namespace Server.Services {
         }
 
         public async UniTask<IMatchmakerTicket> AddMatchmaker() {
-            return await _socket.AddMatchmakerAsync(minCount: 1, maxCount: 1);
+            return await _socket.AddMatchmakerAsync(minCount: 2, maxCount: 2);
         }
 
         public async UniTask RemoveMatchmaker(IMatchmakerTicket ticket) {
