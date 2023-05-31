@@ -5,6 +5,7 @@ using Global.Window.Base;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 namespace Checkers.UI.Views.Implementations {
     public class MatchWindow : BaseWindow, 
@@ -18,6 +19,8 @@ namespace Checkers.UI.Views.Implementations {
         [SerializeField] private TextMeshProUGUI _turnTimer;
         [SerializeField] private PlayerChekersBar _opponentChekersBar;
         [SerializeField] private PlayerChekersBar _playerChekersBar;
+
+        private bool tweenStarted;
 
         protected override void OnEnable() {
             _showState = Core.MVP.Base.Enums.ShowState.Hidden;
@@ -59,11 +62,20 @@ namespace Checkers.UI.Views.Implementations {
 
         public void SetTimerTime(int time) {
             _turnTimer.text = time.ToString();
+            
+            if (time <= 5 && !tweenStarted)
+            {
+                tweenStarted = true;
+                _turnTimer.DOColor(Color.red, 1);
+                _turnTimer.transform.DOScale(1.25f, .5f).SetEase(Ease.InOutSine).SetLoops(-1, LoopType.Yoyo);
+            }
         }
 
         public void ResetBars() {
             _playerChekersBar.ResetBar();
             _opponentChekersBar.ResetBar();
+
+            tweenStarted = false;
         }
     }
 }
