@@ -27,6 +27,9 @@ namespace Main.UI.Views.Implementations.WaitForPlayerWindow {
         [SerializeField]
         private Button _returnButton;
 
+        [SerializeField]
+        private TextMeshProUGUI _timerText;
+
         protected override void OnEnable() {
             _showState = Core.MVP.Base.Enums.ShowState.Hidden;
 
@@ -68,7 +71,7 @@ namespace Main.UI.Views.Implementations.WaitForPlayerWindow {
         }
 
         public void SetTimerText(string text) {
-            throw new NotImplementedException();
+            _timerText.text = text;
         }
     }
 }

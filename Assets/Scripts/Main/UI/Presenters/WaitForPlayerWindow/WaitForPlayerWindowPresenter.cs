@@ -85,8 +85,6 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
         private async UniTask AsyncLoad() {
             View.HideReturnButton();
 
-            _matchChannel = await _nakamaService.JoinChat(_matched.MatchId, ChannelType.DirectMessage, false);
-
             var users = _matched.Users;
 
             var me = _nakamaService.GetMe();

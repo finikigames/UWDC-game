@@ -1118,7 +1118,7 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 0}
+  m_TargetGraphic: {fileID: 7524758503695173239}
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
@@ -1614,6 +1614,7 @@ MonoBehaviour:
   _yourWins: {fileID: 5085241923855986202}
   _opponentWins: {fileID: 1307382072991913814}
   _returnButton: {fileID: 1204764985861068097}
+  _timerText: {fileID: 6198971479905294848}
 --- !u!1 &5059372596377171047
 GameObject:
   m_ObjectHideFlags: 0
