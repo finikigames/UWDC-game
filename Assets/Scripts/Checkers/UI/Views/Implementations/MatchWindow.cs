@@ -20,7 +20,7 @@ namespace Checkers.UI.Views.Implementations {
         [SerializeField] private PlayerChekersBar _opponentChekersBar;
         [SerializeField] private PlayerChekersBar _playerChekersBar;
 
-        private bool tweenStarted;
+        private bool _tweenStarted;
         private bool _isWhite;
 
         protected override void OnEnable() {
@@ -32,6 +32,11 @@ namespace Checkers.UI.Views.Implementations {
             ChangeHideMechanism(new ChainHideMechanism(
                 new FadeHideMechanism(_group),
                 new CustomHideMechanism(HideBlack)));
+        }
+
+        public override void Initialize() {
+            _turnTimer.color = Color.white;
+            _turnTimer.transform.localScale = Vector3.one;
         }
 
         public void ProvideCamera(UnityEngine.Camera camera) {
@@ -69,15 +74,9 @@ namespace Checkers.UI.Views.Implementations {
         public void SetTimerTime(int time) {
             _turnTimer.text = time.ToString();
             
-            if (time > 5)
+            if (time <= 5 && !_tweenStarted)
             {
-                tweenStarted = false;
-                _turnTimer.DOColor(Color.white, 1);
-                _turnTimer.transform.DOScale(1, 1);
-            }
-            else  if (time <= 5 && !tweenStarted)
-            {
-                tweenStarted = true;
+                _tweenStarted = true;
                 _turnTimer.DOColor(Color.red, 1);
                 _turnTimer.transform.DOScale(1.25f, .5f).SetEase(Ease.InOutSine).SetLoops(-1, LoopType.Yoyo);
             }
