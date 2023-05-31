@@ -50,7 +50,6 @@ namespace Checkers.UI.Presenters {
             
             View.ProvideCamera(UnityEngine.Camera.main);
             _needNicknameInitialize = true;
-            View.ResetBars();
 
             _sceneSettings.PawnMover.OnTurnEnd += TurnChange;
             _sceneSettings.TurnHandler.OnEndGame += (s, r) => _timerService.RemoveTimer(TurnId);
@@ -97,9 +96,8 @@ namespace Checkers.UI.Presenters {
         private void CaptureChecker(TurnData turnData) {
             if (!turnData.Capture) return;
             
-            bool isPlayer = _sceneSettings.TurnHandler.Turn == _sceneSettings.TurnHandler.YourColor;
-            
-            View.GetLostCheсker(isPlayer);
+            bool isYourTurn = _sceneSettings.TurnHandler.Turn == _sceneSettings.TurnHandler.YourColor;
+            View.GetLostCheсker(isYourTurn);
         }
 
         private void TurnChange() {
@@ -112,9 +110,13 @@ namespace Checkers.UI.Presenters {
         }
 
         private async UniTask SetBarsPosition() {
-            await UniTask.Delay(500);
-            _sceneSettings._playerBar = View.GetSendPawnPosition(true);
-            _sceneSettings._opponentBar = View.GetSendPawnPosition(false);
+            await UniTask.Delay(50);
+           
+            bool isWhite = _sceneSettings.TurnHandler.StartingPawnColor == _sceneSettings.TurnHandler.YourColor;
+            View.ResetBars(isWhite);
+
+            _sceneSettings._playerBar = View.GetSendPawnPosition(isWhite);
+            _sceneSettings._opponentBar = View.GetSendPawnPosition(!isWhite);
         }
     }
 }
