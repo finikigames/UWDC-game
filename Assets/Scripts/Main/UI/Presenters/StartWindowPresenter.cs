@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using Core.Ticks.Interfaces;
 using Cysharp.Threading.Tasks;
 using EnhancedUI.EnhancedScroller;
+using Global;
 using Global.ConfigTemplate;
 using Global.Context;
 using Global.Enums;
 using Global.Services.Timer;
 using Global.StateMachine.Base.Enums;
+using Global.Window;
 using Global.Window.Base;
 using Global.Window.Enums;
 using Global.Window.Signals;
@@ -34,6 +36,7 @@ namespace Main.UI.Presenters {
         private IUpdateService _updateService;
         private AppConfig _appConfig;
         private SignalBus _signalBus;
+        private WindowService _windowService;
 
         private string _globalGroupName = "globalGroup";
         private string _tournamentId = "4ec4f126-3f9d-11e7-84ef-b7c182b36521";
@@ -61,6 +64,7 @@ namespace Main.UI.Presenters {
             _mainUIConfig = Resolve<MainUIConfig>(GameContext.Main);
             _updateService = Resolve<IUpdateService>(GameContext.Project);
             _appConfig = Resolve<AppConfig>(GameContext.Project);
+            _windowService = Resolve<WindowService>(GameContext.Project);
         }
 
         public override async UniTask InitializeOnce() {
@@ -81,6 +85,8 @@ namespace Main.UI.Presenters {
             _onUserPlayClick = null;
             _onUserPlayClick += SendPartyToUser;
 
+            await _nakamaService.JoinTournament(_tournamentId);
+            
             var wins = await _nakamaService.ListStorageObjects<PlayerResults>("players", "wins");
             var loses = await _nakamaService.ListStorageObjects<PlayerResults>("players", "loses");
 
@@ -148,6 +154,8 @@ namespace Main.UI.Presenters {
             }
             
             if (content.TryGetValue("partyId", out var value)) {
+                if (_windowService.IsWindowOpened(WindowKey.WaitForPlayerWindow)) return;
+                
                 _partyId = value;
                 _inviteSenderUserId = senderUserId;
                 _inviteDisplayName = content["senderDisplayName"];

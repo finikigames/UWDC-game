@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Main.UI.Presenters {
+namespace Global {
     public class PlayerResults {
         public List<string> Data = new ();
     }

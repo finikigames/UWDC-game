@@ -1,21 +1,35 @@
-﻿using Global.VisibilityMechanisms;
+﻿using System;
+using Global.VisibilityMechanisms;
 using Global.Window.Base;
 using Main.UI.Views.Base.WaitForPlayerWindow;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Main.UI.Views.Implementations.WaitForPlayerWindow {
-    public class WaitForPlayerWindow : BaseWindow, 
+    public class WaitForPlayerWindow : BaseWindow,
                                        IWaitForPlayerWindow {
-        [SerializeField] private CanvasGroup _group;
-        [SerializeField] private TextMeshProUGUI _yourDisplayName;
-        [SerializeField] private TextMeshProUGUI _opponentDisplayName;
-        [SerializeField] private TextMeshProUGUI _yourWins;
-        [SerializeField] private TextMeshProUGUI _opponentWins;
+        [SerializeField]
+        private CanvasGroup _group;
+
+        [SerializeField]
+        private TextMeshProUGUI _yourDisplayName;
+
+        [SerializeField]
+        private TextMeshProUGUI _opponentDisplayName;
+
+        [SerializeField]
+        private TextMeshProUGUI _yourWins;
+
+        [SerializeField]
+        private TextMeshProUGUI _opponentWins;
+
+        [SerializeField]
+        private Button _returnButton;
 
         protected override void OnEnable() {
             _showState = Core.MVP.Base.Enums.ShowState.Hidden;
-             
+
             ChangeShowMechanism(new ChainShowMechanism(
                 new FadeShowMechanism(_group),
                 new CustomShowMechanism(ShowBlack)));
@@ -24,7 +38,20 @@ namespace Main.UI.Views.Implementations.WaitForPlayerWindow {
                 new CustomHideMechanism(HideBlack)));
         }
 
-        public void SetYourName(string text) {
+        public void ShowReturnButton() {
+            _returnButton.gameObject.SetActive(true);
+        }
+
+        public void HideReturnButton() {
+            _returnButton.gameObject.SetActive(false);
+        }
+
+        public void SubscribeToReturnButton(Action callback) {
+            _returnButton.onClick.RemoveAllListeners();
+            _returnButton.onClick.AddListener(() => callback?.Invoke());
+        }
+
+    public void SetYourName(string text) {
             _yourDisplayName.text = text;
         }
 
@@ -38,6 +65,10 @@ namespace Main.UI.Views.Implementations.WaitForPlayerWindow {
 
         public void SetOpponentWins(string text) {
             _opponentWins.text = text;
+        }
+
+        public void SetTimerText(string text) {
+            throw new NotImplementedException();
         }
     }
 }

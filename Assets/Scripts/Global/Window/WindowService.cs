@@ -30,6 +30,10 @@ namespace Global.Window {
             _windowsByUid = new();
             SubscribeSignals();
         }
+
+        public bool IsWindowOpened(WindowKey key) {
+            return IsWindowLoaded(key) || _windowsByUid[key].State == WindowState.Opened;
+        }
         
         public void RegisterContainers(List<UIContainerToGameObjectElement> containers) {
             _containers ??= new Dictionary<UIContainerType, GameObject>();

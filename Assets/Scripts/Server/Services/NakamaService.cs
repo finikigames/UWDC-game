@@ -127,8 +127,8 @@ namespace Server.Services {
             _createdParties.Add(userId, party);
         }
 
-        public async UniTask<IChannel> JoinChat(string groupId) {
-            _globalChannel = await _socket.JoinChatAsync(groupId, ChannelType.Group, true);
+        public async UniTask<IChannel> JoinChat(string groupId, ChannelType type = ChannelType.Group,bool persistence = true) {
+            _globalChannel = await _socket.JoinChatAsync(groupId, type, persistence);
             return _globalChannel;
         }
 
@@ -172,12 +172,18 @@ namespace Server.Services {
             await _client.WriteStorageObjectsAsync(_session, new [] { writeObject });
         }
 
-        public async UniTask<IApiStorageObjectList> ListStorageObjects(string id) {
-            return await _client.ListUsersStorageObjectsAsync(_session, id, _session.UserId);
+        public async UniTask<IApiStorageObjectList> ListStorageObjects(string id, string userId = null) {
+            if (string.IsNullOrEmpty(userId)) {
+                userId = _session.UserId;
+            }
+            return await _client.ListUsersStorageObjectsAsync(_session, id, userId);
         }
         
-        public async UniTask<T> ListStorageObjects<T>(string collectionId, string key) where T : class, new() {
-            var objects = await _client.ListUsersStorageObjectsAsync(_session, collectionId, _session.UserId);
+        public async UniTask<T> ListStorageObjects<T>(string collectionId, string key, string userId = null) where T : class, new() {
+            if (string.IsNullOrEmpty(userId)) {
+                userId = _session.UserId;
+            }
+            var objects = await _client.ListUsersStorageObjectsAsync(_session, collectionId, userId, limit:2);
 
             foreach (var obj in objects.Objects) {
                 if (obj.Key != key) continue;
@@ -199,6 +205,15 @@ namespace Server.Services {
         
         public async UniTask<IApiAccount> GetUserInfo() {
             return await _client.GetAccountAsync(_session);
+        }
+
+        public async UniTask<IApiUser> GetUserInfo(string userId) {
+            var users =  await _client.GetUsersAsync(_session, new [] {userId});
+            foreach (var user in users.Users) {
+                return user;
+            }
+
+            return null;
         }
         
         public async UniTask<IApiGroup> CreateGroup(string groupName) {
@@ -239,9 +254,6 @@ namespace Server.Services {
 
         public async UniTask<IApiGroupUserList> GetGroupUsers(string groupName, int limit, string cursor = "") {
             return await _client.ListGroupUsersAsync(_session, groupName, 2, limit, cursor);
-        }
-
-        public async UniTask UpdateUserStatus() {
         }
         
         public async UniTask<List<IGroupUserListGroupUser>> GetGroupUsersWithoutMe(string groupName, int limit, string cursor = "") {

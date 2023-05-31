@@ -1,10 +1,11 @@
-﻿using UnityEngine.Analytics;
+﻿using Unity.Services.Core;
+using UnityEngine.Analytics;
 using Zenject;
 
 namespace Global.Services {
     public class AnalyticsService : IInitializable {
-        public void Initialize() {
-            
+        public async void Initialize() {
+            //await UnityServices.InitializeAsync();
         }
 
         public void SessionStart() {
