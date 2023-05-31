@@ -101,6 +101,18 @@ namespace Server.Services {
             await _socket.JoinPartyAsync(partyId);
         }
 
+        public async UniTask SendMatchmakingInfo(string opponent, string value) {
+            var senderUserId = _me.User.Id;
+            
+            var content = new Dictionary<string, string>() {
+                {"senderUserId", senderUserId},
+                {"ValueDropped", value},
+                {"TargetUser", opponent}
+            };
+
+            await _socket.WriteChatMessageAsync(_globalChannel, content.ToJson());
+        }
+
         public async UniTask SendUserConfirmation(string partyId, string userId) {
             var senderUserId = _me.User.Id;
             

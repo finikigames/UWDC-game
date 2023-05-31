@@ -1,9 +1,11 @@
-﻿using Core.Extensions;
+﻿using System.Collections.Generic;
+using Core.Extensions;
 using Core.Ticks.Interfaces;
 using Cysharp.Threading.Tasks;
 using Global;
 using Global.ConfigTemplate;
 using Global.Context;
+using Global.Enums;
 using Global.Scheduler.Base;
 using Global.Services.Timer;
 using Global.StateMachine.Base.Enums;
@@ -12,7 +14,9 @@ using Main.UI.Data;
 using Main.UI.Data.WaitForPlayerWindow;
 using Main.UI.Views.Base.WaitForPlayerWindow;
 using Nakama;
+using Nakama.TinyJson;
 using Server.Services;
+using UnityEngine;
 using UnityEngine.Scripting;
 using Zenject;
 
@@ -32,6 +36,9 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
         private IMatchmakerTicket _matchmakerTicket;
         private IMatchmakerMatched _matched;
         private IChannel _matchChannel;
+
+        private int _matchmakingValue;
+        private string _opponentId;
 
         public WaitForPlayerWindowPresenter(ContextService service) : base(service) {
         }
@@ -103,7 +110,12 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
             
             _nakamaService.SubscribeToMessages(OnChatMessage);
             CloseThisWindow();
-            
+
+            var value = Random.Range(0, 1000000);
+            _matchmakingValue = value;
+            _opponentId = opponentId;
+            _nakamaService.SendMatchmakingInfo(opponentId, _matchmakingValue.ToString());
+
             _timerService.StartTimer("waiting_for_play", 5, null, false, time => View.SetTimerText(time.ToString()));
             
             _schedulerService
@@ -123,7 +135,28 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
         }
 
         private void OnChatMessage(IApiChannelMessage message) {
+            var content = message.Content.FromJson<Dictionary<string, string>>();
             
+            var profile = _nakamaService.GetMe();
+            if (content.TryGetValue("TargetUser", out var targetUser)) {
+                if (profile.User.Id != targetUser) return;
+            }
+            
+            if (content.TryGetValue("ValueDropped", out var senderValue)) {
+                if (_matchmakingValue > int.Parse(senderValue)) {
+                    _appConfig.PawnColor = (int)PawnColor.White;
+                    return;
+                }
+
+                if (_matchmakingValue < int.Parse(senderValue)) {
+                    _appConfig.PawnColor = (int)PawnColor.Black;
+                    return;
+                }
+                
+                var value = Random.Range(0, 1000000);
+                _matchmakingValue = value;
+                _nakamaService.SendMatchmakingInfo(_opponentId, _matchmakingValue.ToString());
+            }
         }
 
         private void OnMatchmakerMatched(IMatchmakerMatched matched) {
