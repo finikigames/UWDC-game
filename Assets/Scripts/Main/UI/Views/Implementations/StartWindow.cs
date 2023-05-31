@@ -36,13 +36,17 @@ namespace Main.UI.Views.Implementations {
             ChangeHideMechanism(new FadeHideMechanism(_group));
         }
 
-        public void OnTextChange(Action callback)
-        {
+        public void OnTextChange(Action callback) {
+            _searchInputField.onValueChanged.RemoveAllListeners();
             _searchInputField.onValueChanged.AddListener(str => callback?.Invoke());
         }
 
-        public void Init()
-        {
+        public void OnStartClick(Action callback) {
+            _startButton.onClick.RemoveAllListeners();
+            _startButton.onClick.AddListener(() => callback?.Invoke());
+        }
+
+        public void Init() {
             _searchInputField.onValueChanged.RemoveAllListeners();
                 
             ChooseTab(false);

@@ -14,6 +14,7 @@ using Global.Window.Enums;
 using Global.Window.Signals;
 using Main.ConfigTemplate;
 using Main.UI.Data;
+using Main.UI.Data.WaitForPlayerWindow;
 using Main.UI.Views.Base;
 using Main.UI.Views.Implementations;
 using Nakama;
@@ -31,7 +32,6 @@ namespace Main.UI.Presenters {
         private NakamaService _nakamaService;
         private TimerService _timerService;
         private MainUIConfig _mainUIConfig;
-        private ProfileGetService _profileService;
         private IUpdateService _updateService;
         private AppConfig _appConfig;
         private SignalBus _signalBus;
@@ -59,7 +59,6 @@ namespace Main.UI.Presenters {
             _nakamaService = Resolve<NakamaService>(GameContext.Project);
             _timerService = Resolve<TimerService>(GameContext.Project);
             _mainUIConfig = Resolve<MainUIConfig>(GameContext.Main);
-            _profileService = Resolve<ProfileGetService>(GameContext.Project);
             _updateService = Resolve<IUpdateService>(GameContext.Project);
             _appConfig = Resolve<AppConfig>(GameContext.Project);
         }
@@ -83,6 +82,8 @@ namespace Main.UI.Presenters {
             _onUserPlayClick = null;
             _onUserPlayClick += SendPartyToUser;
             
+            View.OnStartClick(OnStartClick);
+            
             _onOpponentFind = null;
             _onOpponentFind += (name) => _appConfig.Opponent = name;
             
@@ -93,6 +94,10 @@ namespace Main.UI.Presenters {
             
             OnUsersUpdate();
             _timerService.StartTimer("updateUsersTimer", 10, OnUsersUpdate, true);
+        }
+
+        private void OnStartClick() {
+            _signalBus.Fire(new OpenWindowSignal(WindowKey.WaitForPlayerWindow, new WaitForPlayerWindowData()));
         }
 
         private async void SendPartyToUser(string userId) {
@@ -223,7 +228,7 @@ namespace Main.UI.Presenters {
             return view;
         }
 
-        public override void Dispose() {
+        public override async UniTask Dispose() {
             _timerService.RemoveTimer("updateUsersTimer");
             
             _updateService.UnregisterUpdate(this);

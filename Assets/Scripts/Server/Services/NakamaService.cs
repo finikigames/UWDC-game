@@ -49,6 +49,22 @@ namespace Server.Services {
             return _me;
         }
 
+        public async UniTask<IMatchmakerTicket> AddMatchmaker() {
+            return await _socket.AddMatchmakerAsync(minCount: 1, maxCount: 1);
+        }
+
+        public async UniTask RemoveMatchmaker(IMatchmakerTicket ticket) {
+            await _socket.RemoveMatchmakerAsync(ticket);
+        }
+
+        public void SubscribeToMatchmakerMatched(Action<IMatchmakerMatched> callback) {
+            _socket.ReceivedMatchmakerMatched += callback;
+        }
+
+        public void UnsubscribeMatchmakerMatched(Action<IMatchmakerMatched> callback) {
+            _socket.ReceivedMatchmakerMatched -= callback;
+        }
+
         public async UniTask RemoveAllPartiesExcept(string userId) {
             foreach (var partyPair in _createdParties) {
                 if (partyPair.Key == userId) continue;
