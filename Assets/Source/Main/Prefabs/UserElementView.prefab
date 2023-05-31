@@ -540,6 +540,7 @@ MonoBehaviour:
   cellIdentifier: 
   _userNickname: {fileID: 236697860996579426}
   _clickButton: {fileID: 3820927384308097698}
+  _buttonText: {fileID: 6426253829346252370}
   Height: 100
 --- !u!1 &8566236944945253693
 GameObject:
