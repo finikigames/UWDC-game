@@ -43,6 +43,7 @@ namespace Main.UI.Presenters {
 
         private Action<string> _onUserPlayClick;
         private Action<string> _onOpponentFind;
+        private Action<StartWindowUserCellView> _onSendInvite;
 
         private bool _unhandledInvite;
         private bool _needLoad;
@@ -50,6 +51,8 @@ namespace Main.UI.Presenters {
         private string _inviteDisplayName;
         private string _approveSenderId;
         private string _inviteSenderUserId;
+
+        private HashSet<StartWindowUserCellView> _hashSet = new();
 
         public StartWindowPresenter(ContextService service) : base(service) {
         }
@@ -86,6 +89,9 @@ namespace Main.UI.Presenters {
             _onOpponentFind = null;
             _onOpponentFind += (name) => _appConfig.Opponent = name;
             
+            _onSendInvite = null;
+            _onSendInvite += SendInvite;
+            
             View.SetScrollerDelegate(this);
 
             _nakamaService.SubscribeToMessages(MessagesListener);
@@ -93,6 +99,8 @@ namespace Main.UI.Presenters {
             
             OnUsersUpdate();
             _timerService.StartTimer("updateUsersTimer", 10, OnUsersUpdate, true);
+            
+            _hashSet.Clear();
         }
 
         private async void SendPartyToUser(string userId) {
@@ -213,13 +221,27 @@ namespace Main.UI.Presenters {
             return _mainUIConfig.Prefab.Height;
         }
 
+        private void SendInvite(StartWindowUserCellView view) {
+            if (!_hashSet.Contains(view)) {
+                _hashSet.Add(view);
+            }
+            
+            view.SetSendText();
+        }
+
         public EnhancedScrollerCellView GetCellView(EnhancedScroller scroller, int dataIndex, int cellIndex) {
             StartWindowUserCellView view = scroller.GetCellView(_mainUIConfig.Prefab) as StartWindowUserCellView;
 
             var data = _userInfoDatas[dataIndex];
-            view.SetNickname(data.Username);
-            view.SubscribeOnClick(data.UserId, _onUserPlayClick, _onOpponentFind);
             
+            view.Init();
+            view.SetNickname(data.Username);
+            view.SubscribeOnClick(data.UserId, _onUserPlayClick, _onOpponentFind, _onSendInvite);
+
+            if (_hashSet.Contains(view)) {
+                view.SetSendText();
+            }
+
             return view;
         }
 
