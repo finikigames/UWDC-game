@@ -106,9 +106,6 @@ namespace Main.UI.Presenters {
 
             _appConfig.PawnColor = (int)PawnColor.White;
             await _nakamaService.SendPartyToUser(userId, party);
-
-            //_signalBus.Fire(new CloseWindowSignal(WindowKey.StartWindow));
-            //_signalBus.Fire(new ToCheckersMetaSignal{WithPlayer = true});
         }
 
         private void PartyPresenceListener(IPartyPresenceEvent presenceEvent) {
@@ -169,7 +166,6 @@ namespace Main.UI.Presenters {
         }
 
         private async UniTask LoadParty() {
-            _signalBus.Fire(new CloseWindowSignal(WindowKey.StartWindow));
             _signalBus.Fire(new ToCheckersMetaSignal{WithPlayer = true});
         }
         

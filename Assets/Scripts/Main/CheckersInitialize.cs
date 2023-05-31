@@ -3,6 +3,8 @@ using Core.Extensions;
 using Cysharp.Threading.Tasks;
 using Global.StateMachine;
 using Global.StateMachine.Base.Enums;
+using Global.Window.Enums;
+using Global.Window.Signals;
 using Main.UI.Data;
 using UnityEngine.SceneManagement;
 using Zenject;
@@ -30,6 +32,7 @@ namespace Main {
         public async UniTask LoadYourAsyncScene(ToCheckersMetaSignal signal) {
             var currentScene = SceneManager.GetActiveScene();
 
+            _signalBus.Fire(new CloseWindowSignal(WindowKey.StartWindow));
             PlayerPrefsX.SetBool("WithPlayer", signal.WithPlayer);
             await SceneManager.LoadSceneAsync("CheckersMain_online", LoadSceneMode.Additive);
 
