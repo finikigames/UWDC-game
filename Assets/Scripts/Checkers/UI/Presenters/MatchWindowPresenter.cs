@@ -13,6 +13,7 @@ using Global.Window.Base;
 using Global.Window.Enums;
 using Global.Window.Signals;
 using Server.Services;
+using UnityEngine;
 using UnityEngine.Scripting;
 
 namespace Checkers.UI.Presenters {
@@ -49,11 +50,12 @@ namespace Checkers.UI.Presenters {
             
             View.ProvideCamera(UnityEngine.Camera.main);
             _needNicknameInitialize = true;
-            View.ResetBars();
 
             _sceneSettings.PawnMover.OnTurnEnd += TurnChange;
-            _sceneSettings.TurnHandler.OnEndGame += (s) => _timerService.RemoveTimer(TurnId);
-            _timerService.StartTimer(TurnId, 10f, TurnTimeOut, false, View.SetTimerTime);
+            _sceneSettings.TurnHandler.OnEndGame += (s, r) => _timerService.RemoveTimer(TurnId);
+            _timerService.StartTimer(TurnId, 30f, TurnTimeOut, false, View.SetTimerTime);
+            
+            SetBarsPosition();
         }
 
         private void OnFleeClick() {
@@ -85,12 +87,17 @@ namespace Checkers.UI.Presenters {
             _timerService.RemoveTimer(TurnId);
         }
 
+        public Vector3 GetSendPawnCheckersBarPosition() {
+            bool isPlayer = _sceneSettings.TurnHandler.Turn == _sceneSettings.TurnHandler.YourColor;
+
+            return View.GetSendPawnPosition(isPlayer);
+        }
+
         private void CaptureChecker(TurnData turnData) {
             if (!turnData.Capture) return;
             
-            bool isPlayer = _sceneSettings.TurnHandler.Turn == _sceneSettings.TurnHandler.YourColor;
-            
-            View.GetLostCheсker(isPlayer);
+            bool isYourTurn = _sceneSettings.TurnHandler.Turn == _sceneSettings.TurnHandler.YourColor;
+            View.GetLostCheсker(isYourTurn);
         }
 
         private void TurnChange() {
@@ -99,7 +106,17 @@ namespace Checkers.UI.Presenters {
 
         private void TurnTimeOut() {
             var winner = _sceneSettings.TurnHandler.Turn == PawnColor.Black ? PawnColor.Black : PawnColor.White;
-            _sceneSettings.TurnHandler.OnEndGame?.Invoke(winner);
+            _sceneSettings.TurnHandler.OnEndGame?.Invoke(winner, WinLoseReason.Timeout);
+        }
+
+        private async UniTask SetBarsPosition() {
+            await UniTask.Delay(50);
+           
+            bool isWhite = _sceneSettings.TurnHandler.StartingPawnColor == _sceneSettings.TurnHandler.YourColor;
+            View.ResetBars(isWhite);
+
+            _sceneSettings._playerBar = View.GetSendPawnPosition(isWhite);
+            _sceneSettings._opponentBar = View.GetSendPawnPosition(!isWhite);
         }
     }
 }

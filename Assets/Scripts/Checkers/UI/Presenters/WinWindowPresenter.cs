@@ -23,11 +23,23 @@ namespace Checkers.UI.Presenters {
 
         protected override async UniTask LoadContent() {
             View.SubscribeToContinue(ToMain);
+            
+            var reasonText = GetWinReasonText(WindowData.Reason);
+            View.SetReasonText(reasonText);
         }
 
         private void ToMain() {
             _signalBus.Fire(new CloseWindowSignal(WindowKey.WinWindow));
             _signalBus.Fire(new ToMainSignal());
+        }
+        
+        private string GetWinReasonText(WinLoseReason reason) {
+            return reason switch {
+                WinLoseReason.Concide => "Ваш противник решил, что вы сильнее и сдался",
+                WinLoseReason.Rule => "Ваш противник уступил вам в ваших навыках",
+                WinLoseReason.Timeout => "Ваш противник задумался и решил отдохнуть",
+                _ => ""
+            };
         }
     }
 }

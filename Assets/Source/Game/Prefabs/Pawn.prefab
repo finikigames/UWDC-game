@@ -114,7 +114,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 186632635685788054}
+  - {fileID: 1583568465071403009}
   - {fileID: 7130058999717974999}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -149,7 +149,8 @@ MonoBehaviour:
   Crown: {fileID: 3246049399796633620, guid: 2489dd16575ee0741a1e7e32886a283f, type: 3}
   PromotionParticles: {fileID: 2816544923751914441, guid: 7342a11b65baa0346a1133b3bf406709, type: 3}
   PawnSelection: {fileID: 8418305190555947777, guid: 28e53d17c72331b4f8d05bc9156ca239, type: 3}
---- !u!1001 &1042227459034087712
+  Trail: {fileID: 0}
+--- !u!1001 &1808272346419439799
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -159,7 +160,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 928217881004038326, guid: c318a877bd06e5d449e2b005e8ee8a9f, type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 928217881004038326, guid: c318a877bd06e5d449e2b005e8ee8a9f, type: 3}
       propertyPath: m_LocalPosition.x
@@ -205,17 +206,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: Trail
       objectReference: {fileID: 0}
-    - target: {fileID: 8019767995426925453, guid: c318a877bd06e5d449e2b005e8ee8a9f, type: 3}
-      propertyPath: m_SortingOrder
-      value: 2
+    - target: {fileID: 3683521752275139061, guid: c318a877bd06e5d449e2b005e8ee8a9f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c318a877bd06e5d449e2b005e8ee8a9f, type: 3}
---- !u!4 &186632635685788054 stripped
+--- !u!4 &1583568465071403009 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 928217881004038326, guid: c318a877bd06e5d449e2b005e8ee8a9f, type: 3}
-  m_PrefabInstance: {fileID: 1042227459034087712}
+  m_PrefabInstance: {fileID: 1808272346419439799}
   m_PrefabAsset: {fileID: 0}

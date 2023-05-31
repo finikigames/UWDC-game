@@ -1,5 +1,6 @@
 ﻿using System;
 using Core.MVP.Base.Interfaces;
+using UnityEngine;
 
 namespace Checkers.UI.Views.Base {
     public interface IMatchWindow : IWindowView {
@@ -10,6 +11,7 @@ namespace Checkers.UI.Views.Base {
         void SetOpponentName(string opponentName);
         void GetLostCheсker(bool isPlayer);
         void SetTimerTime(int time);
-        void ResetBars();
+        void ResetBars(bool isWhite);
+        Vector3 GetSendPawnPosition(bool isPlayer);
     }
 }

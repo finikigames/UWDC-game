@@ -1,4 +1,5 @@
-﻿using DG.Tweening;
+﻿using Core.Extensions;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,17 +10,21 @@ namespace Checkers.UI.Views {
 
         public void ResetBar() {
             foreach (Transform checker in _checkersContainer) {
-                checker.gameObject.GetComponent<Image>().color = Color.white;
+                checker.gameObject.GetComponent<Image>().color =new Color(1,1,1,0);
             }
 
             _lostCheckers = 0;
         }
 
         public void DecreaseСhecker() {
-            var childIndex = _checkersContainer.childCount - _lostCheckers - 1;
+            var childIndex = _lostCheckers;
             var checker = _checkersContainer.GetChild(childIndex);
-            checker.gameObject.GetComponent<Image>().DOFade(0, 0.5f);
+            checker.gameObject.GetComponent<Image>().DOFade(1, 1f);
             _lostCheckers++;
+        }
+
+        public Vector3 GetPosition() {
+            return _checkersContainer.AsRectTransform().position;
         }
     }
 }

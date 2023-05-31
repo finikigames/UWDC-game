@@ -3,6 +3,7 @@ using Checkers.AI;
 using Checkers.Interfaces;
 using Checkers.Pawns;
 using Global.Enums;
+using Global.Window.Enums;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -13,7 +14,7 @@ namespace Checkers.Board
         public PawnColor StartingPawnColor;
 
         public Action<PawnColor, GameObject> OnPawnCheck;
-        public Action<PawnColor> OnEndGame;
+        public Action<PawnColor, WinLoseReason> OnEndGame;
 
         public int whitePawnCount;
         public int blackPawnCount;
@@ -69,7 +70,7 @@ namespace Checkers.Board
         }
 
         private void EndGame(PawnColor winnerPawnColor) {
-            OnEndGame?.Invoke(winnerPawnColor);
+            OnEndGame?.Invoke(winnerPawnColor, WinLoseReason.Rule);
         }
     }
 }

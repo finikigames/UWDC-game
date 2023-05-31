@@ -3,9 +3,8 @@ using Checkers.Board;
 using Checkers.ConfigTemplate;
 using Checkers.Settings;
 using Checkers.UI.Data;
-using Core.Extensions;
+using Checkers.UI.Presenters;
 using Core.Primitives;
-using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Global.ConfigTemplate;
 using Global.Enums;
@@ -75,7 +74,7 @@ namespace Checkers.Services {
             
             _nakamaService.SubscribeToMatchState(OnMatchState);
             _nakamaService.SubscribeToMatchPresence(OnMatchPresence);
-            _sceneSettings.TurnHandler.OnEndGame += (s) => _endGame = true;
+            _sceneSettings.TurnHandler.OnEndGame += (s, r) => _endGame = true;
             
             turnHandler.OnPawnCheck += OnPawnCheck;
             turnHandler.OnEndGame += OnEndGame;
@@ -138,7 +137,7 @@ namespace Checkers.Services {
 
             _someoneLeaved = false;
             
-            _signalBus.Fire(new OpenWindowSignal(WindowKey.WinWindow, new WinWindowData()));
+            _signalBus.Fire(new OpenWindowSignal(WindowKey.WinWindow, new WinWindowData{Reason = WinLoseReason.Concide}));
         }
 
         private void CheckInput() {
@@ -214,24 +213,32 @@ namespace Checkers.Services {
 
         private void SendPawn(Vector3 endPosition, GameObject copy) {
             var startPosition = copy.transform.position;
-     
-            var topPoint = new Vector3(endPosition.x, startPosition.y + 0.5f, endPosition.z); 
+            bool isPlayer = _sceneSettings.TurnHandler.Turn == _sceneSettings.TurnHandler.YourColor;
+            var checkerPosition = isPlayer ? _sceneSettings._opponentBar : _sceneSettings._playerBar;
+
+            var WP0 = new Vector3((checkerPosition.x + startPosition.x) / 2, startPosition.y, (startPosition.z + checkerPosition.z) / 2);
+            var A = new Vector3((checkerPosition.x + startPosition.x) / 2, startPosition.y, startPosition.z);
+            var B = new Vector3(WP0.x, WP0.y, WP0.z - 0.5f);
+            var C = new Vector3(WP0.x, WP0.y, WP0.z + 0.5f);
+            var D = new Vector3(WP0.x, startPosition.y, checkerPosition.z);
+            var WP1 = new Vector3(checkerPosition.x, startPosition.y, checkerPosition.z);
             
-            Vector3[] waypoints = new[] {topPoint, startPosition, topPoint, endPosition, topPoint, endPosition};
+            Vector3[] waypoints = new[] {WP0, A, B, WP1, C, D};
             
             copy.transform.DOPath(waypoints, 1, PathType.CubicBezier, PathMode.Ignore).SetEase(Ease.Linear).onComplete += () => { Object.Destroy(copy); };
+            copy.transform.DOScale(Vector3.one / 1.5f, 1f);
         }
 
-        private void OnEndGame(PawnColor color) {
+        private void OnEndGame(PawnColor color, WinLoseReason reason) {
             if (color != _mainColor) {
                 _schedulerService
                     .StartSequence()
-                    .Append(0.3f, () => { _signalBus.Fire(new OpenWindowSignal(WindowKey.WinWindow, new WinWindowData()));});
+                    .Append(0.3f, () => { _signalBus.Fire(new OpenWindowSignal(WindowKey.WinWindow, new WinWindowData{Reason =  reason}));});
             }
             else {
                 _schedulerService
                     .StartSequence()
-                    .Append(0.3f, () => { _signalBus.Fire(new OpenWindowSignal(WindowKey.LoseWindow, new LoseWindowData()));});
+                    .Append(0.3f, () => { _signalBus.Fire(new OpenWindowSignal(WindowKey.LoseWindow, new LoseWindowData{Reason = reason}));});
             }
         }
     }

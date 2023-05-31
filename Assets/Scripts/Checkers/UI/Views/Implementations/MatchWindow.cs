@@ -21,6 +21,7 @@ namespace Checkers.UI.Views.Implementations {
         [SerializeField] private PlayerChekersBar _playerChekersBar;
 
         private bool tweenStarted;
+        private bool _isWhite;
 
         protected override void OnEnable() {
             _showState = Core.MVP.Base.Enums.ShowState.Hidden;
@@ -56,7 +57,12 @@ namespace Checkers.UI.Views.Implementations {
         }
 
         public void GetLostCheсker(bool isPlayer) {
-            var bar = isPlayer ? _playerChekersBar : _opponentChekersBar;
+            var bar = isPlayer ? _opponentChekersBar : _playerChekersBar;
+
+            if (!_isWhite) {
+                bar = isPlayer ? _playerChekersBar : _opponentChekersBar;
+            }
+            
             bar.DecreaseСhecker();
         }
 
@@ -77,9 +83,16 @@ namespace Checkers.UI.Views.Implementations {
             }
         }
 
-        public void ResetBars() {
+        public void ResetBars(bool isWhite) {
+            _isWhite = isWhite;
+
             _playerChekersBar.ResetBar();
             _opponentChekersBar.ResetBar();
+        }
+
+        public Vector3 GetSendPawnPosition(bool isPlayer) {
+            var bar = isPlayer ? _playerChekersBar.GetPosition() : _opponentChekersBar.GetPosition();
+            return bar;
         }
     }
 }
