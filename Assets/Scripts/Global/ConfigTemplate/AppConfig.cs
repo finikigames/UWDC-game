@@ -6,5 +6,6 @@ namespace Global.ConfigTemplate {
     {
         public int PawnColor;
         public string Opponent;
+        public string OpponentUserId;
     }
 }

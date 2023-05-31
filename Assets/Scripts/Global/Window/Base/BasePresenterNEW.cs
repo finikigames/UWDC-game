@@ -68,7 +68,7 @@ namespace Global.Window.Base {
         public virtual void InitDependencies() {
         }
 
-        public virtual void Dispose() {
+        public virtual async UniTask Dispose() {
             
         }
 

@@ -7,9 +7,13 @@ namespace Main.UI.Views.Base {
         string SearchingPlayer { get; }
         void Init();
         void OnTextChange(Action callback);
+        void OnStartClick(Action callback);
+        void SetTimeTournament(string time);
         void ClearScroller();
         void SetScrollerDelegate(IEnhancedScrollerDelegate deleg);
         void ReloadData();
+        void SetWinsCount(int wins);
+        void SetLosesCount(int loses);
         void SetAllMembersCount(int count);
         void SetOnlineMembersCount(int count);
     }

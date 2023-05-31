@@ -35,7 +35,6 @@ namespace Main.UI.Presenters {
                 await _nakamaService.CreateMatch(WindowData.PartyId);
                 await _nakamaService.SendUserConfirmation(WindowData.PartyId, senderUserId);
                 _signalBus.Fire(new CloseWindowSignal(WindowKey.InviteWindow));
-                _signalBus.Fire(new CloseWindowSignal(WindowKey.StartWindow));
                 _signalBus.Fire(new ToCheckersMetaSignal{WithPlayer = true});
             });
             View.ChangeName(data);

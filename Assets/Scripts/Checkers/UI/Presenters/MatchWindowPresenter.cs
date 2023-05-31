@@ -82,7 +82,7 @@ namespace Checkers.UI.Presenters {
             }
         }
 
-        public override void Dispose() {
+        public override async UniTask Dispose() {
             _updateService.UnregisterUpdate(this);
             _timerService.RemoveTimer(TurnId);
         }

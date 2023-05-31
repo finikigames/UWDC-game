@@ -5,7 +5,9 @@ using Cysharp.Threading.Tasks;
 using Global.Services;
 using Nakama;
 using Nakama.TinyJson;
+using Newtonsoft.Json;
 using UnityEngine;
+using JsonWriter = Nakama.TinyJson.JsonWriter;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -49,6 +51,22 @@ namespace Server.Services {
             return _me;
         }
 
+        public async UniTask<IMatchmakerTicket> AddMatchmaker() {
+            return await _socket.AddMatchmakerAsync(minCount: 2, maxCount: 2);
+        }
+
+        public async UniTask RemoveMatchmaker(IMatchmakerTicket ticket) {
+            await _socket.RemoveMatchmakerAsync(ticket);
+        }
+
+        public void SubscribeToMatchmakerMatched(Action<IMatchmakerMatched> callback) {
+            _socket.ReceivedMatchmakerMatched += callback;
+        }
+
+        public void UnsubscribeMatchmakerMatched(Action<IMatchmakerMatched> callback) {
+            _socket.ReceivedMatchmakerMatched -= callback;
+        }
+
         public async UniTask RemoveAllPartiesExcept(string userId) {
             foreach (var partyPair in _createdParties) {
                 if (partyPair.Key == userId) continue;
@@ -83,6 +101,18 @@ namespace Server.Services {
             await _socket.JoinPartyAsync(partyId);
         }
 
+        public async UniTask SendMatchmakingInfo(string opponent, string value) {
+            var senderUserId = _me.User.Id;
+            
+            var content = new Dictionary<string, string>() {
+                {"senderUserId", senderUserId},
+                {"ValueDropped", value},
+                {"TargetUser", opponent}
+            };
+
+            await _socket.WriteChatMessageAsync(_globalChannel, content.ToJson());
+        }
+
         public async UniTask SendUserConfirmation(string partyId, string userId) {
             var senderUserId = _me.User.Id;
             
@@ -109,17 +139,29 @@ namespace Server.Services {
             _createdParties.Add(userId, party);
         }
 
-        public async UniTask<IChannel> JoinChat(string groupId) {
-            _globalChannel = await _socket.JoinChatAsync(groupId, ChannelType.Group, true);
+        public async UniTask<IChannel> JoinChat(string groupId, ChannelType type = ChannelType.Group,bool persistence = true) {
+            _globalChannel = await _socket.JoinChatAsync(groupId, type, persistence);
             return _globalChannel;
+        }
+
+        public async UniTask<IApiTournament> GetTournament(string id) {
+            var list = await _client.ListTournamentsAsync(_session, 1, 2, null, null, 1);
+
+            foreach (var tournament in list.Tournaments) {
+                if (tournament.Id != id) continue;
+
+                return tournament;
+            }
+
+            return null;
         }
         
         public async UniTask JoinTournament(string id) {
             await _client.JoinTournamentAsync(_session, id);
         }
 
-        public async UniTask SubmitTournamentScore(string title, Dictionary<string, string> metadata, int score, int subScore) {
-            await _client.WriteTournamentRecordAsync(_session, title, score, subScore, JsonWriter.ToJson(metadata));
+        public async UniTask SubmitTournamentScore(string id, Dictionary<string, string> metadata, int score, int subScore) {
+            await _client.WriteTournamentRecordAsync(_session, id, score, subScore, metadata == null ? null:  JsonWriter.ToJson(metadata));
         }
 
         public void SubscribeToPartyPresence(Action<IPartyPresenceEvent> callback) {
@@ -129,6 +171,41 @@ namespace Server.Services {
         public void UnsubscribeFromPartyPresence(Action<IPartyPresenceEvent> callback) {
             _socket.ReceivedPartyPresence -= callback;
         }
+
+        public async UniTask WriteStorageObject<T>(string collectionId, string key, T value) where T : class, new() {
+            var writeObject = new WriteStorageObject {
+                Collection = collectionId,
+                Key = key,
+                Value = JsonConvert.SerializeObject(value),
+                PermissionRead = 1,
+                PermissionWrite = 1
+            };
+
+            await _client.WriteStorageObjectsAsync(_session, new [] { writeObject });
+        }
+
+        public async UniTask<IApiStorageObjectList> ListStorageObjects(string id, string userId = null) {
+            if (string.IsNullOrEmpty(userId)) {
+                userId = _session.UserId;
+            }
+            return await _client.ListUsersStorageObjectsAsync(_session, id, userId);
+        }
+        
+        public async UniTask<T> ListStorageObjects<T>(string collectionId, string key, string userId = null) where T : class, new() {
+            if (string.IsNullOrEmpty(userId)) {
+                userId = _session.UserId;
+            }
+            var objects = await _client.ListUsersStorageObjectsAsync(_session, collectionId, userId, limit:2);
+
+            foreach (var obj in objects.Objects) {
+                if (obj.Key != key) continue;
+
+                return obj.Value.FromJson<T>();
+            }
+
+            return new();
+        }
+
         
         public void SubscribeToMessages(Action<IApiChannelMessage> onParty) {
             _socket.ReceivedChannelMessage += onParty;
@@ -140,6 +217,15 @@ namespace Server.Services {
         
         public async UniTask<IApiAccount> GetUserInfo() {
             return await _client.GetAccountAsync(_session);
+        }
+
+        public async UniTask<IApiUser> GetUserInfo(string userId) {
+            var users =  await _client.GetUsersAsync(_session, new [] {userId});
+            foreach (var user in users.Users) {
+                return user;
+            }
+
+            return null;
         }
         
         public async UniTask<IApiGroup> CreateGroup(string groupName) {
@@ -180,9 +266,6 @@ namespace Server.Services {
 
         public async UniTask<IApiGroupUserList> GetGroupUsers(string groupName, int limit, string cursor = "") {
             return await _client.ListGroupUsersAsync(_session, groupName, 2, limit, cursor);
-        }
-
-        public async UniTask UpdateUserStatus() {
         }
         
         public async UniTask<List<IGroupUserListGroupUser>> GetGroupUsersWithoutMe(string groupName, int limit, string cursor = "") {

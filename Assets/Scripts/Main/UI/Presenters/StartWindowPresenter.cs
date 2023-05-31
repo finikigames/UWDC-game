@@ -3,17 +3,19 @@ using System.Collections.Generic;
 using Core.Ticks.Interfaces;
 using Cysharp.Threading.Tasks;
 using EnhancedUI.EnhancedScroller;
+using Global;
 using Global.ConfigTemplate;
 using Global.Context;
 using Global.Enums;
-using Global.Services;
 using Global.Services.Timer;
 using Global.StateMachine.Base.Enums;
+using Global.Window;
 using Global.Window.Base;
 using Global.Window.Enums;
 using Global.Window.Signals;
 using Main.ConfigTemplate;
 using Main.UI.Data;
+using Main.UI.Data.WaitForPlayerWindow;
 using Main.UI.Views.Base;
 using Main.UI.Views.Implementations;
 using Nakama;
@@ -31,12 +33,13 @@ namespace Main.UI.Presenters {
         private NakamaService _nakamaService;
         private TimerService _timerService;
         private MainUIConfig _mainUIConfig;
-        private ProfileGetService _profileService;
         private IUpdateService _updateService;
         private AppConfig _appConfig;
         private SignalBus _signalBus;
+        private WindowService _windowService;
 
         private string _globalGroupName = "globalGroup";
+        private string _tournamentId = "4ec4f126-3f9d-11e7-84ef-b7c182b36521";
 
         private List<UserInfoData> _userInfoDatas;
         private IApiGroup _globalGroupInfo;
@@ -62,13 +65,12 @@ namespace Main.UI.Presenters {
             _nakamaService = Resolve<NakamaService>(GameContext.Project);
             _timerService = Resolve<TimerService>(GameContext.Project);
             _mainUIConfig = Resolve<MainUIConfig>(GameContext.Main);
-            _profileService = Resolve<ProfileGetService>(GameContext.Project);
             _updateService = Resolve<IUpdateService>(GameContext.Project);
             _appConfig = Resolve<AppConfig>(GameContext.Project);
+            _windowService = Resolve<WindowService>(GameContext.Project);
         }
 
-        public override async UniTask InitializeOnce()
-        {
+        public override async UniTask InitializeOnce() {
             View.Init();
             View.OnTextChange(OnUsersUpdate);
         }
@@ -85,6 +87,34 @@ namespace Main.UI.Presenters {
             
             _onUserPlayClick = null;
             _onUserPlayClick += SendPartyToUser;
+
+            await _nakamaService.JoinTournament(_tournamentId);
+            
+            var wins = await _nakamaService.ListStorageObjects<PlayerResults>("players", "wins");
+            var loses = await _nakamaService.ListStorageObjects<PlayerResults>("players", "loses");
+
+            View.SetWinsCount(wins.Data.Count);
+            View.SetLosesCount(loses.Data.Count);
+            
+            View.OnStartClick(OnStartClick);
+
+            var tournament = await _nakamaService.GetTournament(_tournamentId);
+
+            var startTime = DateTimeOffset.Parse(tournament.StartTime).ToUnixTimeSeconds();
+            var endTime = startTime + tournament.Duration;
+            var nowTime = ((DateTimeOffset) DateTime.Now).ToUnixTimeSeconds();
+
+            var whenEnded = endTime - nowTime;
+            
+            _timerService.StartTimer("tournamentTime", whenEnded, () => {
+                View.SetTimeTournament("Недоступно");
+            }, false, current => {
+                var time = TimeSpan.FromSeconds(current);
+                
+                var timeToDisplay = time.ToString(@"hh\:mm\:ss");
+                
+                View.SetTimeTournament(timeToDisplay);
+            });
             
             _onOpponentFind = null;
             _onOpponentFind += (name) => _appConfig.Opponent = name;
@@ -95,12 +125,15 @@ namespace Main.UI.Presenters {
             View.SetScrollerDelegate(this);
 
             _nakamaService.SubscribeToMessages(MessagesListener);
-            _nakamaService.SubscribeToPartyPresence(PartyPresenceListener);
             
             OnUsersUpdate();
             _timerService.StartTimer("updateUsersTimer", 10, OnUsersUpdate, true);
             
             _hashSet.Clear();
+        }
+
+        private void OnStartClick() {
+            _signalBus.Fire(new OpenWindowSignal(WindowKey.WaitForPlayerWindow, new WaitForPlayerWindowData()));
         }
 
         private async void SendPartyToUser(string userId) {
@@ -109,13 +142,6 @@ namespace Main.UI.Presenters {
 
             _appConfig.PawnColor = (int)PawnColor.White;
             await _nakamaService.SendPartyToUser(userId, party);
-
-            //_signalBus.Fire(new CloseWindowSignal(WindowKey.StartWindow));
-            //_signalBus.Fire(new ToCheckersMetaSignal{WithPlayer = true});
-        }
-
-        private void PartyPresenceListener(IPartyPresenceEvent presenceEvent) {
-            
         }
 
         private void MessagesListener(IApiChannelMessage m) {
@@ -172,7 +198,6 @@ namespace Main.UI.Presenters {
         }
 
         private async UniTask LoadParty() {
-            _signalBus.Fire(new CloseWindowSignal(WindowKey.StartWindow));
             _signalBus.Fire(new ToCheckersMetaSignal{WithPlayer = true});
         }
         
@@ -245,13 +270,13 @@ namespace Main.UI.Presenters {
             return view;
         }
 
-        public override void Dispose() {
+        public override async UniTask Dispose() {
+            _timerService.RemoveTimer("tournamentTime");
             _timerService.RemoveTimer("updateUsersTimer");
             
             _updateService.UnregisterUpdate(this);
             
             _nakamaService.UnsubscribeFromMessages(MessagesListener);
-            _nakamaService.UnsubscribeFromPartyPresence(PartyPresenceListener);
         }
     }
 }
