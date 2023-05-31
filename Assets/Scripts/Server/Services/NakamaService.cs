@@ -5,7 +5,9 @@ using Cysharp.Threading.Tasks;
 using Global.Services;
 using Nakama;
 using Nakama.TinyJson;
+using Newtonsoft.Json;
 using UnityEngine;
+using JsonWriter = Nakama.TinyJson.JsonWriter;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -129,13 +131,25 @@ namespace Server.Services {
             _globalChannel = await _socket.JoinChatAsync(groupId, ChannelType.Group, true);
             return _globalChannel;
         }
+
+        public async UniTask<IApiTournament> GetTournament(string id) {
+            var list = await _client.ListTournamentsAsync(_session, 1, 2, null, null, 1);
+
+            foreach (var tournament in list.Tournaments) {
+                if (tournament.Id != id) continue;
+
+                return tournament;
+            }
+
+            return null;
+        }
         
         public async UniTask JoinTournament(string id) {
             await _client.JoinTournamentAsync(_session, id);
         }
 
-        public async UniTask SubmitTournamentScore(string title, Dictionary<string, string> metadata, int score, int subScore) {
-            await _client.WriteTournamentRecordAsync(_session, title, score, subScore, JsonWriter.ToJson(metadata));
+        public async UniTask SubmitTournamentScore(string id, Dictionary<string, string> metadata, int score, int subScore) {
+            await _client.WriteTournamentRecordAsync(_session, id, score, subScore, JsonWriter.ToJson(metadata));
         }
 
         public void SubscribeToPartyPresence(Action<IPartyPresenceEvent> callback) {
@@ -145,6 +159,35 @@ namespace Server.Services {
         public void UnsubscribeFromPartyPresence(Action<IPartyPresenceEvent> callback) {
             _socket.ReceivedPartyPresence -= callback;
         }
+
+        public async UniTask WriteStorageObject<T>(string collectionId, string key, T value) where T : class, new() {
+            var writeObject = new WriteStorageObject {
+                Collection = collectionId,
+                Key = key,
+                Value = JsonConvert.SerializeObject(value),
+                PermissionRead = 1,
+                PermissionWrite = 1
+            };
+
+            await _client.WriteStorageObjectsAsync(_session, new [] { writeObject });
+        }
+
+        public async UniTask<IApiStorageObjectList> ListStorageObjects(string id) {
+            return await _client.ListUsersStorageObjectsAsync(_session, id, _session.UserId);
+        }
+        
+        public async UniTask<T> ListStorageObjects<T>(string collectionId, string key) where T : class, new() {
+            var objects = await _client.ListUsersStorageObjectsAsync(_session, collectionId, _session.UserId);
+
+            foreach (var obj in objects.Objects) {
+                if (obj.Key != key) continue;
+
+                return obj.Value.FromJson<T>();
+            }
+
+            return new();
+        }
+
         
         public void SubscribeToMessages(Action<IApiChannelMessage> onParty) {
             _socket.ReceivedChannelMessage += onParty;

@@ -6,7 +6,6 @@ using EnhancedUI.EnhancedScroller;
 using Global.ConfigTemplate;
 using Global.Context;
 using Global.Enums;
-using Global.Services;
 using Global.Services.Timer;
 using Global.StateMachine.Base.Enums;
 using Global.Window.Base;
@@ -25,6 +24,10 @@ using UnityEngine.Scripting;
 using Zenject;
 
 namespace Main.UI.Presenters {
+    public class PlayerResults {
+        public List<string> Data = new ();
+    }
+    
     [Preserve]
     public class StartWindowPresenter : BaseWindowPresenter<IStartWindow, StartWindowData>,
                                         IEnhancedScrollerDelegate,
@@ -37,6 +40,7 @@ namespace Main.UI.Presenters {
         private SignalBus _signalBus;
 
         private string _globalGroupName = "globalGroup";
+        private string _tournamentId = "4ec4f126-3f9d-11e7-84ef-b7c182b36521";
 
         private List<UserInfoData> _userInfoDatas;
         private IApiGroup _globalGroupInfo;
@@ -63,8 +67,7 @@ namespace Main.UI.Presenters {
             _appConfig = Resolve<AppConfig>(GameContext.Project);
         }
 
-        public override async UniTask InitializeOnce()
-        {
+        public override async UniTask InitializeOnce() {
             View.Init();
             View.OnTextChange(OnUsersUpdate);
         }
@@ -81,8 +84,31 @@ namespace Main.UI.Presenters {
             
             _onUserPlayClick = null;
             _onUserPlayClick += SendPartyToUser;
+
+            var wins = await _nakamaService.ListStorageObjects<PlayerResults>("players", "wins");
             
+            wins.Data.Add(Guid.NewGuid().ToString());
+
+            await _nakamaService.WriteStorageObject("players", "wins", wins);
             View.OnStartClick(OnStartClick);
+
+            var tournament = await _nakamaService.GetTournament(_tournamentId);
+
+            var startTime = DateTimeOffset.Parse(tournament.StartTime).ToUnixTimeSeconds();
+            var endTime = startTime + tournament.Duration;
+            var nowTime = ((DateTimeOffset) DateTime.Now).ToUnixTimeSeconds();
+
+            var whenEnded = endTime - nowTime;
+            
+            _timerService.StartTimer("tournamentTime", whenEnded, () => {
+                View.SetTimeTournament("Недоступно");
+            }, false, current => {
+                var time = TimeSpan.FromSeconds(current);
+                
+                var timeToDisplay = time.ToString(@"hh\:mm\:ss");
+                
+                View.SetTimeTournament(timeToDisplay);
+            });
             
             _onOpponentFind = null;
             _onOpponentFind += (name) => _appConfig.Opponent = name;
@@ -225,6 +251,7 @@ namespace Main.UI.Presenters {
         }
 
         public override async UniTask Dispose() {
+            _timerService.RemoveTimer("tournamentTime");
             _timerService.RemoveTimer("updateUsersTimer");
             
             _updateService.UnregisterUpdate(this);

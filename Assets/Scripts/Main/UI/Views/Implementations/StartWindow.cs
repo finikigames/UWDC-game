@@ -46,6 +46,10 @@ namespace Main.UI.Views.Implementations {
             _startButton.onClick.AddListener(() => callback?.Invoke());
         }
 
+        public void SetTimeTournament(string time) {
+            _timerText.text = time;
+        }
+
         public void Init() {
             _searchInputField.onValueChanged.RemoveAllListeners();
                 

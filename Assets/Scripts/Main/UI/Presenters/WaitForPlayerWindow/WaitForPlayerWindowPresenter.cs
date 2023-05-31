@@ -1,5 +1,6 @@
 ﻿using Core.Ticks.Interfaces;
 using Cysharp.Threading.Tasks;
+using Global.ConfigTemplate;
 using Global.Context;
 using Global.StateMachine.Base.Enums;
 using Global.Window.Base;
@@ -16,19 +17,24 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
     [Preserve]
     public class WaitForPlayerWindowPresenter : BaseWindowPresenter<IWaitForPlayerWindow, WaitForPlayerWindowData>,
                                                 IUpdatable {
-        private readonly NakamaService _nakamaService;
-        private readonly IUpdateService _updateService;
-        private readonly SignalBus _signalBus;
+        private NakamaService _nakamaService;
+        private IUpdateService _updateService;
+        private SignalBus _signalBus;
+        private AppConfig _appConfig;
 
         private bool _needLoad;
-        
+
         private IMatchmakerTicket _matchmakerTicket;
         private IMatchmakerMatched _matched;
 
         public WaitForPlayerWindowPresenter(ContextService service) : base(service) {
+        }
+
+        public override void InitDependencies() {
             _nakamaService = Resolve<NakamaService>(GameContext.Project);
             _updateService = Resolve<IUpdateService>(GameContext.Project);
             _signalBus = Resolve<SignalBus>(GameContext.Main);
+            _appConfig = Resolve<AppConfig>(GameContext.Project);
         }
 
         protected override async UniTask LoadContent() {
