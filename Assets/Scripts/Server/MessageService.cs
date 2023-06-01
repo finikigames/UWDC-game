@@ -103,8 +103,8 @@ namespace Server {
             
             var content = new Dictionary<string, string>() {
                 {"senderUserId", senderUser.User.Id},
-                {"Pause", value},
-                {"TargetUser", opponent}
+                {"pause", value},
+                {"targetUserId", opponent}
             };
 
             await _nakamaService.SendMessage(_globalChannel, content);

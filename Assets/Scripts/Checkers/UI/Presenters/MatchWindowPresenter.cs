@@ -176,21 +176,21 @@ namespace Checkers.UI.Presenters {
             var content = message.Content.FromJson<Dictionary<string, string>>();
             
             var profile = _nakamaService.GetMe();
-            if (content.TryGetValue("TargetUser", out var targetUser)) {
+            if (content.TryGetValue("targetUserId", out var targetUser)) {
                 if (profile.User.Id != targetUser) return;
             }
 
-            if (!content.TryGetValue("Pause", out var pauseValue)) return;
+            if (content.TryGetValue("gameEndAndTimeExpired", out var value)) {
+                _appConfig.GameEnded = true;
+            }
+            
+            if (!content.TryGetValue("pause", out var pauseValue)) return;
 
             if (!string.IsNullOrEmpty(pauseValue)) {
                 _timerService.RemoveTimer(TurnId);
                 _opponentReturn = false;
                 _needPauseGame = true;
                 return;
-            }
-
-            if (content.TryGetValue("gameEndAndTimeExpired", out var value)) {
-                _appConfig.GameEnded = true;
             }
 
             _opponentReturn = true;
