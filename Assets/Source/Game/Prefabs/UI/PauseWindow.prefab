@@ -39,7 +39,7 @@ RectTransform:
   - {fileID: 5189040150411525342}
   - {fileID: 127817848426670590}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -138,6 +138,8 @@ MonoBehaviour:
   _headerText: {fileID: 4250279839021741416}
   _closeButton: {fileID: 1720457073966338945}
   _blackBg: {fileID: 6111288523223083367}
+  _group: {fileID: 7448787366202929581}
+  _timerText: {fileID: 4272396400176181506}
 --- !u!1 &5297953621019734812
 GameObject:
   m_ObjectHideFlags: 0
