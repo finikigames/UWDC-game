@@ -57,12 +57,11 @@ namespace Checkers.UI.Presenters {
 
             _sceneSettings.PawnMover.OnTurn += CaptureChecker;
             _nakamaService.SubscribeToMessages(OnChatMessage);
-            
-            View.SetPauseStateView(false);
         }
 
         protected override async UniTask LoadContent() {
             _updateService.RegisterUpdate(this);
+            View.SetPauseStateView(false);
 
             View.SubscribeToHowToPlayButton(OnHowToPlayClick);
             View.SubscribeToFleeButton(OnFleeClick);
