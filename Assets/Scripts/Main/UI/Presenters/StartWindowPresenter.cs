@@ -140,6 +140,7 @@ namespace Main.UI.Presenters {
 
             _appConfig.PawnColor = (int)PawnColor.White;
             await _nakamaService.SendPartyToUser(userId, party);
+            _appConfig.OpponentUserId = userId;
         }
 
         private void MessagesListener(IApiChannelMessage m) {

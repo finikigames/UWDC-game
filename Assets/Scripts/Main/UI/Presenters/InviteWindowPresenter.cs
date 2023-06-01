@@ -35,6 +35,7 @@ namespace Main.UI.Presenters {
                 var senderUserId = WindowData.SenderId;
                 await _nakamaService.CreateMatch(WindowData.PartyId);
                 await _nakamaService.SendUserConfirmation(WindowData.PartyId, senderUserId);
+                _appConfig.OpponentUserId = senderUserId;
                 _signalBus.Fire(new CloseWindowSignal(WindowKey.InviteWindow));
                 PlayerPrefsX.SetBool("Matchmaking", false);
                 _signalBus.Fire(new ToCheckersMetaSignal{WithPlayer = true});
