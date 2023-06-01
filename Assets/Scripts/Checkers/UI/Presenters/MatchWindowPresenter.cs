@@ -155,7 +155,6 @@ namespace Checkers.UI.Presenters {
         }
 
         private async void PauseGame() {
-            _remainTime = _timerService.GetTime(TurnId);
             _timerService.RemoveTimer(TurnId);
 
             var continueTime = DateTimeOffset.Now.ToUnixTimeSeconds();
@@ -179,7 +178,6 @@ namespace Checkers.UI.Presenters {
             if (!content.TryGetValue("Pause", out var pauseValue)) return;
 
             if (!string.IsNullOrEmpty(pauseValue)) {
-                _remainTime = _timerService.GetTime(TurnId);
                 _timerService.RemoveTimer(TurnId);
 
                 _needPauseGame = true;
@@ -188,7 +186,7 @@ namespace Checkers.UI.Presenters {
                 
             _needResumeGame = true;
                 
-            _timerService.StartTimer(TurnId, _remainTime, TurnTimeOut, false, View.SetTimerTime);
+            _timerService.StartTimer(TurnId, _remainTime, TurnTimeOut, false, SetRemainTurnTime);
         }
 
         private async void ResumeGame() {
@@ -199,13 +197,17 @@ namespace Checkers.UI.Presenters {
                 return;
             }
             
-            _timerService.StartTimer(TurnId, _remainTime, TurnTimeOut, false, View.SetTimerTime);
+            _timerService.StartTimer(TurnId, _remainTime, TurnTimeOut, false, SetRemainTurnTime);
             var opponentUserId = !string.IsNullOrEmpty(_appConfig.OpponentUserId)
                 ? _appConfig.OpponentUserId
                 : _globalScope.ApproveSenderId;
             
             await _messageService.SendPauseInfo(opponentUserId, "");
+        }
 
+        private void SetRemainTurnTime(int time) {
+            _remainTime = time;
+            View.SetTimerTime((int)_remainTime);
         }
     }
 }
