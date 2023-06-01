@@ -168,6 +168,8 @@ namespace Main.UI.Presenters {
             if (!_approvedMatchAndNeedLoad) return;
             _approvedMatchAndNeedLoad = false;
 
+            var inviteData = _globalScope.SendedInvites[_approveSenderId];
+            _appConfig.OpponentDisplayName = inviteData.DisplayName;
             foreach (var pair in _globalScope.SendedInvites) {
                 
             }

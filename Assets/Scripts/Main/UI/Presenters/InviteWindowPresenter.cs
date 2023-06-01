@@ -45,10 +45,11 @@ namespace Main.UI.Presenters {
                 await _messageService.SendUserConfirmation(data.MatchId, senderUserId);
                 _signalBus.Fire(new CloseWindowSignal(WindowKey.InviteWindow));
                 PlayerPrefsX.SetBool("Matchmaking", false);
-                _signalBus.Fire(new ToCheckersMetaSignal{WithPlayer = true});
                 
                 _appConfig.PawnColor = (int)PawnColor.Black;
                 _appConfig.OpponentDisplayName = data.DisplayName;
+                
+                _signalBus.Fire(new ToCheckersMetaSignal{WithPlayer = true});
             });
             
             View.SubscribeToDecline(async () => {
