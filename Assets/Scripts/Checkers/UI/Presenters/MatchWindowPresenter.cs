@@ -57,6 +57,8 @@ namespace Checkers.UI.Presenters {
 
             _sceneSettings.PawnMover.OnTurn += CaptureChecker;
             _nakamaService.SubscribeToMessages(OnChatMessage);
+            
+            View.SetPauseStateView(false);
         }
 
         protected override async UniTask LoadContent() {
@@ -150,7 +152,7 @@ namespace Checkers.UI.Presenters {
             var continueTime = DateTimeOffset.Now.ToUnixTimeSeconds();
             _remainTime = _defaultTurnTime - (continueTime - _timerStartTime);
 
-            var opponentUserId = string.IsNullOrEmpty(_appConfig.OpponentUserId)
+            var opponentUserId = !string.IsNullOrEmpty(_appConfig.OpponentUserId)
                 ? _appConfig.OpponentUserId
                 : _globalScope.ApproveSenderId;
             

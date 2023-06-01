@@ -1,5 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using Global.ConfigTemplate;
 using Global.Services;
 using Global.StateMachine;
 using Global.StateMachine.Base.Enums;
@@ -14,18 +15,22 @@ namespace Preloader {
         private readonly NakamaService _nakamaService;
         private readonly GameStateMachine _gameStateMachine;
         private readonly GlobalMessageListener _messageListener;
+        private readonly AppConfig _appConfig;
 
         public EntryPoint(ProfileGetService getService,
                           NakamaService nakamaService,
                           GameStateMachine gameStateMachine,
-                          GlobalMessageListener messageListener) {
+                          GlobalMessageListener messageListener,
+                          AppConfig appConfig) {
             _getService = getService;
             _nakamaService = nakamaService;
             _gameStateMachine = gameStateMachine;
             _messageListener = messageListener;
+            _appConfig = appConfig;
         }
         
         public void Initialize() {
+            _appConfig.Reset();
             InitializeInternal();
         }
 
