@@ -146,6 +146,7 @@ namespace Server.Services {
         }
         
         public async UniTask JoinTournament(string id) {
+            if (!_tournament.IsActive()) return;
             await CheckForSessionExpired();
             await _client.JoinTournamentAsync(_session, id);
         }

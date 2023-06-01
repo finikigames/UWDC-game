@@ -81,6 +81,8 @@ namespace Main.UI.Presenters {
 
             _updateService.RegisterUpdate(this);
 
+            var tournament = await _nakamaService.GetTournament(_tournamentId);
+            
             await _nakamaService.JoinTournament(_tournamentId);
             
             var wins = await _nakamaService.ListStorageObjects<PlayerResults>("players", "wins");
@@ -90,8 +92,6 @@ namespace Main.UI.Presenters {
             View.SetLosesCount(loses.Data.Count);
             
             View.OnStartClick(OnStartClick);
-
-            var tournament = await _nakamaService.GetTournament(_tournamentId);
 
             var whenEnded = tournament.GetRemainingTime();
             
