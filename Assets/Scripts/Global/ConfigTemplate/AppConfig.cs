@@ -8,15 +8,15 @@ namespace Global.ConfigTemplate {
         public float PauseTime;
         public float TurnTime;
         
-        [HideInInspector]
+        [NonSerialized]
         public PawnColor PawnColor;
-        [HideInInspector]
+        [NonSerialized]
         public string OpponentDisplayName;
-        [HideInInspector]
+        [NonSerialized]
         public string OpponentUserId;
-        [HideInInspector]
+        [NonSerialized]
         public bool InMatch;
-        [HideInInspector]
+        [NonSerialized]
         public bool InSearch;
 
         public void Reset() {
