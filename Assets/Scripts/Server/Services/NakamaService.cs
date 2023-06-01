@@ -110,13 +110,22 @@ namespace Server.Services {
             await _socket.JoinPartyAsync(partyId);
         }
 
-        public async UniTask SendMatchmakingInfo(string opponent, string value) {
+        public async UniTask SendDeclineInvite(string inviteSenderUserId) {
+            var content = new Dictionary<string, string>() {
+                {"senderUserId", _me.User.Id},
+                {"targetUserId", inviteSenderUserId}
+            };
+
+            await _socket.WriteChatMessageAsync(_globalChannel, content.ToJson());
+        }
+        
+        public async UniTask SendMatchmakingInfo(string targetUserId, string value) {
             var senderUserId = _me.User.Id;
             
             var content = new Dictionary<string, string>() {
                 {"senderUserId", senderUserId},
-                {"ValueDropped", value},
-                {"TargetUser", opponent}
+                {"valueDropped", value},
+                {"targetUserId", targetUserId}
             };
 
             await _socket.WriteChatMessageAsync(_globalChannel, content.ToJson());
@@ -134,10 +143,8 @@ namespace Server.Services {
             await _socket.WriteChatMessageAsync(_globalChannel, content.ToJson());
         }
         
-        public async UniTask SendPartyToUser(string userId, IParty party)
-        {
-            var inviteData = new InviteData
-            {
+        public async UniTask SendPartyToUser(string userId, IParty party) {
+            var inviteData = new InviteData {
                 UserId = _me.User.Id,
                 MatchId = party.Id,
                 DisplayName = _me.User.DisplayName

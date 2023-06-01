@@ -33,30 +33,26 @@ namespace Main.UI.Presenters {
         }
 
         protected override async UniTask LoadContent() {
-            var data = WindowData.DisplayName;
+            var data = WindowData.InviteData;
             
             View.SubscribeToApply(async () => {
-                var senderUserId = WindowData.SenderId;
-                await _nakamaService.CreateMatch(WindowData.PartyId);
-                await _nakamaService.SendUserConfirmation(WindowData.PartyId, senderUserId);
+                var senderUserId = data.UserId;
+                await _nakamaService.CreateMatch(data.MatchId);
+                await _nakamaService.RemoveAllParties();
+                await _nakamaService.SendUserConfirmation(data.MatchId, senderUserId);
                 _signalBus.Fire(new CloseWindowSignal(WindowKey.InviteWindow));
                 PlayerPrefsX.SetBool("Matchmaking", false);
                 _signalBus.Fire(new ToCheckersMetaSignal{WithPlayer = true});
                 
                 _appConfig.PawnColor = (int)PawnColor.Black;
-                _appConfig.OpponentDisplayName = WindowData.DisplayName;
+                _appConfig.OpponentDisplayName = data.DisplayName;
             });
             
             View.SubscribeToDecline(async () => {
-                if (_globalScope.ReceivedInvites.Count > 0) {
-                    
-                }
-                else {
-                    CloseThisWindow();
-                }
+                await _nakamaService.SendDeclineInvite(data.UserId);
             });
             
-            View.ChangeName(data);
+            View.ChangeName(data.DisplayName);
         }
     }
 }

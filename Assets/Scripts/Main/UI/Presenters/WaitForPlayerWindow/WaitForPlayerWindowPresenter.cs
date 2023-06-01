@@ -136,15 +136,15 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
             _signalBus.Fire(new ToCheckersMetaSignal{WithPlayer = true});
         }
 
-        private void OnChatMessage(IApiChannelMessage message) {
+        private async void OnChatMessage(IApiChannelMessage message) {
             var content = message.Content.FromJson<Dictionary<string, string>>();
             
             var profile = _nakamaService.GetMe();
-            if (content.TryGetValue("TargetUser", out var targetUser)) {
+            if (content.TryGetValue("targetUserId", out var targetUser)) {
                 if (profile.User.Id != targetUser) return;
             }
             
-            if (content.TryGetValue("ValueDropped", out var senderValue)) {
+            if (content.TryGetValue("valueDropped", out var senderValue)) {
                 if (_matchmakingValue > int.Parse(senderValue)) {
                     _appConfig.PawnColor = (int)PawnColor.White;
                     return;
@@ -157,7 +157,7 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
                 
                 var value = Random.Range(0, 1000000);
                 _matchmakingValue = value;
-                _nakamaService.SendMatchmakingInfo(_opponentId, _matchmakingValue.ToString());
+                await _nakamaService.SendMatchmakingInfo(_opponentId, _matchmakingValue.ToString());
             }
         }
 

@@ -140,7 +140,7 @@ namespace Main.UI.Presenters {
             // Check for approved matches
             if (content.TryGetValue("approveMatchInvite", out var matchAndPartyId)) {
                 _approvedMatchAndNeedLoad = true;
-                _approveSenderId = content["senderUserId"];
+                _approveSenderId = senderUserId;
             }
             
             // Check for incoming invites
@@ -162,19 +162,30 @@ namespace Main.UI.Presenters {
         private async void CheckNeedLoad() {
             if (!_approvedMatchAndNeedLoad) return;
             _approvedMatchAndNeedLoad = false;
-            
+
+            foreach (var pair in _globalScope.SendedInvites) {
+                
+            }
+            _globalScope.SendedInvites.Clear();
             await _nakamaService.RemoveAllPartiesExcept(_approveSenderId);
             await LoadParty();
         }
 
         private void CheckInvite() {
             if (_globalScope.ReceivedInvites.Count == 0) return;
+            if (!_windowService.IsWindowOpened(WindowKey.InviteWindow)) return;
 
-            
+            KeyValuePair<string, InviteData> inviteData = default;
+
+            foreach (var invitePair in _globalScope.ReceivedInvites) {
+                inviteData = invitePair;
+                break;
+            }
+
+            _globalScope.ReceivedInvites.Remove(inviteData.Key);
+
             _signalBus.Fire(new OpenWindowSignal(WindowKey.InviteWindow, new InviteWindowData {
-                PartyId = _partyId,
-                DisplayName = _inviteDisplayName,
-                SenderId = _inviteSenderUserId
+                InviteData = inviteData.Value
             }));
         }
 
@@ -229,12 +240,15 @@ namespace Main.UI.Presenters {
         }
 
         private async void OnSendInviteClick(UserInfoData data, StartWindowUserCellView view) {
+            if (_globalScope.SendedInvites.ContainsKey(data.UserId)) return;
+            
             view.SetSendText();
-
+            
             var party = await _nakamaService.CreateParty();
             await _nakamaService.CreateMatch(party.Id);
 
             _appConfig.PawnColor = (int)PawnColor.White;
+
             await _nakamaService.SendPartyToUser(data.UserId, party);
             
             var inviteData = new InviteData {
