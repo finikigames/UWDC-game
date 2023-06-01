@@ -68,7 +68,7 @@ namespace Checkers.Services {
         public void Initialize() {
             _signalBus.Fire(new OpenWindowSignal(WindowKey.MatchWindow, new MatchWindowData()));
             
-            _mainColor = (PawnColor)_appConfig.PawnColor;
+            _mainColor = _appConfig.PawnColor;
             
             var turnHandler = _sceneSettings.TurnHandler;
 
@@ -137,7 +137,7 @@ namespace Checkers.Services {
         }
 
         private void CheckLeave() {
-            if (!_someoneLeaved) return;
+            if (!_someoneLeaved || _appConfig.GameEnded) return;
 
             _someoneLeaved = false;
             
@@ -239,6 +239,7 @@ namespace Checkers.Services {
         }
 
         private void OnEndGame(PawnColor color, WinLoseReason reason) {
+            _appConfig.GameEnded = true;
             if (color != _mainColor) {
                 _schedulerService
                     .StartSequence()

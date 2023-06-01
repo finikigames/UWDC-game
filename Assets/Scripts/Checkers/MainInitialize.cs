@@ -39,6 +39,7 @@ namespace Checkers {
         public async UniTask LoadYourAsyncScene() {
             var currentScene = SceneManager.GetActiveScene();
 
+            _appConfig.GameEnded = false;
             _appConfig.InMatch = false;
             
             _signalBus.Fire(new CloseWindowSignal(WindowKey.MatchWindow));

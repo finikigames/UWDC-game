@@ -6,7 +6,11 @@ namespace Global.ConfigTemplate {
     public class AppConfig {
         public float PauseTime;
         public float TurnTime;
-        
+
+        [NonSerialized] 
+        public bool GameEnded;
+        [NonSerialized] 
+        public bool MyLeaveTimerExpired;
         [NonSerialized]
         public PawnColor PawnColor;
         [NonSerialized]
@@ -24,6 +28,8 @@ namespace Global.ConfigTemplate {
             OpponentUserId = "";
             InMatch = false;
             InSearch = false;
+            MyLeaveTimerExpired = false;
+            GameEnded = false;
         }
     }
 }
