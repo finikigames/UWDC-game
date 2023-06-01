@@ -1,6 +1,5 @@
 ﻿using System;
 using Global.Enums;
-using UnityEngine;
 
 namespace Global.ConfigTemplate {
     [Serializable]
