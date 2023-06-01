@@ -38,10 +38,14 @@ namespace Checkers.UI.Presenters {
         private bool _needNicknameInitialize;
         private bool _needPauseGame;
         private bool _needResumeGame;
+        
         private const string TurnId = "TurnTimer";
         private const string PauseId = "PauseId";
+        
         private long _timerStartTime;
         private long _remainTime;
+        private long _pauseStartTime;
+        
         private int _defaultTurnTime = 20;
         private int _pauseTime = 10;
 
@@ -148,6 +152,11 @@ namespace Checkers.UI.Presenters {
             _sceneSettings.TurnHandler.OnEndGame?.Invoke(winner, WinLoseReason.Timeout);
         }
 
+        private void PauseTimeOut() {
+            var winner = _sceneSettings.TurnHandler.YourColor == PawnColor.Black ? PawnColor.White : PawnColor.Black;
+            _sceneSettings.TurnHandler.OnEndGame?.Invoke(winner, WinLoseReason.Timeout);
+        }
+
         private async UniTask SetBarsPosition() {
             await UniTask.Delay(50);
            
@@ -163,6 +172,7 @@ namespace Checkers.UI.Presenters {
             
             var continueTime = DateTimeOffset.Now.ToUnixTimeSeconds();
             _remainTime = _defaultTurnTime - (continueTime - _timerStartTime);
+            _pauseStartTime = continueTime;
 
             var opponentUserId = !string.IsNullOrEmpty(_appConfig.OpponentUserId)
                 ? _appConfig.OpponentUserId
@@ -178,31 +188,37 @@ namespace Checkers.UI.Presenters {
             if (content.TryGetValue("TargetUser", out var targetUser)) {
                 if (profile.User.Id != targetUser) return;
             }
+
+            if (!content.TryGetValue("Pause", out var pauseValue)) return;
             
-            if (content.TryGetValue("Pause", out var pauseValue)) {
-                var continueTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+            var continueTime = DateTimeOffset.Now.ToUnixTimeSeconds();
 
-                if (!string.IsNullOrEmpty(pauseValue)) {
-                    _timerService.RemoveTimer(TurnId);
+            if (!string.IsNullOrEmpty(pauseValue)) {
+                _timerService.RemoveTimer(TurnId);
                     
-                    _remainTime = _defaultTurnTime - (continueTime - _timerStartTime);
+                _remainTime = _defaultTurnTime - (continueTime - _timerStartTime);
 
-                    _needPauseGame = true;
-                    _timerService.StartTimer(PauseId, _pauseTime, TurnTimeOut, false, View.SetPauseTime);
-                    return;
-                }
-                
-                _timerService.RemoveTimer(PauseId);
-                _needResumeGame = true;
-                
-                _timerStartTime = continueTime - _remainTime;
-                _timerService.StartTimer(TurnId, _remainTime, TurnTimeOut, false, View.SetTimerTime);
+                _needPauseGame = true;
+                    
+                _timerService.StartTimer(PauseId, _pauseTime, PauseTimeOut, false, View.SetPauseTime);
+                return;
             }
+                
+            _timerService.RemoveTimer(PauseId);
+            _needResumeGame = true;
+                
+            _timerStartTime = continueTime - _remainTime;
+            _timerService.StartTimer(TurnId, _remainTime, TurnTimeOut, false, View.SetTimerTime);
         }
 
         private async void ResumeGame() {
             var continueTime = DateTimeOffset.Now.ToUnixTimeSeconds();
             _timerStartTime = continueTime - _remainTime;
+            
+            if (continueTime - _pauseStartTime >= _pauseTime) {
+                PauseTimeOut();
+                return;
+            }
             
             _timerService.StartTimer(TurnId, _remainTime, TurnTimeOut, false, View.SetTimerTime);
             var opponentUserId = !string.IsNullOrEmpty(_appConfig.OpponentUserId)
