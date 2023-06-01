@@ -42,9 +42,8 @@ namespace Checkers.UI.Presenters {
         private const string TurnId = "TurnTimer";
         private const string PauseId = "PauseId";
         
-        private float _timerStartTime;
         private float _remainTime;
-        private float _pauseStartTime;
+        private long _pauseStartTime;
         
         private int _defaultTurnTime = 20;
         private int _pauseTime = 10;
@@ -78,7 +77,6 @@ namespace Checkers.UI.Presenters {
             _sceneSettings.PawnMover.OnTurnEnd += TurnChange;
             _sceneSettings.TurnHandler.OnEndGame += (s, r) => _timerService.RemoveTimer(TurnId);
             _timerService.StartTimer(TurnId, _defaultTurnTime, TurnTimeOut, false, View.SetTimerTime);
-            _timerStartTime = DateTimeOffset.Now.ToUnixTimeSeconds();
             _remainTime = _defaultTurnTime;
             
             SetBarsPosition();
@@ -143,7 +141,6 @@ namespace Checkers.UI.Presenters {
 
         private void TurnChange() {
             _timerService.ResetTimer(TurnId, _defaultTurnTime);
-            _timerStartTime = DateTimeOffset.Now.ToUnixTimeSeconds();
             _remainTime = _defaultTurnTime;
         }
 
@@ -210,13 +207,11 @@ namespace Checkers.UI.Presenters {
             _timerService.RemoveTimer(PauseId);
             _needResumeGame = true;
                 
-            _timerStartTime = continueTime - (_defaultTurnTime - _remainTime);
             _timerService.StartTimer(TurnId, _remainTime, TurnTimeOut, false, View.SetTimerTime);
         }
 
         private async void ResumeGame() {
             var continueTime = DateTimeOffset.Now.ToUnixTimeSeconds();
-            _timerStartTime = continueTime - (_defaultTurnTime - _remainTime);
             
             if (continueTime - _pauseStartTime >= _pauseTime) {
                 PauseTimeOut();
