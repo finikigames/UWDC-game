@@ -166,15 +166,7 @@ namespace Checkers.UI.Presenters {
         }
 
         private void ResumeGame() {
-            var continueTime = DateTimeOffset.Now.ToUnixTimeSeconds();
-            var remainTime = _defaultTurnTime - (continueTime - _timerStartTime);
-
-            if (remainTime <= 0) {
-                TurnTimeOut();
-                return;
-            }
-            
-            _timerService.StartTimer(TurnId, remainTime, TurnTimeOut, false, View.SetTimerTime);
+            _timerService.StartTimer(TurnId, _remainTime, TurnTimeOut, false, View.SetTimerTime);
         }
     }
 }
