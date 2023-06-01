@@ -17,10 +17,8 @@ namespace Checkers.UI.Views.Implementations {
         [SerializeField] private TextMeshProUGUI _opponentName;
         [SerializeField] private TextMeshProUGUI _yourName;
         [SerializeField] private TextMeshProUGUI _turnTimer;
-        [SerializeField] private TextMeshProUGUI _pauseTimer;
         [SerializeField] private PlayerChekersBar _opponentChekersBar;
         [SerializeField] private PlayerChekersBar _playerChekersBar;
-        [SerializeField] private Transform _pauseBody;
 
         private bool _tweenStarted;
         private bool _isWhite;
@@ -75,9 +73,6 @@ namespace Checkers.UI.Views.Implementations {
             bar.DecreaseСhecker();
         }
 
-        public void SetPauseTime(int time) {
-            _pauseTimer.text = time.ToString();
-        }
         public void ResetBars(bool isWhite) {
             _isWhite = isWhite;
 
@@ -90,10 +85,6 @@ namespace Checkers.UI.Views.Implementations {
             return bar;
         }
 
-        public void SetPauseStateView(bool state) {
-            _pauseBody.gameObject.SetActive(state);
-        }
-        
         public void SetTimerTime(int time) {
             _turnTimer.text = time.ToString();
             _currentTime = time;

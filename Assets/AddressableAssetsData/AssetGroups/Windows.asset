@@ -57,6 +57,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9ee2aaf69838be144a79f51a0e892a20
+    m_Address: Assets/Source/Game/Prefabs/UI/PauseWindow.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: cdd271947a8a11647ab0306c881bac99, type: 2}
   m_SchemaSet:

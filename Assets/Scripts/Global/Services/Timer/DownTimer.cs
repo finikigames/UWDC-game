@@ -2,8 +2,8 @@ using System;
 
 namespace Global.Services.Timer {
     public class DownTimer : Timer {
-        private readonly Action OnEnd;
-        private readonly Action<int> OnTick;
+        private readonly Action _onEnd;
+        private readonly Action<int> _onTick;
         private float _initialTime;
         private float _timeLeft;
 
@@ -11,8 +11,8 @@ namespace Global.Services.Timer {
             _timeLeft = time;
             _initialTime = time;
             IsLoop = isLoop;
-            OnEnd = callback;
-            OnTick = callbackTick;
+            _onEnd = callback;
+            _onTick = callbackTick;
         }
 
         public override float GetTime() {
@@ -29,7 +29,7 @@ namespace Global.Services.Timer {
             _timeLeft = _initialTime;
         }
         
-        public override void ResetTimer(int time) {
+        public override void ResetTimer(float time) {
             TimerEnded = false;
             _initialTime = time;
             _timeLeft = _initialTime;
@@ -39,7 +39,7 @@ namespace Global.Services.Timer {
             if (TimerEnded) return;
             
             _timeLeft -= UnityEngine.Time.deltaTime;
-            OnTick?.Invoke((int)Math.Ceiling(_timeLeft));
+            _onTick?.Invoke((int)Math.Ceiling(_timeLeft));
 
             if (_timeLeft <= 0) {
                 EndTimer();
@@ -49,11 +49,11 @@ namespace Global.Services.Timer {
         private void EndTimer() {
             if (!IsLoop) {
                 TimerEnded = true;
-                OnEnd?.Invoke();
+                _onEnd?.Invoke();
             }
             else {
                 _timeLeft = _initialTime;
-                OnEnd?.Invoke();
+                _onEnd?.Invoke();
             }
         }
     }

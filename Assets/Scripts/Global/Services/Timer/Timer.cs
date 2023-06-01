@@ -1,4 +1,3 @@
-
 namespace Global.Services.Timer {
     public abstract class Timer {
         public bool TimerEnded;
@@ -7,7 +6,7 @@ namespace Global.Services.Timer {
         public abstract void SetTime(float time);
 
         public abstract void ResetTimer();
-        public abstract void ResetTimer(int time);
+        public abstract void ResetTimer(float time);
 
         public abstract void Process();
         public abstract float GetTime();

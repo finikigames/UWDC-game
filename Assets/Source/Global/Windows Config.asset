@@ -143,3 +143,19 @@ MonoBehaviour:
         GUID: 442e82239c56459e8aa5af76da613c56
         _typeNameAndAssembly: Main.UI.Presenters.InviteWindowPresenter, Main
         _suppressLogs: 0
+    - Uid: 
+      PrefabReference:
+        m_AssetGUID: 9ee2aaf69838be144a79f51a0e892a20
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_EditorAssetChanged: 0
+      Key: 9
+      Priority: 0
+      IsFullScreen: 0
+      CanClose: 1
+      Context: 4
+      _controller:
+        GuidAssignmentFailed: 0
+        GUID: 72982864ebae4aa489f26586115e206e
+        _typeNameAndAssembly: Checkers.UI.Presenters.PauseWindowPresenter, Checkers
+        _suppressLogs: 0

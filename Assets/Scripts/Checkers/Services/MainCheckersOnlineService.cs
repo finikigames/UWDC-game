@@ -9,6 +9,7 @@ using DG.Tweening;
 using Global.ConfigTemplate;
 using Global.Enums;
 using Global.Scheduler.Base;
+using Global.Window;
 using Global.Window.Enums;
 using Global.Window.Signals;
 using Nakama;
@@ -38,6 +39,7 @@ namespace Checkers.Services {
         private readonly NakamaService _nakamaService;
         private readonly SignalBus _signalBus;
         private readonly AppConfig _appConfig;
+        private readonly WindowService _windowService;
         private readonly CheckersConfig _checkersConfig;
         private PawnColor _mainColor;
         private UnityEngine.Camera _cam;
@@ -52,12 +54,14 @@ namespace Checkers.Services {
                                          NakamaService nakamaService,
                                          CheckersConfig checkersConfig,
                                          SignalBus signalBus,
-                                         AppConfig appConfig) {
+                                         AppConfig appConfig,
+                                         WindowService windowService) {
             _sceneSettings = sceneSettings;
             _schedulerService = schedulerService;
             _nakamaService = nakamaService;
             _signalBus = signalBus;
             _appConfig = appConfig;
+            _windowService = windowService;
             _checkersConfig = checkersConfig;
         }
         
@@ -142,7 +146,12 @@ namespace Checkers.Services {
 
         private void CheckInput() {
             if (!Input.GetMouseButtonDown(0)) return;
-
+            if (_windowService.IsWindowOpened(WindowKey.PauseWindow)) return;
+            if (_windowService.IsWindowOpened(WindowKey.WinWindow)) return;
+            if (_windowService.IsWindowOpened(WindowKey.LoseWindow)) return;
+            if (_windowService.IsWindowOpened(WindowKey.FleeWindow)) return;
+            if (_windowService.IsWindowOpened(WindowKey.RulesWindow)) return;
+            
             if (_sceneSettings.TurnHandler.Turn != _mainColor) return;
             var mouseInput = Input.mousePosition;
 
@@ -154,7 +163,7 @@ namespace Checkers.Services {
             if ((column < 0 || column > 7) || (row < 0 || row > 7)) return;
             var tileGetter = _sceneSettings.Getter;
 
-            if (_appConfig.PawnColor == (int) PawnColor.Black) {
+            if (_appConfig.PawnColor == PawnColor.Black) {
                 column = 7 - column;
                 row = 7 - row;
             }

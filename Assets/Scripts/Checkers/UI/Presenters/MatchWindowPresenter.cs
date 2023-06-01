@@ -20,8 +20,8 @@ using Nakama;
 using Nakama.TinyJson;
 using Server;
 using Server.Services;
-using UnityEngine;
 using UnityEngine.Scripting;
+using Zenject;
 
 namespace Checkers.UI.Presenters {
     [Preserve]
@@ -34,19 +34,16 @@ namespace Checkers.UI.Presenters {
         private TimerService _timerService;
         private MessageService _messageService;
         private GlobalScope _globalScope;
-        
+        private SignalBus _signalBus;
+
         private bool _needNicknameInitialize;
         private bool _needPauseGame;
         private bool _needResumeGame;
-        
+
         private const string TurnId = "TurnTimer";
-        private const string PauseId = "PauseId";
-        
+
         private float _remainTime;
         private long _pauseStartTime;
-        
-        private int _defaultTurnTime = 20;
-        private int _pauseTime = 10;
 
         public MatchWindowPresenter(ContextService service) : base(service) {
         }
@@ -59,14 +56,14 @@ namespace Checkers.UI.Presenters {
             _timerService = Resolve<TimerService>(GameContext.Project);
             _messageService = Resolve<MessageService>(GameContext.Project);
             _globalScope = Resolve<GlobalScope>(GameContext.Project);
-
-            _sceneSettings.PawnMover.OnTurn += CaptureChecker;
-            _nakamaService.SubscribeToMessages(OnChatMessage);
+            _signalBus = Resolve<SignalBus>(GameContext.Checkers);
         }
 
         protected override async UniTask LoadContent() {
+            _sceneSettings.PawnMover.OnTurn += CaptureChecker;
+            _nakamaService.SubscribeToMessages(OnChatMessage);
+            
             _updateService.RegisterUpdate(this);
-            View.SetPauseStateView(false);
 
             View.SubscribeToHowToPlayButton(OnHowToPlayClick);
             View.SubscribeToFleeButton(OnFleeClick);
@@ -76,8 +73,8 @@ namespace Checkers.UI.Presenters {
 
             _sceneSettings.PawnMover.OnTurnEnd += TurnChange;
             _sceneSettings.TurnHandler.OnEndGame += (s, r) => _timerService.RemoveTimer(TurnId);
-            _timerService.StartTimer(TurnId, _defaultTurnTime, TurnTimeOut, false, View.SetTimerTime);
-            _remainTime = _defaultTurnTime;
+            _timerService.StartTimer(TurnId, _appConfig.TurnTime, TurnTimeOut, false, View.SetTimerTime);
+            _remainTime = _appConfig.TurnTime;
             
             SetBarsPosition();
             ApplicationQuit.SubscribeOnQuit(PauseGame);
@@ -98,7 +95,7 @@ namespace Checkers.UI.Presenters {
                 _needNicknameInitialize = false;
                 var me = _nakamaService.GetMe();
 
-                if (_appConfig.PawnColor == (int) PawnColor.Black) {
+                if (_appConfig.PawnColor == PawnColor.Black) {
                     View.SetOpponentName(me.User.DisplayName);
                     View.SetYourName(_appConfig.OpponentDisplayName);
                 }
@@ -109,13 +106,13 @@ namespace Checkers.UI.Presenters {
             }
 
             if (_needPauseGame) {
-                View.SetPauseStateView(true);
+                _signalBus.Fire(new OpenWindowSignal(WindowKey.PauseWindow, new PauseWindowData()));
                 _needPauseGame = false;
             }
 
             if (!_needResumeGame) return;
             
-            View.SetPauseStateView(false);
+            _signalBus.Fire(new CloseWindowSignal(WindowKey.PauseWindow));
             _needResumeGame = false;
         }
 
@@ -126,12 +123,6 @@ namespace Checkers.UI.Presenters {
             ApplicationQuit.UnSubscribeOnResume(ResumeGame);
         }
 
-        public Vector3 GetSendPawnCheckersBarPosition() {
-            bool isPlayer = _sceneSettings.TurnHandler.Turn == _sceneSettings.TurnHandler.YourColor;
-
-            return View.GetSendPawnPosition(isPlayer);
-        }
-
         private void CaptureChecker(TurnData turnData) {
             if (!turnData.Capture) return;
             
@@ -140,8 +131,8 @@ namespace Checkers.UI.Presenters {
         }
 
         private void TurnChange() {
-            _timerService.ResetTimer(TurnId, _defaultTurnTime);
-            _remainTime = _defaultTurnTime;
+            _timerService.ResetTimer(TurnId, _appConfig.TurnTime);
+            _remainTime = _appConfig.TurnTime;
         }
 
         private void TurnTimeOut() {
@@ -151,11 +142,6 @@ namespace Checkers.UI.Presenters {
 
         private void PauseTimeOut() {
             _sceneSettings.TurnHandler.OnEndGame?.Invoke(_sceneSettings.TurnHandler.YourColor, WinLoseReason.Timeout);
-        }
-        
-        private void PauseTimeOutForWaiting() {
-            var winner = _sceneSettings.TurnHandler.YourColor == PawnColor.Black ? PawnColor.White : PawnColor.Black;
-            _sceneSettings.TurnHandler.OnEndGame?.Invoke(winner, WinLoseReason.Timeout);
         }
 
         private async UniTask SetBarsPosition() {
@@ -191,20 +177,15 @@ namespace Checkers.UI.Presenters {
             }
 
             if (!content.TryGetValue("Pause", out var pauseValue)) return;
-            
-            var continueTime = DateTimeOffset.Now.ToUnixTimeSeconds();
 
             if (!string.IsNullOrEmpty(pauseValue)) {
                 _remainTime = _timerService.GetTime(TurnId);
                 _timerService.RemoveTimer(TurnId);
 
                 _needPauseGame = true;
-                    
-                _timerService.StartTimer(PauseId, _pauseTime, PauseTimeOutForWaiting, false, View.SetPauseTime);
                 return;
             }
                 
-            _timerService.RemoveTimer(PauseId);
             _needResumeGame = true;
                 
             _timerService.StartTimer(TurnId, _remainTime, TurnTimeOut, false, View.SetTimerTime);
@@ -213,7 +194,7 @@ namespace Checkers.UI.Presenters {
         private async void ResumeGame() {
             var continueTime = DateTimeOffset.Now.ToUnixTimeSeconds();
             
-            if (continueTime - _pauseStartTime >= _pauseTime) {
+            if (continueTime - _pauseStartTime >= _appConfig.PauseTime) {
                 PauseTimeOut();
                 return;
             }

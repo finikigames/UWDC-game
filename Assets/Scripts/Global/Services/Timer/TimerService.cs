@@ -44,7 +44,7 @@ namespace Global.Services.Timer {
             _timers[timerId].ResetTimer();
         }
 
-        public void ResetTimer(string timerId, int time) {
+        public void ResetTimer(string timerId, float time) {
             if (!_timers.ContainsKey(timerId)) return;
             
             _timers[timerId].ResetTimer(time);

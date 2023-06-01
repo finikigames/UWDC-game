@@ -160,7 +160,7 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
                 }
 
                 if (_matchmakingValue < int.Parse(senderValue)) {
-                    _appConfig.PawnColor = (int)PawnColor.Black;
+                    _appConfig.PawnColor = PawnColor.Black;
                     return;
                 }
                 

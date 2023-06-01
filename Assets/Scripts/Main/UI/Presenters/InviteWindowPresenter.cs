@@ -47,7 +47,7 @@ namespace Main.UI.Presenters {
                 _signalBus.Fire(new CloseWindowSignal(WindowKey.InviteWindow));
                 PlayerPrefsX.SetBool("Matchmaking", false);
                 
-                _appConfig.PawnColor = (int)PawnColor.Black;
+                _appConfig.PawnColor = PawnColor.Black;
                 _appConfig.OpponentDisplayName = data.DisplayName;
                 
                 _signalBus.Fire(new ToCheckersMetaSignal{WithPlayer = true});
