@@ -36,6 +36,8 @@ namespace Checkers.UI.Presenters {
         private GlobalScope _globalScope;
         
         private bool _needNicknameInitialize;
+        private bool _needPauseGame;
+        private bool _needResumeGame;
         private const string TurnId = "TurnTimer";
         private const string PauseId = "PauseId";
         private long _timerStartTime;
@@ -89,19 +91,30 @@ namespace Checkers.UI.Presenters {
         }
 
         public void CustomUpdate() {
-            if (!_needNicknameInitialize) return;
+            if (_needNicknameInitialize)
+            {
+                _needNicknameInitialize = false;
+                var me = _nakamaService.GetMe();
 
-            _needNicknameInitialize = false;
-            var me = _nakamaService.GetMe();
+                if (_appConfig.PawnColor == (int) PawnColor.Black) {
+                    View.SetOpponentName(me.User.DisplayName);
+                    View.SetYourName(_appConfig.OpponentDisplayName);
+                }
+                else {
+                    View.SetYourName(me.User.DisplayName);
+                    View.SetOpponentName(_appConfig.OpponentDisplayName);
+                }
+            }
 
-            if (_appConfig.PawnColor == (int) PawnColor.Black) {
-                View.SetOpponentName(me.User.DisplayName);
-                View.SetYourName(_appConfig.OpponentDisplayName);
+            if (_needPauseGame) {
+                View.SetPauseStateView(true);
+                _needPauseGame = false;
             }
-            else {
-                View.SetYourName(me.User.DisplayName);
-                View.SetOpponentName(_appConfig.OpponentDisplayName);
-            }
+
+            if (!_needResumeGame) return;
+            
+            View.SetPauseStateView(false);
+            _needResumeGame = false;
         }
 
         public override async UniTask Dispose() {
@@ -173,25 +186,31 @@ namespace Checkers.UI.Presenters {
                     _timerService.RemoveTimer(TurnId);
                     
                     _remainTime = _defaultTurnTime - (continueTime - _timerStartTime);
-                    
-                    View.SetPauseStateView(true);
+
+                    _needPauseGame = true;
                     _timerService.StartTimer(PauseId, _pauseTime, TurnTimeOut, false, View.SetPauseTime);
                     return;
                 }
                 
                 _timerService.RemoveTimer(PauseId);
-                View.SetPauseStateView(false);
+                _needResumeGame = true;
                 
                 _timerStartTime = continueTime - _remainTime;
                 _timerService.StartTimer(TurnId, _remainTime, TurnTimeOut, false, View.SetTimerTime);
             }
         }
 
-        private void ResumeGame() {
+        private async void ResumeGame() {
             var continueTime = DateTimeOffset.Now.ToUnixTimeSeconds();
             _timerStartTime = continueTime - _remainTime;
             
             _timerService.StartTimer(TurnId, _remainTime, TurnTimeOut, false, View.SetTimerTime);
+            var opponentUserId = !string.IsNullOrEmpty(_appConfig.OpponentUserId)
+                ? _appConfig.OpponentUserId
+                : _globalScope.ApproveSenderId;
+            
+            await _messageService.SendPauseInfo(opponentUserId, "");
+
         }
     }
 }
