@@ -29,6 +29,12 @@ namespace Global.Services.Timer {
             TimeLeft = _initialTime;
         }
 
+        public void ResetTimer(float time) {
+            TimerEnded = false;
+            _initialTime = time;
+            TimeLeft = _initialTime;
+        }
+
         public void Process() {
             if (TimerEnded) return;
             

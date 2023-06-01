@@ -20,7 +20,7 @@ namespace Main.UI.Views {
 
         private void OnEnable() {
             _logoButton.onClick.RemoveAllListeners();
-            _logoButton.onClick.AddListener(() => openIt("https://finiki.games/"));
+            _logoButton.onClick.AddListener(() => openIt("https://infinnity.ru/"));
         }
     }
 }

@@ -51,7 +51,7 @@ SpriteAtlas:
     cachedData: {fileID: 0}
     packedSpriteRenderDataKeys:
     - 3467c76054a62894b8e145001e8c3eef: 21300000
-    - 3127d7c0a18a6344e94c1d7d0c819394: 21300000
+    - 1cbaa1b301c3378409a9d8c7cef6e601: 21300000
     - 19a6d6e8911f0e2488dfbf2e64f5725f: 21300000
     - 9c624b1a6277d6540a6e324fcd175c0d: 21300000
     - 6b79297cf338bc1408da68bb6460156c: 21300000
@@ -59,14 +59,14 @@ SpriteAtlas:
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
   - {fileID: 21300000, guid: 3467c76054a62894b8e145001e8c3eef, type: 3}
-  - {fileID: 21300000, guid: 3127d7c0a18a6344e94c1d7d0c819394, type: 3}
+  - {fileID: 21300000, guid: 1cbaa1b301c3378409a9d8c7cef6e601, type: 3}
   - {fileID: 21300000, guid: 19a6d6e8911f0e2488dfbf2e64f5725f, type: 3}
   - {fileID: 21300000, guid: 9c624b1a6277d6540a6e324fcd175c0d, type: 3}
   - {fileID: 21300000, guid: 6b79297cf338bc1408da68bb6460156c, type: 3}
   - {fileID: 21300000, guid: 688c9d8fb052129489d34e1c4b11536d, type: 3}
   m_PackedSpriteNamesToIndex:
   - bg_cut
-  - FINIKI_logo_color_vert
+  - Logo_White_hor_noStatus_noTM
   - BlueButtonNoBorder
   - BlueButton
   - RedButton

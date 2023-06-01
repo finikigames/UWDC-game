@@ -1,4 +1,6 @@
-﻿using Checkers.Services;
+﻿using System;
+using System.Collections.Generic;
+using Checkers.Services;
 using Checkers.Settings;
 using Checkers.UI.Data;
 using Checkers.UI.Views.Base;
@@ -7,11 +9,14 @@ using Cysharp.Threading.Tasks;
 using Global.ConfigTemplate;
 using Global.Context;
 using Global.Enums;
+using Global.Services;
 using Global.Services.Timer;
 using Global.StateMachine.Base.Enums;
 using Global.Window.Base;
 using Global.Window.Enums;
 using Global.Window.Signals;
+using Nakama;
+using Nakama.TinyJson;
 using Server.Services;
 using UnityEngine;
 using UnityEngine.Scripting;
@@ -28,6 +33,11 @@ namespace Checkers.UI.Presenters {
         
         private bool _needNicknameInitialize;
         private const string TurnId = "TurnTimer";
+        private const string PauseId = "PauseId";
+        private long _timerStartTime;
+        private long _remainTime;
+        private float _defaultTurnTime = 20.0f;
+        private float _pauseTime = 10.0f;
 
         public MatchWindowPresenter(ContextService service) : base(service) {
         }
@@ -40,6 +50,7 @@ namespace Checkers.UI.Presenters {
             _timerService = Resolve<TimerService>(GameContext.Project);
 
             _sceneSettings.PawnMover.OnTurn += CaptureChecker;
+            _nakamaService.SubscribeToMessages(OnChatMessage);
         }
 
         protected override async UniTask LoadContent() {
@@ -53,9 +64,12 @@ namespace Checkers.UI.Presenters {
 
             _sceneSettings.PawnMover.OnTurnEnd += TurnChange;
             _sceneSettings.TurnHandler.OnEndGame += (s, r) => _timerService.RemoveTimer(TurnId);
-            _timerService.StartTimer(TurnId, 30f, TurnTimeOut, false, View.SetTimerTime);
+            _timerService.StartTimer(TurnId, _defaultTurnTime, TurnTimeOut, false, View.SetTimerTime);
+            _timerStartTime = DateTimeOffset.Now.ToUnixTimeSeconds();
             
             SetBarsPosition();
+            ApplicationQuit.SubscribeOnQuit(PauseGame);
+            ApplicationQuit.SubscribeOnResume(ResumeGame);        
         }
 
         private void OnFleeClick() {
@@ -85,6 +99,8 @@ namespace Checkers.UI.Presenters {
         public override async UniTask Dispose() {
             _updateService.UnregisterUpdate(this);
             _timerService.RemoveTimer(TurnId);
+            ApplicationQuit.UnSubscribeOnQuit(PauseGame);
+            ApplicationQuit.UnSubscribeOnResume(ResumeGame);
         }
 
         public Vector3 GetSendPawnCheckersBarPosition() {
@@ -101,7 +117,8 @@ namespace Checkers.UI.Presenters {
         }
 
         private void TurnChange() {
-            _timerService.ResetTimer(TurnId);
+            _timerService.ResetTimer(TurnId, _defaultTurnTime);
+            _timerStartTime = DateTimeOffset.Now.ToUnixTimeSeconds();
         }
 
         private void TurnTimeOut() {
@@ -117,6 +134,47 @@ namespace Checkers.UI.Presenters {
 
             _sceneSettings._playerBar = View.GetSendPawnPosition(isWhite);
             _sceneSettings._opponentBar = View.GetSendPawnPosition(!isWhite);
+        }
+
+        private async void PauseGame() {
+            _timerService.RemoveTimer(TurnId);
+            await _nakamaService.SendMatchmakingInfo(_appConfig.OpponentUserId, "True");
+        }
+        
+        private void OnChatMessage(IApiChannelMessage message) {
+            var content = message.Content.FromJson<Dictionary<string, string>>();
+            
+            var profile = _nakamaService.GetMe();
+            if (content.TryGetValue("TargetUser", out var targetUser)) {
+                if (profile.User.Id != targetUser) return;
+            }
+            
+            if (content.TryGetValue("Pause", out var pauseValue)) {
+                if (!string.IsNullOrEmpty(pauseValue)) {
+                    _timerService.RemoveTimer(TurnId);
+                    var continueTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+                    _remainTime = (long)_defaultTurnTime - (continueTime - _timerStartTime);
+                    View.SetPauseStateView(true);
+                    _timerService.StartTimer(PauseId, _pauseTime, TurnTimeOut, false, View.SetPauseTime);
+                    return;
+                }
+                
+                _timerService.RemoveTimer(PauseId);
+                View.SetPauseStateView(false);
+                _timerService.StartTimer(TurnId, _remainTime, TurnTimeOut, false, View.SetTimerTime);
+            }
+        }
+
+        private void ResumeGame() {
+            var continueTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+            var remainTime = _defaultTurnTime - (continueTime - _timerStartTime);
+
+            if (remainTime <= 0) {
+                TurnTimeOut();
+                return;
+            }
+            
+            _timerService.StartTimer(TurnId, remainTime, TurnTimeOut, false, View.SetTimerTime);
         }
     }
 }

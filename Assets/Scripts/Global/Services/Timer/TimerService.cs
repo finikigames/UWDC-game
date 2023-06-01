@@ -23,7 +23,15 @@ namespace Global.Services.Timer {
         }
 
         public void ResetTimer(string timerId) {
+            if (!_timers.ContainsKey(timerId)) return;
+            
             _timers[timerId].ResetTimer();
+        }
+
+        public void ResetTimer(string timerId, float time) {
+            if (!_timers.ContainsKey(timerId)) return;
+            
+            _timers[timerId].ResetTimer(time);
         }
 
         public void Tick() {
