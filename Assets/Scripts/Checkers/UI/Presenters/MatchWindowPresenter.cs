@@ -158,7 +158,7 @@ namespace Checkers.UI.Presenters {
         
         private void PauseTimeOutForWaiting() {
             var winner = _sceneSettings.TurnHandler.YourColor == PawnColor.Black ? PawnColor.White : PawnColor.Black;
-            _sceneSettings.TurnHandler.OnEndGame?.Invoke(_sceneSettings.TurnHandler.YourColor, WinLoseReason.Timeout);
+            _sceneSettings.TurnHandler.OnEndGame?.Invoke(winner, WinLoseReason.Timeout);
         }
 
         private async UniTask SetBarsPosition() {
@@ -172,10 +172,10 @@ namespace Checkers.UI.Presenters {
         }
 
         private async void PauseGame() {
-            _timerService.RemoveTimer(TurnId);
-            
-            var continueTime = DateTimeOffset.Now.ToUnixTimeSeconds();
             _remainTime = _timerService.GetTime(TurnId);
+            _timerService.RemoveTimer(TurnId);
+
+            var continueTime = DateTimeOffset.Now.ToUnixTimeSeconds();
             _pauseStartTime = continueTime;
 
             var opponentUserId = !string.IsNullOrEmpty(_appConfig.OpponentUserId)
@@ -198,9 +198,9 @@ namespace Checkers.UI.Presenters {
             var continueTime = DateTimeOffset.Now.ToUnixTimeSeconds();
 
             if (!string.IsNullOrEmpty(pauseValue)) {
+                _remainTime = _timerService.GetTime(TurnId);
                 _timerService.RemoveTimer(TurnId);
 
-                _remainTime = _timerService.GetTime(TurnId);
                 _needPauseGame = true;
                     
                 _timerService.StartTimer(PauseId, _pauseTime, PauseTimeOutForWaiting, false, View.SetPauseTime);
@@ -210,13 +210,13 @@ namespace Checkers.UI.Presenters {
             _timerService.RemoveTimer(PauseId);
             _needResumeGame = true;
                 
-            _timerStartTime = continueTime - _remainTime;
+            _timerStartTime = continueTime - (_defaultTurnTime - _remainTime);
             _timerService.StartTimer(TurnId, _remainTime, TurnTimeOut, false, View.SetTimerTime);
         }
 
         private async void ResumeGame() {
             var continueTime = DateTimeOffset.Now.ToUnixTimeSeconds();
-            _timerStartTime = continueTime - (_pauseTime - _remainTime);
+            _timerStartTime = continueTime - (_defaultTurnTime - _remainTime);
             
             if (continueTime - _pauseStartTime >= _pauseTime) {
                 PauseTimeOut();
