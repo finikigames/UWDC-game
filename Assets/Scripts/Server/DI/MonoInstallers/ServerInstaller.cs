@@ -13,6 +13,10 @@ namespace Server.DI.MonoInstallers {
                 .BindInterfacesAndSelfTo<GlobalMessageListener>()
                 .AsSingle()
                 .NonLazy();
+
+            Container
+                .BindInterfacesAndSelfTo<MessageService>()
+                .AsSingle();
         }
     }
 }

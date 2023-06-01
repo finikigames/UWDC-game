@@ -1,9 +1,8 @@
 ﻿using Core.MVP.Base.Interfaces;
+using Global;
 
 namespace Main.UI.Data {
     public class InviteWindowData : IWindowData {
-        public string DisplayName;
-        public string PartyId;
-        public string SenderId;
+        public InviteData InviteData;
     }
 }

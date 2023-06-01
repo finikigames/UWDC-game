@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
-using Global;
 using Global.Extensions;
 using Global.Services;
 using Nakama;
@@ -60,6 +59,18 @@ namespace Server.Services {
             return _me;
         }
 
+        public void AddParty(string id, IParty party) {
+            _createdParties.Add(id, party);
+        }
+
+        public bool HasParty(string id) {
+            return _createdParties.ContainsKey(id);
+        }
+
+        public void RemoveParty(string id) {
+            _createdParties.Remove(id);
+        }
+
         public async UniTask<IMatchmakerTicket> AddMatchmaker() {
             return await _socket.AddMatchmakerAsync(minCount: 2, maxCount: 2);
         }
@@ -110,49 +121,8 @@ namespace Server.Services {
             await _socket.JoinPartyAsync(partyId);
         }
 
-        public async UniTask SendMatchmakingInfo(string opponent, string value) {
-            var senderUserId = _me.User.Id;
-            
-            var content = new Dictionary<string, string>() {
-                {"senderUserId", senderUserId},
-                {"ValueDropped", value},
-                {"TargetUser", opponent}
-            };
-
-            await _socket.WriteChatMessageAsync(_globalChannel, content.ToJson());
-        }
-
-        public async UniTask SendUserConfirmation(string partyId, string userId) {
-            var senderUserId = _me.User.Id;
-            
-            var content = new Dictionary<string, string>() {
-                {"senderUserId", senderUserId},
-                {"approveMatchInvite", partyId},
-                {"targetUserId", userId}
-            };
-            
-            await _socket.WriteChatMessageAsync(_globalChannel, content.ToJson());
-        }
-        
-        public async UniTask SendPartyToUser(string userId, IParty party)
-        {
-            var inviteData = new InviteData
-            {
-                UserId = _me.User.Id,
-                MatchId = party.Id,
-                DisplayName = _me.User.DisplayName
-            };
-
-            var content = new Dictionary<string, string>() {
-                {"senderUserId", _me.User.Id},
-                {"newInvite", inviteData.ToJson()},
-                {"targetUserId", userId}
-            };
-            
-            await _socket.WriteChatMessageAsync(_globalChannel, content.ToJson());
-
-            if (_createdParties.ContainsKey(userId)) return;
-            _createdParties.Add(userId, party);
+        public async UniTask SendMessage(IChannel channel, Dictionary<string, string> data) {
+            await _socket.WriteChatMessageAsync(channel, data.ToJson());
         }
 
         public async UniTask<IChannel> JoinChat(string groupId, ChannelType type = ChannelType.Group,bool persistence = true) {
