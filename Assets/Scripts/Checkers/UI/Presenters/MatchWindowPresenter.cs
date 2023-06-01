@@ -39,6 +39,9 @@ namespace Checkers.UI.Presenters {
         private bool _needNicknameInitialize;
         private bool _needPauseGame;
         private bool _needResumeGame;
+        
+        private bool _opponentReturn = true;
+        private bool _playerReturn = true;
 
         private const string TurnId = "TurnTimer";
 
@@ -156,6 +159,7 @@ namespace Checkers.UI.Presenters {
 
         private async void PauseGame() {
             _timerService.RemoveTimer(TurnId);
+            _playerReturn = false;
 
             var continueTime = DateTimeOffset.Now.ToUnixTimeSeconds();
             _pauseStartTime = continueTime;
@@ -179,30 +183,38 @@ namespace Checkers.UI.Presenters {
 
             if (!string.IsNullOrEmpty(pauseValue)) {
                 _timerService.RemoveTimer(TurnId);
-
+                _opponentReturn = false;
                 _needPauseGame = true;
                 return;
             }
-                
+
+            _opponentReturn = true;
             _needResumeGame = true;
                 
+            if (!_playerReturn) return;
+            
             _timerService.StartTimer(TurnId, _remainTime, TurnTimeOut, false, SetRemainTurnTime);
         }
 
         private async void ResumeGame() {
             var continueTime = DateTimeOffset.Now.ToUnixTimeSeconds();
-            
+            _playerReturn = true;
             if (continueTime - _pauseStartTime >= _appConfig.PauseTime) {
                 PauseTimeOut();
                 return;
             }
             
-            _timerService.StartTimer(TurnId, _remainTime, TurnTimeOut, false, SetRemainTurnTime);
             var opponentUserId = !string.IsNullOrEmpty(_appConfig.OpponentUserId)
                 ? _appConfig.OpponentUserId
                 : _globalScope.ApproveSenderId;
             
             await _messageService.SendPauseInfo(opponentUserId, "");
+            
+            if (!_opponentReturn) {
+                return;
+            }
+            
+            _timerService.StartTimer(TurnId, _remainTime, TurnTimeOut, false, SetRemainTurnTime);
         }
 
         private void SetRemainTurnTime(int time) {
