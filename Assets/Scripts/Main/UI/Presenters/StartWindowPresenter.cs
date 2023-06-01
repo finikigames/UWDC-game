@@ -11,6 +11,7 @@ using Global.Enums;
 using Global.Extensions;
 using Global.Services.Timer;
 using Global.StateMachine.Base.Enums;
+using Global.UI.Data;
 using Global.Window;
 using Global.Window.Base;
 using Global.Window.Enums;
@@ -138,6 +139,9 @@ namespace Main.UI.Presenters {
             var party = await _nakamaService.CreateParty();
             await _nakamaService.CreateMatch(party.Id);
 
+            var data = new FlyTextData("отправлено");
+            _signalBus.Fire(new OpenWindowSignal(WindowKey.FlyText, data));
+            
             _appConfig.PawnColor = (int)PawnColor.White;
             await _nakamaService.SendPartyToUser(userId, party);
         }

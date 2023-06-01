@@ -129,7 +129,7 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
                 .StartSequence()
                 .Append(5, () => {
                     CloseThisWindow();
-                    _timerService.RemoveTimer("waiting_for_play");
+                    _timerService.RemoveTimer("await_start_game");
                     
                     StartLoad();
                 });
