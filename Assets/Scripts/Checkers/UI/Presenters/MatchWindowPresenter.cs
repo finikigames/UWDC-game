@@ -154,10 +154,11 @@ namespace Checkers.UI.Presenters {
             }
             
             if (content.TryGetValue("Pause", out var pauseValue)) {
+                var continueTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+
                 if (!string.IsNullOrEmpty(pauseValue)) {
                     _timerService.RemoveTimer(TurnId);
                     
-                    var continueTime = DateTimeOffset.Now.ToUnixTimeSeconds();
                     _remainTime = (long)_defaultTurnTime - (continueTime - _timerStartTime);
                     
                     View.SetPauseStateView(true);
@@ -167,11 +168,16 @@ namespace Checkers.UI.Presenters {
                 
                 _timerService.RemoveTimer(PauseId);
                 View.SetPauseStateView(false);
+                
+                _timerStartTime = continueTime - _remainTime;
                 _timerService.StartTimer(TurnId, _remainTime, TurnTimeOut, false, View.SetTimerTime);
             }
         }
 
         private void ResumeGame() {
+            var continueTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+            _timerStartTime = continueTime - _remainTime;
+            
             _timerService.StartTimer(TurnId, _remainTime, TurnTimeOut, false, View.SetTimerTime);
         }
     }
