@@ -8,6 +8,7 @@ namespace Global.Window.Enums {
         RulesWindow = 6,
         FleeWindow = 7,
         InviteWindow = 8,
-        PauseWindow = 9
+        FlyText = 9,
+        PauseWindow = 10
     }
 }

@@ -1,4 +1,5 @@
-﻿using Checkers.UI.Data;
+﻿using System.Threading.Tasks;
+using Checkers.UI.Data;
 using Checkers.UI.Views.Base;
 using Core.Extensions;
 using Cysharp.Threading.Tasks;
@@ -36,24 +37,28 @@ namespace Checkers.UI.Presenters {
             Debug.Log("[Windows] Opened win window");
             View.SubscribeToContinue(ToMain);
             
-            var isMatchmaking = PlayerPrefsX.GetBool("Matchmaking");
-
-            if (isMatchmaking) {
-                var opponentId = _appConfig.OpponentUserId;
-                
-                var list = await _nakamaService.ListStorageObjects<PlayerResults>("players", "wins");
-
-                foreach (var element in list.Data) {
-                    if (element == opponentId) return;
-                }
-                list.Data.Add(opponentId);
-
-                await _nakamaService.WriteStorageObject("players", "wins", list);
-                
-                await _nakamaService.SubmitTournamentScore(_tournamentId, null, list.Data.Count, 0);
-            }
+            await CheckIfMatchmaking();
             var reasonText = GetWinReasonText(WindowData.Reason);
             View.SetReasonText(reasonText);
+        }
+
+        private async UniTask CheckIfMatchmaking() {
+            var isMatchmaking = PlayerPrefsX.GetBool("Matchmaking");
+
+            if (!isMatchmaking) return;
+            var opponentId = _appConfig.OpponentUserId;
+
+            var list = await _nakamaService.ListStorageObjects<PlayerResults>("players", "wins");
+
+            foreach (var element in list.Data) {
+                if (element == opponentId) return;
+            }
+
+            list.Data.Add(opponentId);
+
+            await _nakamaService.WriteStorageObject("players", "wins", list);
+
+            await _nakamaService.SubmitTournamentScore(_tournamentId, null, list.Data.Count, list.Data.Count);
         }
 
         private void ToMain() {

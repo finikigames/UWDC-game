@@ -3,12 +3,12 @@ using Checkers.Board;
 using Checkers.ConfigTemplate;
 using Checkers.Settings;
 using Checkers.UI.Data;
-using Checkers.UI.Presenters;
 using Core.Primitives;
 using DG.Tweening;
 using Global.ConfigTemplate;
 using Global.Enums;
 using Global.Scheduler.Base;
+using Global.UI.Data;
 using Global.Window;
 using Global.Window.Enums;
 using Global.Window.Signals;
@@ -74,6 +74,9 @@ namespace Checkers.Services {
             
             turnHandler.OnPawnCheck += OnPawnCheck;
             turnHandler.OnEndGame += OnEndGame;
+            turnHandler.OnTurnChange += CheckTurn;
+            
+            CheckTurn(turnHandler.GetTurn());
 
             _sceneSettings.HeroHealthSlider.maxValue = 12;
             _sceneSettings.HeroHealthSlider.value = 12;
@@ -186,6 +189,13 @@ namespace Checkers.Services {
             if (_mainColor == PawnColor.White) return;
             _sceneSettings.BoardRoot.position = _checkersConfig.BoardBlackMainPosition;
             _sceneSettings.BoardRoot.rotation = Quaternion.Euler(_checkersConfig.BoardBlackMainRotation);
+        }
+
+        private void CheckTurn(PawnColor pawnColor) {
+            if (_mainColor == pawnColor) {
+                var data = new FlyTextData("твой ход");
+                _signalBus.Fire(new OpenWindowSignal(WindowKey.FlyText, data));
+            }
         }
 
         private void OnPawnCheck(PawnColor color, GameObject pawn) {
