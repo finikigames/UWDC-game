@@ -69,13 +69,16 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
             
             _updateService.RegisterUpdate(this);
             _nakamaService.SubscribeToMatchmakerMatched(OnMatchmakerMatched);
+            
+            _timerService.StartUpTimer("waiting_for_play", 99, null, false, time => View.SetTimerText($"поиск матча: {time.ToString()}"));
         }
 
         private void OnReturnClick() {
             CloseThisWindow();
         }
 
-        public void CustomUpdate() {
+        public void CustomUpdate()
+        {
             if (!_needLoad) return;
             _needLoad = false;
 
@@ -118,8 +121,9 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
             _matchmakingValue = value;
             _opponentId = opponentId;
             await _nakamaService.SendMatchmakingInfo(opponentId, _matchmakingValue.ToString());
-
-            _timerService.StartTimer("waiting_for_play", 5, null, false, time => View.SetTimerText(time.ToString()));
+            
+            _timerService.RemoveTimer("waiting_for_play");
+            _timerService.StartTimer("await_start_game", 5, null, false, time => View.SetTimerText(time.ToString()));
             
             _schedulerService
                 .StartSequence()

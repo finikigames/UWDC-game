@@ -9,26 +9,19 @@ using UnityEngine.UI;
 namespace Main.UI.Views.Implementations.WaitForPlayerWindow {
     public class WaitForPlayerWindow : BaseWindow,
                                        IWaitForPlayerWindow {
-        [SerializeField]
-        private CanvasGroup _group;
+        [SerializeField] private CanvasGroup _group;
 
-        [SerializeField]
-        private TextMeshProUGUI _yourDisplayName;
+        [SerializeField] private TextMeshProUGUI _yourDisplayName;
 
-        [SerializeField]
-        private TextMeshProUGUI _opponentDisplayName;
+        [SerializeField] private TextMeshProUGUI _opponentDisplayName;
 
-        [SerializeField]
-        private TextMeshProUGUI _yourWins;
+        [SerializeField] private TextMeshProUGUI _yourWins;
 
-        [SerializeField]
-        private TextMeshProUGUI _opponentWins;
+        [SerializeField] private TextMeshProUGUI _opponentWins;
 
-        [SerializeField]
-        private Button _returnButton;
+        [SerializeField] private Button _returnButton;
 
-        [SerializeField]
-        private TextMeshProUGUI _timerText;
+        [SerializeField] private TextMeshProUGUI _timerText;
 
         protected override void OnEnable() {
             _showState = Core.MVP.Base.Enums.ShowState.Hidden;
