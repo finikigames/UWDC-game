@@ -13,4 +13,10 @@ MonoBehaviour:
   m_Name: App Config Installer
   m_EditorClassIdentifier: 
   Config:
-    PawnColor: 0
+    PauseTime: 10
+    TurnTime: 20
+    PawnColor: 1
+    OpponentDisplayName: Victor Cactus
+    OpponentUserId: 
+    InMatch: 1
+    InSearch: 0
