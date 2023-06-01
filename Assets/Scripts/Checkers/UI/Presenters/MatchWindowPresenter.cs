@@ -6,6 +6,7 @@ using Checkers.UI.Data;
 using Checkers.UI.Views.Base;
 using Core.Ticks.Interfaces;
 using Cysharp.Threading.Tasks;
+using Global;
 using Global.ConfigTemplate;
 using Global.Context;
 using Global.Enums;
@@ -17,6 +18,7 @@ using Global.Window.Enums;
 using Global.Window.Signals;
 using Nakama;
 using Nakama.TinyJson;
+using Server;
 using Server.Services;
 using UnityEngine;
 using UnityEngine.Scripting;
@@ -30,14 +32,16 @@ namespace Checkers.UI.Presenters {
         private IUpdateService _updateService;
         private MainCheckerSceneSettings _sceneSettings;
         private TimerService _timerService;
+        private MessageService _messageService;
+        private GlobalScope _globalScope;
         
         private bool _needNicknameInitialize;
         private const string TurnId = "TurnTimer";
         private const string PauseId = "PauseId";
         private long _timerStartTime;
         private long _remainTime;
-        private float _defaultTurnTime = 20.0f;
-        private float _pauseTime = 10.0f;
+        private int _defaultTurnTime = 20;
+        private int _pauseTime = 10;
 
         public MatchWindowPresenter(ContextService service) : base(service) {
         }
@@ -48,6 +52,8 @@ namespace Checkers.UI.Presenters {
             _updateService = Resolve<IUpdateService>(GameContext.Project);
             _sceneSettings = Resolve<MainCheckerSceneSettings>(GameContext.Checkers);
             _timerService = Resolve<TimerService>(GameContext.Project);
+            _messageService = Resolve<MessageService>(GameContext.Project);
+            _globalScope = Resolve<GlobalScope>(GameContext.Project);
 
             _sceneSettings.PawnMover.OnTurn += CaptureChecker;
             _nakamaService.SubscribeToMessages(OnChatMessage);
@@ -88,11 +94,11 @@ namespace Checkers.UI.Presenters {
 
             if (_appConfig.PawnColor == (int) PawnColor.Black) {
                 View.SetOpponentName(me.User.DisplayName);
-                View.SetYourName(_appConfig.Opponent);
+                View.SetYourName(_appConfig.OpponentDisplayName);
             }
             else {
                 View.SetYourName(me.User.DisplayName);
-                View.SetOpponentName(_appConfig.Opponent);
+                View.SetOpponentName(_appConfig.OpponentDisplayName);
             }
         }
 
@@ -141,8 +147,12 @@ namespace Checkers.UI.Presenters {
             
             var continueTime = DateTimeOffset.Now.ToUnixTimeSeconds();
             _remainTime = (long)_defaultTurnTime - (continueTime - _timerStartTime);
+
+            var opponentUserId = string.IsNullOrEmpty(_appConfig.OpponentUserId)
+                ? _appConfig.OpponentUserId
+                : _globalScope.ApproveSenderId;
             
-            await _nakamaService.SendMatchmakingInfo(_appConfig.OpponentUserId, "True");
+            await _messageService.SendPauseInfo(opponentUserId, "True");
         }
         
         private void OnChatMessage(IApiChannelMessage message) {

@@ -11,6 +11,7 @@ namespace Main.UI.Views.Implementations {
                                 IInviteWindow {
         [SerializeField] private CanvasGroup _group;
         [SerializeField] private Button _applyButton;
+        [SerializeField] private Button _declineButton;
         [SerializeField] private TextMeshProUGUI _mainText;
 
         protected override void OnEnable() {
@@ -22,6 +23,11 @@ namespace Main.UI.Views.Implementations {
             ChangeHideMechanism(new ChainHideMechanism(
                 new FadeHideMechanism(_group),
                 new CustomHideMechanism(HideBlack)));
+        }
+
+        public void SubscribeToDecline(Action callback) {
+            _declineButton.onClick.RemoveAllListeners();
+            _declineButton.onClick.AddListener(() => callback?.Invoke());
         }
         
         public void SubscribeToApply(Action callback) {

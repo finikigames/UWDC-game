@@ -15,6 +15,7 @@ using Main.UI.Data.WaitForPlayerWindow;
 using Main.UI.Views.Base.WaitForPlayerWindow;
 using Nakama;
 using Nakama.TinyJson;
+using Server;
 using Server.Services;
 using UnityEngine;
 using UnityEngine.Scripting;
@@ -30,6 +31,7 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
         private AppConfig _appConfig;
         private TimerService _timerService;
         private ISchedulerService _schedulerService;
+        private MessageService _messageService;
 
         private bool _needLoad;
 
@@ -50,12 +52,15 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
             _appConfig = Resolve<AppConfig>(GameContext.Project);
             _timerService = Resolve<TimerService>(GameContext.Project);
             _schedulerService = Resolve<ISchedulerService>(GameContext.Project);
+            _messageService = Resolve<MessageService>(GameContext.Project);
         }
 
         protected override async UniTask LoadContent() {
             _matchmakerTicket = await _nakamaService.AddMatchmaker();
             
             View.SubscribeToReturnButton(OnReturnClick);
+
+            _appConfig.InSearch = true;
             
             View.ShowReturnButton();
 
@@ -69,13 +74,16 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
             
             _updateService.RegisterUpdate(this);
             _nakamaService.SubscribeToMatchmakerMatched(OnMatchmakerMatched);
+            
+            _timerService.StartUpTimer("waiting_for_play", 99, null, false, time => View.SetTimerText($"поиск матча: {time.ToString()}"));
         }
 
         private void OnReturnClick() {
             CloseThisWindow();
         }
 
-        public void CustomUpdate() {
+        public void CustomUpdate()
+        {
             if (!_needLoad) return;
             _needLoad = false;
 
@@ -109,7 +117,7 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
             var opponentWinsCount = await _nakamaService.ListStorageObjects<PlayerResults>("players", "wins", opponentId);
             View.SetOpponentWins(opponentWinsCount.Data.Count.ToString());
             
-            _appConfig.Opponent = opponentUserInfo.DisplayName;
+            _appConfig.OpponentDisplayName = opponentUserInfo.DisplayName;
             View.SetOpponentName(opponentUserInfo.DisplayName);
             
             _nakamaService.SubscribeToMessages(OnChatMessage);
@@ -117,9 +125,10 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
             var value = Random.Range(0, 1000000);
             _matchmakingValue = value;
             _opponentId = opponentId;
-            await _nakamaService.SendMatchmakingInfo(opponentId, _matchmakingValue.ToString());
-
-            _timerService.StartTimer("waiting_for_play", 5, null, false, time => View.SetTimerText(time.ToString()));
+            await _messageService.SendMatchmakingInfo(opponentId, _matchmakingValue.ToString());
+            
+            _timerService.RemoveTimer("waiting_for_play");
+            _timerService.StartTimer("await_start_game", 5, null, false, time => View.SetTimerText(time.ToString()));
             
             _schedulerService
                 .StartSequence()
@@ -136,15 +145,15 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
             _signalBus.Fire(new ToCheckersMetaSignal{WithPlayer = true});
         }
 
-        private void OnChatMessage(IApiChannelMessage message) {
+        private async void OnChatMessage(IApiChannelMessage message) {
             var content = message.Content.FromJson<Dictionary<string, string>>();
             
             var profile = _nakamaService.GetMe();
-            if (content.TryGetValue("TargetUser", out var targetUser)) {
+            if (content.TryGetValue("targetUserId", out var targetUser)) {
                 if (profile.User.Id != targetUser) return;
             }
             
-            if (content.TryGetValue("ValueDropped", out var senderValue)) {
+            if (content.TryGetValue("valueDropped", out var senderValue)) {
                 if (_matchmakingValue > int.Parse(senderValue)) {
                     _appConfig.PawnColor = (int)PawnColor.White;
                     return;
@@ -157,7 +166,7 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
                 
                 var value = Random.Range(0, 1000000);
                 _matchmakingValue = value;
-                _nakamaService.SendMatchmakingInfo(_opponentId, _matchmakingValue.ToString());
+                await _messageService.SendMatchmakingInfo(_opponentId, _matchmakingValue.ToString());
             }
         }
 
@@ -175,6 +184,7 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
                 await _nakamaService.RemoveMatchmaker(_matchmakerTicket);
             }
 
+            _appConfig.InSearch = false;
             _nakamaService.UnsubscribeFromMessages(OnChatMessage);
             _nakamaService.UnsubscribeMatchmakerMatched(OnMatchmakerMatched);
         }

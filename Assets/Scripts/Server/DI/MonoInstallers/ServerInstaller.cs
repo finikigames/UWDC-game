@@ -8,6 +8,15 @@ namespace Server.DI.MonoInstallers {
                 .BindInterfacesAndSelfTo<NakamaService>()
                 .AsSingle()
                 .NonLazy();
+
+            Container
+                .BindInterfacesAndSelfTo<GlobalMessageListener>()
+                .AsSingle()
+                .NonLazy();
+
+            Container
+                .BindInterfacesAndSelfTo<MessageService>()
+                .AsSingle();
         }
     }
 }

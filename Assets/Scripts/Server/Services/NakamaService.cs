@@ -49,8 +49,26 @@ namespace Server.Services {
 #endif
         }
 
+        private async UniTask CheckForSessionExpired() {
+            if (!_session.IsExpired) return;
+
+            await _client.SessionRefreshAsync(_session);
+        }
+        
         public IApiAccount GetMe() {
             return _me;
+        }
+
+        public void AddParty(string id, IParty party) {
+            _createdParties.Add(id, party);
+        }
+
+        public bool HasParty(string id) {
+            return _createdParties.ContainsKey(id);
+        }
+
+        public void RemoveParty(string id) {
+            _createdParties.Remove(id);
         }
 
         public async UniTask<IMatchmakerTicket> AddMatchmaker() {
@@ -102,56 +120,9 @@ namespace Server.Services {
         public async UniTask JoinParty(string partyId) {
             await _socket.JoinPartyAsync(partyId);
         }
-        
-        public async UniTask SendPauseInfo(string opponent, string value) {
-            var senderUserId = _me.User.Id;
-            
-            var content = new Dictionary<string, string>() {
-                {"senderUserId", senderUserId},
-                {"Pause", value},
-                {"TargetUser", opponent}
-            };
 
-            await _socket.WriteChatMessageAsync(_globalChannel, content.ToJson());
-        }
-        
-
-        public async UniTask SendMatchmakingInfo(string opponent, string value) {
-            var senderUserId = _me.User.Id;
-            
-            var content = new Dictionary<string, string>() {
-                {"senderUserId", senderUserId},
-                {"ValueDropped", value},
-                {"TargetUser", opponent}
-            };
-
-            await _socket.WriteChatMessageAsync(_globalChannel, content.ToJson());
-        }
-
-        public async UniTask SendUserConfirmation(string partyId, string userId) {
-            var senderUserId = _me.User.Id;
-            
-            var content = new Dictionary<string, string>() {
-                {"senderUserId", senderUserId},
-                {"approveMatchInvite", partyId},
-                {"targetUserId", userId}
-            };
-            
-            await _socket.WriteChatMessageAsync(_globalChannel, content.ToJson());
-        }
-        
-        public async UniTask SendPartyToUser(string userId, IParty party) {
-            var content = new Dictionary<string, string>() {
-                {"senderUserId", _me.User.Id},
-                {"partyId", party.Id},
-                {"senderDisplayName", _me.User.DisplayName},
-                {"targetUserId", userId}
-            };
-            
-            await _socket.WriteChatMessageAsync(_globalChannel, content.ToJson());
-
-            if (_createdParties.ContainsKey(userId)) return;
-            _createdParties.Add(userId, party);
+        public async UniTask SendMessage(IChannel channel, Dictionary<string, string> data) {
+            await _socket.WriteChatMessageAsync(channel, data.ToJson());
         }
 
         public async UniTask<IChannel> JoinChat(string groupId, ChannelType type = ChannelType.Group,bool persistence = true) {
@@ -160,6 +131,8 @@ namespace Server.Services {
         }
 
         public async UniTask<IApiTournament> GetTournament(string id) {
+            await CheckForSessionExpired();
+            
             var list = await _client.ListTournamentsAsync(_session, 1, 2, null, null, 1);
 
             foreach (var tournament in list.Tournaments) {
@@ -173,11 +146,14 @@ namespace Server.Services {
         }
         
         public async UniTask JoinTournament(string id) {
+            await CheckForSessionExpired();
             await _client.JoinTournamentAsync(_session, id);
         }
 
         public async UniTask SubmitTournamentScore(string id, Dictionary<string, string> metadata, int score, int subScore) {
             if (!_tournament.IsActive()) return;
+            await CheckForSessionExpired();
+            
             await _client.WriteTournamentRecordAsync(_session, id, score, subScore, metadata == null ? null:  JsonWriter.ToJson(metadata));
         }
 
@@ -190,6 +166,8 @@ namespace Server.Services {
         }
 
         public async UniTask WriteStorageObject<T>(string collectionId, string key, T value) where T : class, new() {
+            await CheckForSessionExpired();
+            
             var writeObject = new WriteStorageObject {
                 Collection = collectionId,
                 Key = key,
@@ -205,6 +183,9 @@ namespace Server.Services {
             if (string.IsNullOrEmpty(userId)) {
                 userId = _session.UserId;
             }
+
+            await CheckForSessionExpired();
+            
             return await _client.ListUsersStorageObjectsAsync(_session, id, userId);
         }
         
@@ -212,6 +193,8 @@ namespace Server.Services {
             if (string.IsNullOrEmpty(userId)) {
                 userId = _session.UserId;
             }
+
+            await CheckForSessionExpired();
             var objects = await _client.ListUsersStorageObjectsAsync(_session, collectionId, userId, limit:2);
 
             foreach (var obj in objects.Objects) {
@@ -233,10 +216,12 @@ namespace Server.Services {
         }
         
         public async UniTask<IApiAccount> GetUserInfo() {
+            await CheckForSessionExpired();
             return await _client.GetAccountAsync(_session);
         }
 
         public async UniTask<IApiUser> GetUserInfo(string userId) {
+            await CheckForSessionExpired();
             var users =  await _client.GetUsersAsync(_session, new [] {userId});
             foreach (var user in users.Users) {
                 return user;
@@ -246,17 +231,21 @@ namespace Server.Services {
         }
         
         public async UniTask<IApiGroup> CreateGroup(string groupName) {
+            await CheckForSessionExpired();
             var groups = await _client.ListGroupsAsync(_session, groupName);
             foreach (var group in groups.Groups) {
                 if (group.Name == groupName) {
                     return group;
                 }
             }
+
+            await CheckForSessionExpired();
             _apiGroup = await _client.CreateGroupAsync(_session, groupName);
             return _apiGroup;
         }
         
         public async UniTask JoinGroup(string groupId) {
+            await CheckForSessionExpired();
             var resultsMember = await _client.ListUserGroupsAsync(_session, 2, 1, "");
             
             foreach (var group in resultsMember.UserGroups) {
@@ -272,6 +261,8 @@ namespace Server.Services {
         }
 
         public async UniTask<IApiGroup> GetGroupInfo(string groupName) {
+            await CheckForSessionExpired();
+            
             var groups = await _client.ListGroupsAsync(_session, groupName);
 
             foreach (var group in groups.Groups) {
@@ -282,10 +273,12 @@ namespace Server.Services {
         }
 
         public async UniTask<IApiGroupUserList> GetGroupUsers(string groupName, int limit, string cursor = "") {
+            await CheckForSessionExpired();
             return await _client.ListGroupUsersAsync(_session, groupName, 2, limit, cursor);
         }
         
         public async UniTask<List<IGroupUserListGroupUser>> GetGroupUsersWithoutMe(string groupName, int limit, string cursor = "") {
+            await CheckForSessionExpired();
             var usersList = await _client.ListGroupUsersAsync(_session, groupName, 2, limit, cursor);
 
             var value = usersList.GroupUsers.Where(u => u.User.Id != _me.User.Id).ToList();
@@ -374,10 +367,6 @@ namespace Server.Services {
             return _match;
         }
 
-        public async UniTask<IApiMatchList> GetMatchesList() {
-            return await _client.ListMatchesAsync(_session, 0, 1, 10, false, null, null);
-        }
-
         public async UniTask SendMatchStateAsync(string matchId, long opCode, string data) {
             await _socket.SendMatchStateAsync(matchId, opCode, data);
         }
@@ -399,6 +388,8 @@ namespace Server.Services {
         }
 
         public async UniTask AddFriend(string friendId) {
+            await CheckForSessionExpired();
+            
             await _client.AddFriendsAsync(_session, new [] {friendId});
         }
 

@@ -24,6 +24,8 @@ namespace Checkers.UI.Views.Implementations {
 
         private bool _tweenStarted;
         private bool _isWhite;
+        private float _currentTime;
+        private readonly int _borderTime = 5;
 
         protected override void OnEnable() {
             _showState = Core.MVP.Base.Enums.ShowState.Hidden;
@@ -73,21 +75,9 @@ namespace Checkers.UI.Views.Implementations {
             bar.DecreaseСhecker();
         }
 
-        public void SetTimerTime(int time) {
-            _turnTimer.text = time.ToString();
-            
-            if (time <= 5 && !_tweenStarted)
-            {
-                _tweenStarted = true;
-                _turnTimer.DOColor(Color.red, 1);
-                _turnTimer.transform.DOScale(1.25f, .5f).SetEase(Ease.InOutSine).SetLoops(-1, LoopType.Yoyo);
-            }
-        }
-
         public void SetPauseTime(int time) {
             _pauseTimer.text = time.ToString();
         }
-
         public void ResetBars(bool isWhite) {
             _isWhite = isWhite;
 
@@ -102,6 +92,36 @@ namespace Checkers.UI.Views.Implementations {
 
         public void SetPauseStateView(bool state) {
             _pauseBody.gameObject.SetActive(state);
+        }
+        
+        public void SetTimerTime(int time) {
+            _turnTimer.text = time.ToString();
+            _currentTime = time;
+            
+            if (time <= _borderTime && !_tweenStarted) {
+                _tweenStarted = true;
+                ActivateTween();
+            }
+        }
+        
+        private void ActivateTween() {
+            DOTween.Sequence()
+                .Join(_turnTimer.DOColor(Color.red, 0))
+                .Append(_turnTimer.transform.DOScale(1.25f, .5f).SetEase(Ease.InOutSine))
+                .Append(_turnTimer.transform.DOScale(1f, .5f).SetEase(Ease.InOutSine))
+                .OnComplete(CheckStatus);
+        }
+
+        private void CheckStatus() {
+            if (_currentTime <= _borderTime) {
+                ActivateTween();
+            }
+            else {
+                _turnTimer.color = Color.white;
+                _turnTimer.transform.localScale = Vector3.one;
+
+                _tweenStarted = false;
+            }
         }
     }
 }
