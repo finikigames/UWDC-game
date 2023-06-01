@@ -10,6 +10,7 @@ using Global.Window.Base;
 using Global.Window.Enums;
 using Global.Window.Signals;
 using Server.Services;
+using UnityEngine;
 using UnityEngine.Scripting;
 using Zenject;
 
@@ -32,6 +33,7 @@ namespace Checkers.UI.Presenters {
         }
 
         protected override async UniTask LoadContent() {
+            Debug.Log("[Windows] Opened win window");
             View.SubscribeToContinue(ToMain);
             
             var isMatchmaking = PlayerPrefsX.GetBool("Matchmaking");
