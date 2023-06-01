@@ -14,6 +14,7 @@ using Global.Window.Enums;
 using Global.Window.Signals;
 using Nakama;
 using Newtonsoft.Json;
+using Server;
 using Server.Services;
 using UnityEngine;
 using Zenject;
@@ -24,15 +25,7 @@ namespace Checkers.Services {
         public Coords From;
         public bool Capture;
     }
-    
-    public struct StartedSignal {
-        public PawnColor StartColor;
-    }
 
-    public struct YouAreBlack {
-        
-    }
-    
     public class MainCheckersOnlineService : ITickable {
         private readonly MainCheckerSceneSettings _sceneSettings;
         private readonly ISchedulerService _schedulerService;
@@ -40,6 +33,7 @@ namespace Checkers.Services {
         private readonly SignalBus _signalBus;
         private readonly AppConfig _appConfig;
         private readonly WindowService _windowService;
+        private readonly MessageService _messageService;
         private readonly CheckersConfig _checkersConfig;
         private PawnColor _mainColor;
         private UnityEngine.Camera _cam;
@@ -54,13 +48,15 @@ namespace Checkers.Services {
                                          CheckersConfig checkersConfig,
                                          SignalBus signalBus,
                                          AppConfig appConfig,
-                                         WindowService windowService) {
+                                         WindowService windowService,
+                                         MessageService messageService) {
             _sceneSettings = sceneSettings;
             _schedulerService = schedulerService;
             _nakamaService = nakamaService;
             _signalBus = signalBus;
             _appConfig = appConfig;
             _windowService = windowService;
+            _messageService = messageService;
             _checkersConfig = checkersConfig;
         }
         

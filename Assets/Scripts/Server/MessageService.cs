@@ -28,6 +28,18 @@ namespace Server {
         public void InitializeGlobalChannel(IChannel channel) {
             _globalChannel = channel;
         }
+
+        public async UniTask YourTimeExpired(string userId) {
+            var me = _nakamaService.GetMe();
+            
+            var content = new Dictionary<string, string>() {
+                {"senderUserId", me.User.Id},
+                {"targetUserId", userId},
+                {"gameEndAndTimeExpired", null}
+            };
+
+            await _nakamaService.SendMessage(_globalChannel, content);
+        }
         
         public async UniTask SendPartyToUser(string userId, IParty party) {
             var me = _nakamaService.GetMe();

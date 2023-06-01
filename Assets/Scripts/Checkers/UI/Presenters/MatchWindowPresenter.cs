@@ -189,6 +189,10 @@ namespace Checkers.UI.Presenters {
                 return;
             }
 
+            if (content.TryGetValue("gameEndAndTimeExpired", out var value)) {
+                _appConfig.GameEnded = true;
+            }
+
             _opponentReturn = true;
             _needResumeGame = true;
                 
