@@ -35,22 +35,25 @@ namespace Checkers.UI.Presenters {
             var reasonText = GetLoseReasonText(WindowData.Reason);
             View.SetReasonText(reasonText);
 
+            await CheckIfMatchmaking();
+        }
+
+        private async UniTask CheckIfMatchmaking() {
             var isMatchmaking = PlayerPrefsX.GetBool("Matchmaking");
 
-            if (isMatchmaking) {
-                var opponentId = _appConfig.OpponentUserId;
-                
-                var list = await _nakamaService.ListStorageObjects<PlayerResults>("players", "loses");
+            if (!isMatchmaking) return;
+            var opponentId = _appConfig.OpponentUserId;
+            
+            var list = await _nakamaService.ListStorageObjects<PlayerResults>("players", "loses");
 
-                foreach (var element in list.Data) {
-                    if (element == opponentId) return;
-                }
-                list.Data.Add(opponentId);
-
-                await _nakamaService.WriteStorageObject("players", "loses", list);
+            foreach (var element in list.Data) {
+                if (element == opponentId) return;
             }
+            list.Data.Add(opponentId);
+
+            await _nakamaService.WriteStorageObject("players", "loses", list);
         }
-        
+
         private void ToMain() {
             _signalBus.Fire(new CloseWindowSignal(WindowKey.LoseWindow));
             _signalBus.Fire(new ToMainSignal());
