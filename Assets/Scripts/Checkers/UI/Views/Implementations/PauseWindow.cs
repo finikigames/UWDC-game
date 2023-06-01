@@ -21,8 +21,8 @@ namespace Checkers.UI.Views.Implementations {
                 new CustomHideMechanism(HideBlack)));
         }
         
-        public void SetPauseTime(int time) {
-            _timerText.text = time.ToString();
+        public void SetPauseTime(float time) {
+            _timerText.text = ((int)time).ToString();
         }
     }
 }

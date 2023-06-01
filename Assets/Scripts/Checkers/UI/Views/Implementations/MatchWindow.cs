@@ -85,8 +85,8 @@ namespace Checkers.UI.Views.Implementations {
             return bar;
         }
 
-        public void SetTimerTime(int time) {
-            _turnTimer.text = time.ToString();
+        public void SetTimerTime(float time) {
+            _turnTimer.text = ((int)time).ToString();
             _currentTime = time;
             
             if (time <= _borderTime && !_tweenStarted) {

@@ -21,6 +21,7 @@ using Nakama;
 using Nakama.TinyJson;
 using Server;
 using Server.Services;
+using UnityEngine;
 using UnityEngine.Scripting;
 using Zenject;
 
@@ -77,7 +78,7 @@ namespace Checkers.UI.Presenters {
 
             _sceneSettings.PawnMover.OnTurnEnd += TurnChange;
             _sceneSettings.TurnHandler.OnEndGame += (s, r) => _timerService.RemoveTimer(TurnId);
-            _timerService.StartTimer(TurnId, _appConfig.TurnTime, TurnTimeOut, false, View.SetTimerTime);
+            _timerService.StartTimer(TurnId, _appConfig.TurnTime, TurnTimeOut, false, SetRemainTurnTime);
             _remainTime = _appConfig.TurnTime;
             
             SetBarsPosition();
@@ -218,8 +219,9 @@ namespace Checkers.UI.Presenters {
             _timerService.StartTimer(TurnId, _remainTime, TurnTimeOut, false, SetRemainTurnTime);
         }
 
-        private void SetRemainTurnTime(int time) {
+        private void SetRemainTurnTime(float time) {
             _remainTime = time;
+            Debug.Log(_remainTime);
             View.SetTimerTime((int)_remainTime);
         }
     }

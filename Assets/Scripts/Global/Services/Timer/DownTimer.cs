@@ -3,11 +3,11 @@ using System;
 namespace Global.Services.Timer {
     public class DownTimer : Timer {
         private readonly Action _onEnd;
-        private readonly Action<int> _onTick;
+        private readonly Action<float> _onTick;
         private float _initialTime;
         private float _timeLeft;
 
-        public DownTimer(float time, Action callback, bool isLoop = false, Action<int> callbackTick = null) {
+        public DownTimer(float time, Action callback, bool isLoop = false, Action<float> callbackTick = null) {
             _timeLeft = time;
             _initialTime = time;
             IsLoop = isLoop;

@@ -4,11 +4,11 @@ namespace Global.Services.Timer {
     public class UpTimer : Timer
     {
         private readonly Action _onEnd;
-        private readonly Action<int> _onTick;
+        private readonly Action<float> _onTick;
         private float _currentTime;
         private float _timeDuration;
         
-        public UpTimer(float time, Action callback, bool isLoop = false, Action<int> callbackTick = null) {
+        public UpTimer(float time, Action callback, bool isLoop = false, Action<float> callbackTick = null) {
             _timeDuration = time;
             _currentTime = 0;
             IsLoop = isLoop;

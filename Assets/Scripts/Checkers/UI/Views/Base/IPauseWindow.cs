@@ -2,6 +2,6 @@
 
 namespace Checkers.UI.Views.Base {
     public interface IPauseWindow : IWindowView {
-        void SetPauseTime(int time);
+        void SetPauseTime(float time);
     }
 }
