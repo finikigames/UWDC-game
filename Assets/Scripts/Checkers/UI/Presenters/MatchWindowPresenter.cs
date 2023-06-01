@@ -138,6 +138,10 @@ namespace Checkers.UI.Presenters {
 
         private async void PauseGame() {
             _timerService.RemoveTimer(TurnId);
+            
+            var continueTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+            _remainTime = (long)_defaultTurnTime - (continueTime - _timerStartTime);
+            
             await _nakamaService.SendMatchmakingInfo(_appConfig.OpponentUserId, "True");
         }
         
@@ -152,8 +156,10 @@ namespace Checkers.UI.Presenters {
             if (content.TryGetValue("Pause", out var pauseValue)) {
                 if (!string.IsNullOrEmpty(pauseValue)) {
                     _timerService.RemoveTimer(TurnId);
+                    
                     var continueTime = DateTimeOffset.Now.ToUnixTimeSeconds();
                     _remainTime = (long)_defaultTurnTime - (continueTime - _timerStartTime);
+                    
                     View.SetPauseStateView(true);
                     _timerService.StartTimer(PauseId, _pauseTime, TurnTimeOut, false, View.SetPauseTime);
                     return;
