@@ -18,5 +18,13 @@ namespace Global.UI.Views.Implementations {
                 new FadeHideMechanism(_group),
                 new CustomHideMechanism(HideBlack)));
         }
+
+        public void ShowCloseButton() {
+            _closeButton.gameObject.SetActive(true);
+        }
+
+        public void HideCloseButton() {
+            _closeButton.gameObject.SetActive(false);
+        }
     }
 }

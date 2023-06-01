@@ -1,4 +1,5 @@
-﻿using Core.Extensions;
+﻿using System.Threading.Tasks;
+using Core.Extensions;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Global.ConfigTemplate;
@@ -6,6 +7,7 @@ using Global.Services;
 using Global.StateMachine;
 using Global.StateMachine.Base.Enums;
 using Global.UI.Data;
+using Global.UI.Signals;
 using Global.Window;
 using Global.Window.Enums;
 using Global.Window.Signals;
@@ -59,10 +61,7 @@ namespace Preloader {
             
             _messageListener.Initialize();
 
-            /*if (!PlayerPrefsX.GetBool("NotFirstStart")) {
-                PlayerPrefsX.SetBool("NotFirstStart", true);
-                _signalBus.Fire(new OpenWindowSignal(WindowKey.RulesWindow, new RulesWindowData()));
-            }*/
+            await WaitForWindowOpenAndClose();
 
             var currentScene = SceneManager.GetActiveScene().buildIndex;
             await SceneManager.LoadSceneAsync("Main", LoadSceneMode.Additive);
@@ -70,6 +69,24 @@ namespace Preloader {
             await _gameStateMachine.Fire(Trigger.MainTrigger);
 
             await SceneManager.UnloadSceneAsync(currentScene);
+        }
+
+        private async UniTask WaitForWindowOpenAndClose() {
+            if (!PlayerPrefsX.GetBool("NotFirstStart")) {
+                PlayerPrefsX.SetBool("NotFirstStart", true);
+                _signalBus.Fire(new OpenWindowSignal(WindowKey.RulesWindow, new RulesWindowData()));
+            }
+            else {
+                return;
+            }
+            
+            while (!_windowService.IsWindowOpened(WindowKey.RulesWindow)) {
+                await UniTask.Yield();
+            }
+            
+            _signalBus.Fire(new ShowRulesWindowCloseButton { Show = false });
+            await UniTask.Delay(3000);
+            _signalBus.Fire(new ShowRulesWindowCloseButton { Show = true });
         }
     }
 }

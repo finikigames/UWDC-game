@@ -1,6 +1,7 @@
 ﻿using Cysharp.Threading.Tasks;
 using Global.Context;
 using Global.UI.Data;
+using Global.UI.Signals;
 using Global.UI.Views.Base;
 using Global.Window.Base;
 using UnityEngine.Scripting;
@@ -12,6 +13,20 @@ namespace Global.UI.Presenters {
         }
 
         protected override async UniTask LoadContent() {
+            SignalBus.Subscribe<ShowRulesWindowCloseButton>(OnRulesCloseState);
+        }
+
+        public override async UniTask Dispose() {
+            SignalBus.Unsubscribe<ShowRulesWindowCloseButton>(OnRulesCloseState);
+        }
+
+        private void OnRulesCloseState(ShowRulesWindowCloseButton signal) {
+            if (signal.Show) {
+                View.ShowCloseButton();
+            }
+            else {
+                View.HideCloseButton();
+            }
         }
     }
 }
