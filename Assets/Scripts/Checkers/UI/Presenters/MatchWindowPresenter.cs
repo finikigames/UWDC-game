@@ -213,7 +213,7 @@ namespace Checkers.UI.Presenters {
 
         private async void ResumeGame() {
             var continueTime = DateTimeOffset.Now.ToUnixTimeSeconds();
-            _timerStartTime = continueTime - _remainTime;
+            _timerStartTime = continueTime - (_pauseTime - _remainTime);
             
             if (continueTime - _pauseStartTime >= _pauseTime) {
                 PauseTimeOut();
