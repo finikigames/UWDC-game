@@ -13,8 +13,18 @@ namespace Global.Services.Timer {
         }
 
         public void StartTimer(string timerId, float time, Action onEnd, bool isLoop = false, Action<int> onTick = null) {
-            var timer = new Timer(time, onEnd, isLoop, onTick);
+            StartDownTimer(timerId, time, onEnd, isLoop, onTick);
+        }
+
+        public void StartDownTimer(string timerId, float time, Action onEnd, bool isLoop = false, Action<int> onTick = null) {
+            var timer = new DownTimer(time, onEnd, isLoop, onTick);
             
+            _timers.Add(timerId, timer);
+        }
+
+        public void StartUpTimer(string timerId, float time, Action onEnd, bool isLoop = false, Action<int> onTick = null)
+        {
+            var timer = new UpTimer(time, onEnd, isLoop, onTick);
             _timers.Add(timerId, timer);
         }
 
