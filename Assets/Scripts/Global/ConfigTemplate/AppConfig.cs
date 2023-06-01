@@ -21,6 +21,8 @@ namespace Global.ConfigTemplate {
         public bool InMatch;
         [NonSerialized]
         public bool InSearch;
+        [NonSerialized]
+        public bool Leave;
 
         public void Reset() {
             PawnColor = 0;
@@ -30,6 +32,7 @@ namespace Global.ConfigTemplate {
             InSearch = false;
             MyLeaveTimerExpired = false;
             GameEnded = false;
+            Leave = false;
         }
     }
 }

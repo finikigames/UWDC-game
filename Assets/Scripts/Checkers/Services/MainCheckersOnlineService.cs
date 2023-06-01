@@ -40,7 +40,6 @@ namespace Checkers.Services {
 
         private TurnData _turnData;
         private bool _hasInput;
-        private bool _someoneLeaved;
 
         public MainCheckersOnlineService(MainCheckerSceneSettings sceneSettings,
                                          ISchedulerService schedulerService, 
@@ -72,7 +71,6 @@ namespace Checkers.Services {
             _sceneSettings.TurnHandler.YourColor = _mainColor;
             
             _nakamaService.SubscribeToMatchState(OnMatchState);
-            _nakamaService.SubscribeToMatchPresence(OnMatchPresence);
             
             turnHandler.OnPawnCheck += OnPawnCheck;
             turnHandler.OnEndGame += OnEndGame;
@@ -101,12 +99,6 @@ namespace Checkers.Services {
             };
         }
 
-        private void OnMatchPresence(IMatchPresenceEvent obj) {
-            if (obj.Leaves.Any()) {
-                _someoneLeaved = true;
-            }
-        }
-
         public void Tick() {
             if (_appConfig.GameEnded) return;
             
@@ -131,10 +123,9 @@ namespace Checkers.Services {
         }
 
         private void CheckLeave() {
-            if (!_someoneLeaved || _appConfig.GameEnded) return;
+            if (!_appConfig.Leave) return;
 
-            _someoneLeaved = false;
-            
+            _appConfig.Leave = false;
             _signalBus.Fire(new OpenWindowSignal(WindowKey.WinWindow, new WinWindowData{Reason = WinLoseReason.Concide}));
         }
 

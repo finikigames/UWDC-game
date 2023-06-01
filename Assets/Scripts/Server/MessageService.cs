@@ -29,13 +29,13 @@ namespace Server {
             _globalChannel = channel;
         }
 
-        public async UniTask YourTimeExpired(string userId) {
+        public async UniTask Leave(string userId) {
             var me = _nakamaService.GetMe();
             
             var content = new Dictionary<string, string>() {
                 {"senderUserId", me.User.Id},
                 {"targetUserId", userId},
-                {"gameEndAndTimeExpired", null}
+                {"leave", null}
             };
 
             await _nakamaService.SendMessage(_globalChannel, content);

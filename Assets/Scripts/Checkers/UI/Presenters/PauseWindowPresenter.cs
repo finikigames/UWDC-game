@@ -39,8 +39,6 @@ namespace Checkers.UI.Presenters {
         private async void PauseTimeOutForWaiting() {
             var winner = _sceneSettings.TurnHandler.YourColor == PawnColor.Black ? PawnColor.White : PawnColor.Black;
             _sceneSettings.TurnHandler.EndGame(winner, WinLoseReason.Timeout);
-
-            await _messageService.YourTimeExpired(_appConfig.OpponentUserId);
             
             CloseThisWindow();
         }

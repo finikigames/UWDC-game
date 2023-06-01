@@ -64,6 +64,10 @@ namespace Server {
                 _globalScope.ApprovedMatchAndNeedLoad = true;
                 _globalScope.ApproveSenderId = senderUserId;
             }
+
+            if (content.TryGetValue("leave", out var leave)) {
+                _appConfig.Leave = true;
+            }
         }
     }
 }
