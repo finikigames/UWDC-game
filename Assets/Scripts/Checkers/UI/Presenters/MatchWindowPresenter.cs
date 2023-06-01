@@ -72,6 +72,7 @@ namespace Checkers.UI.Presenters {
             _sceneSettings.TurnHandler.OnEndGame += (s, r) => _timerService.RemoveTimer(TurnId);
             _timerService.StartTimer(TurnId, _defaultTurnTime, TurnTimeOut, false, View.SetTimerTime);
             _timerStartTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+            _remainTime = _defaultTurnTime;
             
             SetBarsPosition();
             ApplicationQuit.SubscribeOnQuit(PauseGame);
@@ -125,6 +126,7 @@ namespace Checkers.UI.Presenters {
         private void TurnChange() {
             _timerService.ResetTimer(TurnId, _defaultTurnTime);
             _timerStartTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+            _remainTime = _defaultTurnTime;
         }
 
         private void TurnTimeOut() {
@@ -146,7 +148,7 @@ namespace Checkers.UI.Presenters {
             _timerService.RemoveTimer(TurnId);
             
             var continueTime = DateTimeOffset.Now.ToUnixTimeSeconds();
-            _remainTime = (long)_defaultTurnTime - (continueTime - _timerStartTime);
+            _remainTime = _defaultTurnTime - (continueTime - _timerStartTime);
 
             var opponentUserId = string.IsNullOrEmpty(_appConfig.OpponentUserId)
                 ? _appConfig.OpponentUserId
@@ -169,7 +171,7 @@ namespace Checkers.UI.Presenters {
                 if (!string.IsNullOrEmpty(pauseValue)) {
                     _timerService.RemoveTimer(TurnId);
                     
-                    _remainTime = (long)_defaultTurnTime - (continueTime - _timerStartTime);
+                    _remainTime = _defaultTurnTime - (continueTime - _timerStartTime);
                     
                     View.SetPauseStateView(true);
                     _timerService.StartTimer(PauseId, _pauseTime, TurnTimeOut, false, View.SetPauseTime);
