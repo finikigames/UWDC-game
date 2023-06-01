@@ -141,11 +141,11 @@ namespace Checkers.UI.Presenters {
 
         private void TurnTimeOut() {
             var winner = _sceneSettings.TurnHandler.Turn == PawnColor.Black ? PawnColor.Black : PawnColor.White;
-            _sceneSettings.TurnHandler.OnEndGame?.Invoke(winner, WinLoseReason.Timeout);
+            _sceneSettings.TurnHandler.EndGame(winner, WinLoseReason.Timeout);
         }
 
         private void PauseTimeOut() {
-            _sceneSettings.TurnHandler.OnEndGame?.Invoke(_sceneSettings.TurnHandler.YourColor, WinLoseReason.Timeout);
+            _sceneSettings.TurnHandler.EndGame(_sceneSettings.TurnHandler.YourColor, WinLoseReason.Timeout);
         }
 
         private async UniTask SetBarsPosition() {

@@ -69,8 +69,8 @@ namespace Checkers.Board
                 EndGame(PawnColor.White);
         }
 
-        private void EndGame(PawnColor winnerPawnColor) {
-            OnEndGame?.Invoke(winnerPawnColor, WinLoseReason.Rule);
+        public void EndGame(PawnColor winnerPawnColor, WinLoseReason reason = WinLoseReason.Rule) {
+            OnEndGame?.Invoke(winnerPawnColor, reason);
         }
     }
 }

@@ -47,7 +47,6 @@ namespace Checkers.Services {
         private TurnData _turnData;
         private bool _hasInput;
         private bool _someoneLeaved;
-        private bool _endGame;
 
         public MainCheckersOnlineService(MainCheckerSceneSettings sceneSettings,
                                          ISchedulerService schedulerService, 
@@ -78,7 +77,6 @@ namespace Checkers.Services {
             
             _nakamaService.SubscribeToMatchState(OnMatchState);
             _nakamaService.SubscribeToMatchPresence(OnMatchPresence);
-            _sceneSettings.TurnHandler.OnEndGame += (s, r) => _endGame = true;
             
             turnHandler.OnPawnCheck += OnPawnCheck;
             turnHandler.OnEndGame += OnEndGame;
@@ -114,7 +112,7 @@ namespace Checkers.Services {
         }
 
         public void Tick() {
-            if (_endGame) return;
+            if (_appConfig.GameEnded) return;
             
             CheckInput();
 
