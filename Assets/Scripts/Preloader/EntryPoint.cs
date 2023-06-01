@@ -1,9 +1,14 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using Core.Extensions;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Global.ConfigTemplate;
 using Global.Services;
 using Global.StateMachine;
 using Global.StateMachine.Base.Enums;
+using Global.UI.Data;
+using Global.Window;
+using Global.Window.Enums;
+using Global.Window.Signals;
 using Server;
 using Server.Services;
 using UnityEngine.SceneManagement;
@@ -16,17 +21,23 @@ namespace Preloader {
         private readonly GameStateMachine _gameStateMachine;
         private readonly GlobalMessageListener _messageListener;
         private readonly AppConfig _appConfig;
+        private readonly WindowService _windowService;
+        private readonly SignalBus _signalBus;
 
         public EntryPoint(ProfileGetService getService,
                           NakamaService nakamaService,
                           GameStateMachine gameStateMachine,
                           GlobalMessageListener messageListener,
-                          AppConfig appConfig) {
+                          AppConfig appConfig,
+                          WindowService windowService,
+                          SignalBus signalBus) {
             _getService = getService;
             _nakamaService = nakamaService;
             _gameStateMachine = gameStateMachine;
             _messageListener = messageListener;
             _appConfig = appConfig;
+            _windowService = windowService;
+            _signalBus = signalBus;
         }
         
         public void Initialize() {
@@ -47,6 +58,11 @@ namespace Preloader {
             await _nakamaService.CommonInitialize();
             
             _messageListener.Initialize();
+
+            /*if (!PlayerPrefsX.GetBool("NotFirstStart")) {
+                PlayerPrefsX.SetBool("NotFirstStart", true);
+                _signalBus.Fire(new OpenWindowSignal(WindowKey.RulesWindow, new RulesWindowData()));
+            }*/
 
             var currentScene = SceneManager.GetActiveScene().buildIndex;
             await SceneManager.LoadSceneAsync("Main", LoadSceneMode.Additive);

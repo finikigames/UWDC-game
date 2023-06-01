@@ -13,6 +13,7 @@ using Global.Enums;
 using Global.Services;
 using Global.Services.Timer;
 using Global.StateMachine.Base.Enums;
+using Global.UI.Data;
 using Global.Window.Base;
 using Global.Window.Enums;
 using Global.Window.Signals;

@@ -1,6 +1,6 @@
 ﻿using Core.MVP.Base.Interfaces;
 
-namespace Checkers.UI.Data {
+namespace Global.UI.Data {
     public class RulesWindowData : IWindowData {
     }
 }

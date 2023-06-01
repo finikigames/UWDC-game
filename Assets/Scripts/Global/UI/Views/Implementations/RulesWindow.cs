@@ -1,9 +1,9 @@
-﻿using Checkers.UI.Views.Base;
+﻿using Global.UI.Views.Base;
 using Global.VisibilityMechanisms;
 using Global.Window.Base;
 using UnityEngine;
 
-namespace Checkers.UI.Views.Implementations {
+namespace Global.UI.Views.Implementations {
     public class RulesWindow : BaseWindow, 
                                IRulesWindow {
         [SerializeField] private CanvasGroup _group;
