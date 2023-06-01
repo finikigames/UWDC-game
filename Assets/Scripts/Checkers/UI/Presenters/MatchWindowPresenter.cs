@@ -42,9 +42,9 @@ namespace Checkers.UI.Presenters {
         private const string TurnId = "TurnTimer";
         private const string PauseId = "PauseId";
         
-        private long _timerStartTime;
-        private long _remainTime;
-        private long _pauseStartTime;
+        private float _timerStartTime;
+        private float _remainTime;
+        private float _pauseStartTime;
         
         private int _defaultTurnTime = 20;
         private int _pauseTime = 10;
@@ -153,8 +153,12 @@ namespace Checkers.UI.Presenters {
         }
 
         private void PauseTimeOut() {
+            _sceneSettings.TurnHandler.OnEndGame?.Invoke(_sceneSettings.TurnHandler.YourColor, WinLoseReason.Timeout);
+        }
+        
+        private void PauseTimeOutForWaiting() {
             var winner = _sceneSettings.TurnHandler.YourColor == PawnColor.Black ? PawnColor.White : PawnColor.Black;
-            _sceneSettings.TurnHandler.OnEndGame?.Invoke(winner, WinLoseReason.Timeout);
+            _sceneSettings.TurnHandler.OnEndGame?.Invoke(_sceneSettings.TurnHandler.YourColor, WinLoseReason.Timeout);
         }
 
         private async UniTask SetBarsPosition() {
@@ -171,7 +175,7 @@ namespace Checkers.UI.Presenters {
             _timerService.RemoveTimer(TurnId);
             
             var continueTime = DateTimeOffset.Now.ToUnixTimeSeconds();
-            _remainTime = _defaultTurnTime - (continueTime - _timerStartTime);
+            _remainTime = _timerService.GetTime(TurnId);
             _pauseStartTime = continueTime;
 
             var opponentUserId = !string.IsNullOrEmpty(_appConfig.OpponentUserId)
@@ -195,12 +199,11 @@ namespace Checkers.UI.Presenters {
 
             if (!string.IsNullOrEmpty(pauseValue)) {
                 _timerService.RemoveTimer(TurnId);
-                    
-                _remainTime = _defaultTurnTime - (continueTime - _timerStartTime);
 
+                _remainTime = _timerService.GetTime(TurnId);
                 _needPauseGame = true;
                     
-                _timerService.StartTimer(PauseId, _pauseTime, PauseTimeOut, false, View.SetPauseTime);
+                _timerService.StartTimer(PauseId, _pauseTime, PauseTimeOutForWaiting, false, View.SetPauseTime);
                 return;
             }
                 

@@ -10,5 +10,6 @@ namespace Global.Services.Timer {
         public abstract void ResetTimer(int time);
 
         public abstract void Process();
+        public abstract float GetTime();
     }
 }

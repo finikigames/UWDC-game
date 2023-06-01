@@ -1,8 +1,7 @@
 using System;
 
 namespace Global.Services.Timer {
-    public class DownTimer : Timer
-    {
+    public class DownTimer : Timer {
         private readonly Action OnEnd;
         private readonly Action<int> OnTick;
         private float _initialTime;
@@ -14,6 +13,10 @@ namespace Global.Services.Timer {
             IsLoop = isLoop;
             OnEnd = callback;
             OnTick = callbackTick;
+        }
+
+        public override float GetTime() {
+            return _timeLeft;
         }
 
         public override void SetTime(float time) {

@@ -22,6 +22,12 @@ namespace Global.Services.Timer {
             _timers.Add(timerId, timer);
         }
 
+        public float GetTime(string timerId) {
+            if (!_timers.ContainsKey(timerId)) return 0f;
+
+            return _timers[timerId].GetTime();
+        }
+
         public void StartUpTimer(string timerId, float time, Action onEnd, bool isLoop = false, Action<int> onTick = null)
         {
             var timer = new UpTimer(time, onEnd, isLoop, onTick);

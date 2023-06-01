@@ -21,6 +21,10 @@ namespace Global.Services.Timer {
             _currentTime = 0;
         }
 
+        public override float GetTime() {
+            return _currentTime;
+        }
+
         public override void ResetTimer() {
             TimerEnded = false;
             _currentTime = 0;
