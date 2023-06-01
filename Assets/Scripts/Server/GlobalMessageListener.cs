@@ -62,7 +62,7 @@ namespace Server {
             // Check for approved matches
             if (content.TryGetValue("approveMatchInvite", out var matchAndPartyId)) {
                 _globalScope.ApprovedMatchAndNeedLoad = true;
-                _globalScope.ApproveSenderId = senderUserId;
+                _appConfig.OpponentUserId = senderUserId;
             }
 
             if (content.TryGetValue("leave", out var leave)) {

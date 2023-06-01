@@ -35,10 +35,10 @@ namespace Checkers.UI.Presenters {
                 CloseThisWindow();
                 View.Hide(null);
             });
-            View.SubscribeToFleeButton(() => {
+            View.SubscribeToFleeButton(async () => {
+                await _messageService.Leave(_appConfig.OpponentUserId);
                 _signalBus.Fire(new CloseWindowSignal(WindowKey.FleeWindow));
                 _signalBus.Fire(new ToMainSignal());
-                _messageService.Leave(_appConfig.OpponentUserId);
             });
         }
     }

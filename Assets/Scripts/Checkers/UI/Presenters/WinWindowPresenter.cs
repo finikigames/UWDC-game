@@ -20,7 +20,7 @@ namespace Checkers.UI.Presenters {
         private SignalBus _signalBus;
         private NakamaService _nakamaService;
         private AppConfig _appConfig;
-        
+
         private string _tournamentId = "4ec4f126-3f9d-11e7-84ef-b7c182b36521";
 
         public WinWindowPresenter(ContextService service) : base(service) {

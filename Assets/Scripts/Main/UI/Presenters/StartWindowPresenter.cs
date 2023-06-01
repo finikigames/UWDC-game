@@ -132,13 +132,13 @@ namespace Main.UI.Presenters {
             if (!_globalScope.ApprovedMatchAndNeedLoad) return;
             _globalScope.ApprovedMatchAndNeedLoad = false;
 
-            var inviteData = _globalScope.SendedInvites[_globalScope.ApproveSenderId];
+            var inviteData = _globalScope.SendedInvites[_appConfig.OpponentUserId];
             _appConfig.OpponentDisplayName = inviteData.DisplayName;
             foreach (var pair in _globalScope.SendedInvites) {
                 
             }
             _globalScope.SendedInvites.Clear();
-            await _nakamaService.RemoveAllPartiesExcept(_globalScope.ApproveSenderId);
+            await _nakamaService.RemoveAllPartiesExcept(_appConfig.OpponentUserId);
             await LoadParty();
         }
 

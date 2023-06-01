@@ -165,9 +165,7 @@ namespace Checkers.UI.Presenters {
             var continueTime = DateTimeOffset.Now.ToUnixTimeSeconds();
             _pauseStartTime = continueTime;
 
-            var opponentUserId = !string.IsNullOrEmpty(_appConfig.OpponentUserId)
-                ? _appConfig.OpponentUserId
-                : _globalScope.ApproveSenderId;
+            var opponentUserId = _appConfig.OpponentUserId;
             
             await _messageService.SendPauseInfo(opponentUserId, "True");
         }
@@ -208,10 +206,8 @@ namespace Checkers.UI.Presenters {
                 PauseTimeOut();
                 return;
             }
-            
-            var opponentUserId = !string.IsNullOrEmpty(_appConfig.OpponentUserId)
-                ? _appConfig.OpponentUserId
-                : _globalScope.ApproveSenderId;
+
+            var opponentUserId = _appConfig.OpponentUserId;
             
             await _messageService.SendPauseInfo(opponentUserId, "");
             

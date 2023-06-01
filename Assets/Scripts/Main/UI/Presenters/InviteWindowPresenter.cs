@@ -43,7 +43,7 @@ namespace Main.UI.Presenters {
                 await _nakamaService.CreateMatch(data.MatchId);
                 await _nakamaService.RemoveAllParties();
                 await _messageService.SendUserConfirmation(data.MatchId, senderUserId);
-                _globalScope.ApproveSenderId = senderUserId;
+                _appConfig.OpponentUserId = senderUserId;
                 _signalBus.Fire(new CloseWindowSignal(WindowKey.InviteWindow));
                 PlayerPrefsX.SetBool("Matchmaking", false);
                 
