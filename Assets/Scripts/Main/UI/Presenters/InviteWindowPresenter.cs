@@ -54,6 +54,8 @@ namespace Main.UI.Presenters {
             
             View.SubscribeToDecline(async () => {
                 await _messageService.SendDeclineInviteSended(data.UserId);
+                
+                CloseThisWindow();
             });
             
             View.ChangeName(data.DisplayName);

@@ -21,11 +21,8 @@ using Main.UI.Data.WaitForPlayerWindow;
 using Main.UI.Views.Base;
 using Main.UI.Views.Implementations;
 using Nakama;
-using Nakama.TinyJson;
-using Newtonsoft.Json;
 using Server;
 using Server.Services;
-using UnityEngine;
 using UnityEngine.Scripting;
 using Zenject;
 
@@ -51,9 +48,6 @@ namespace Main.UI.Presenters {
         private IApiGroup _globalGroupInfo;
 
         private Action<UserInfoData, StartWindowUserCellView> _onSendInviteClick;
-
-        private bool _approvedMatchAndNeedLoad;
-        private string _approveSenderId;
 
         public StartWindowPresenter(ContextService service) : base(service) {
         }
@@ -116,8 +110,6 @@ namespace Main.UI.Presenters {
             
             View.SetScrollerDelegate(this);
 
-            _nakamaService.SubscribeToMessages(MessagesListener);
-            
             OnUsersUpdate();
             _timerService.StartTimer("updateUsersTimer", 10, OnUsersUpdate, true);
             
@@ -128,36 +120,6 @@ namespace Main.UI.Presenters {
             _signalBus.Fire(new OpenWindowSignal(WindowKey.WaitForPlayerWindow, new WaitForPlayerWindowData()));
         }
 
-        private void MessagesListener(IApiChannelMessage m) {
-            var content = m.Content.FromJson<Dictionary<string, string>>();
-
-            var profile = _nakamaService.GetMe();
-            // Check if ME is sender to prevent getting message by yourself
-            if (content.TryGetValue("senderUserId", out var senderUserId)) {
-                if (profile.User.Id == senderUserId) return;
-            }
-
-            // Check if this message is addressed for YOU
-            if (content.TryGetValue("targetUserId", out var targetUserId)) {
-                if (profile.User.Id != targetUserId) return;
-            }
-            
-            // Check for approved matches
-            if (content.TryGetValue("approveMatchInvite", out var matchAndPartyId)) {
-                _approvedMatchAndNeedLoad = true;
-                _approveSenderId = senderUserId;
-            }
-            
-            // Check for incoming invites
-            if (content.TryGetValue("newInvite", out var value)) {
-                var inviteData = JsonConvert.DeserializeObject<InviteData>(value);
-                
-                _globalScope.ReceivedInvites.Add(senderUserId, inviteData);
-
-                Debug.Log($"Get a party with a id {value}");
-            }
-        }
-
         public void CustomUpdate() {
             CheckInvite();
 
@@ -165,16 +127,16 @@ namespace Main.UI.Presenters {
         }
 
         private async void CheckNeedLoad() {
-            if (!_approvedMatchAndNeedLoad) return;
-            _approvedMatchAndNeedLoad = false;
+            if (!_globalScope.ApprovedMatchAndNeedLoad) return;
+            _globalScope.ApprovedMatchAndNeedLoad = false;
 
-            var inviteData = _globalScope.SendedInvites[_approveSenderId];
+            var inviteData = _globalScope.SendedInvites[_globalScope.ApproveSenderId];
             _appConfig.OpponentDisplayName = inviteData.DisplayName;
             foreach (var pair in _globalScope.SendedInvites) {
                 
             }
             _globalScope.SendedInvites.Clear();
-            await _nakamaService.RemoveAllPartiesExcept(_approveSenderId);
+            await _nakamaService.RemoveAllPartiesExcept(_globalScope.ApproveSenderId);
             await LoadParty();
         }
 
@@ -286,10 +248,8 @@ namespace Main.UI.Presenters {
         public override async UniTask Dispose() {
             _timerService.RemoveTimer("tournamentTime");
             _timerService.RemoveTimer("updateUsersTimer");
-            
+
             _updateService.UnregisterUpdate(this);
-            
-            _nakamaService.UnsubscribeFromMessages(MessagesListener);
         }
     }
 }

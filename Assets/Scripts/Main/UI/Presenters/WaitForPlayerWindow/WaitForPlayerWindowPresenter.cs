@@ -59,6 +59,8 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
             _matchmakerTicket = await _nakamaService.AddMatchmaker();
             
             View.SubscribeToReturnButton(OnReturnClick);
+
+            _appConfig.InSearch = true;
             
             View.ShowReturnButton();
 
@@ -178,6 +180,7 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
                 await _nakamaService.RemoveMatchmaker(_matchmakerTicket);
             }
 
+            _appConfig.InSearch = false;
             _nakamaService.UnsubscribeFromMessages(OnChatMessage);
             _nakamaService.UnsubscribeMatchmakerMatched(OnMatchmakerMatched);
         }

@@ -7,5 +7,6 @@ namespace Global.ConfigTemplate {
         public string OpponentDisplayName;
         public string OpponentUserId;
         public bool InMatch;
+        public bool InSearch;
     }
 }
