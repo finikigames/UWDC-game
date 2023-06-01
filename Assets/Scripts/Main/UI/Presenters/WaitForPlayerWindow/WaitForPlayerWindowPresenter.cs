@@ -15,6 +15,7 @@ using Main.UI.Data.WaitForPlayerWindow;
 using Main.UI.Views.Base.WaitForPlayerWindow;
 using Nakama;
 using Nakama.TinyJson;
+using Server;
 using Server.Services;
 using UnityEngine;
 using UnityEngine.Scripting;
@@ -30,6 +31,7 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
         private AppConfig _appConfig;
         private TimerService _timerService;
         private ISchedulerService _schedulerService;
+        private MessageService _messageService;
 
         private bool _needLoad;
 
@@ -50,6 +52,7 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
             _appConfig = Resolve<AppConfig>(GameContext.Project);
             _timerService = Resolve<TimerService>(GameContext.Project);
             _schedulerService = Resolve<ISchedulerService>(GameContext.Project);
+            _messageService = Resolve<MessageService>(GameContext.Project);
         }
 
         protected override async UniTask LoadContent() {
@@ -117,7 +120,7 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
             var value = Random.Range(0, 1000000);
             _matchmakingValue = value;
             _opponentId = opponentId;
-            await _nakamaService.SendMatchmakingInfo(opponentId, _matchmakingValue.ToString());
+            await _messageService.SendMatchmakingInfo(opponentId, _matchmakingValue.ToString());
 
             _timerService.StartTimer("waiting_for_play", 5, null, false, time => View.SetTimerText(time.ToString()));
             
@@ -157,7 +160,7 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
                 
                 var value = Random.Range(0, 1000000);
                 _matchmakingValue = value;
-                await _nakamaService.SendMatchmakingInfo(_opponentId, _matchmakingValue.ToString());
+                await _messageService.SendMatchmakingInfo(_opponentId, _matchmakingValue.ToString());
             }
         }
 

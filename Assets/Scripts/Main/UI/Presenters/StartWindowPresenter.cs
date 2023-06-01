@@ -23,6 +23,7 @@ using Main.UI.Views.Implementations;
 using Nakama;
 using Nakama.TinyJson;
 using Newtonsoft.Json;
+using Server;
 using Server.Services;
 using UnityEngine;
 using UnityEngine.Scripting;
@@ -41,6 +42,7 @@ namespace Main.UI.Presenters {
         private SignalBus _signalBus;
         private WindowService _windowService;
         private GlobalScope _globalScope;
+        private MessageService _messageService;
 
         private string _globalGroupName = "globalGroup";
         private string _tournamentId = "4ec4f126-3f9d-11e7-84ef-b7c182b36521";
@@ -52,7 +54,7 @@ namespace Main.UI.Presenters {
 
         private bool _approvedMatchAndNeedLoad;
         private string _approveSenderId;
-        
+
         public StartWindowPresenter(ContextService service) : base(service) {
         }
 
@@ -65,6 +67,7 @@ namespace Main.UI.Presenters {
             _appConfig = Resolve<AppConfig>(GameContext.Project);
             _windowService = Resolve<WindowService>(GameContext.Project);
             _globalScope = Resolve<GlobalScope>(GameContext.Project);
+            _messageService = Resolve<MessageService>(GameContext.Project);
         }
 
         public override async UniTask InitializeOnce() {
@@ -75,7 +78,9 @@ namespace Main.UI.Presenters {
         protected override async UniTask LoadContent() {
             var group = await _nakamaService.CreateGroup(_globalGroupName);
             await _nakamaService.JoinGroup(group.Id);
-            await _nakamaService.JoinChat(group.Id);
+            var channel = await _nakamaService.JoinChat(group.Id);
+            
+            _messageService.InitializeGlobalChannel(channel);
             _globalGroupInfo = await _nakamaService.GetGroupInfo(_globalGroupName);
 
             _userInfoDatas = new List<UserInfoData>();
@@ -173,7 +178,7 @@ namespace Main.UI.Presenters {
 
         private void CheckInvite() {
             if (_globalScope.ReceivedInvites.Count == 0) return;
-            if (!_windowService.IsWindowOpened(WindowKey.InviteWindow)) return;
+            if (_windowService.IsWindowOpened(WindowKey.InviteWindow)) return;
 
             KeyValuePair<string, InviteData> inviteData = default;
 
@@ -249,7 +254,7 @@ namespace Main.UI.Presenters {
 
             _appConfig.PawnColor = (int)PawnColor.White;
 
-            await _nakamaService.SendPartyToUser(data.UserId, party);
+            await _messageService.SendPartyToUser(data.UserId, party);
             
             var inviteData = new InviteData {
                 UserId = data.UserId,

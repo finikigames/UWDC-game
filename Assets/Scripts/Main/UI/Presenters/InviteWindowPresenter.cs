@@ -10,6 +10,7 @@ using Global.Window.Enums;
 using Global.Window.Signals;
 using Main.UI.Data;
 using Main.UI.Views.Base;
+using Server;
 using Server.Services;
 using UnityEngine.Scripting;
 using Zenject;
@@ -21,6 +22,7 @@ namespace Main.UI.Presenters {
         private SignalBus _signalBus;
         private AppConfig _appConfig;
         private GlobalScope _globalScope;
+        private MessageService _messageService;
 
         public InviteWindowPresenter(ContextService service) : base(service) {
         }
@@ -30,6 +32,7 @@ namespace Main.UI.Presenters {
             _signalBus = Resolve<SignalBus>(GameContext.Main);
             _appConfig = Resolve<AppConfig>(GameContext.Project);
             _globalScope = Resolve<GlobalScope>(GameContext.Project);
+            _messageService = Resolve<MessageService>(GameContext.Project);
         }
 
         protected override async UniTask LoadContent() {
@@ -39,7 +42,7 @@ namespace Main.UI.Presenters {
                 var senderUserId = data.UserId;
                 await _nakamaService.CreateMatch(data.MatchId);
                 await _nakamaService.RemoveAllParties();
-                await _nakamaService.SendUserConfirmation(data.MatchId, senderUserId);
+                await _messageService.SendUserConfirmation(data.MatchId, senderUserId);
                 _signalBus.Fire(new CloseWindowSignal(WindowKey.InviteWindow));
                 PlayerPrefsX.SetBool("Matchmaking", false);
                 _signalBus.Fire(new ToCheckersMetaSignal{WithPlayer = true});
@@ -49,7 +52,7 @@ namespace Main.UI.Presenters {
             });
             
             View.SubscribeToDecline(async () => {
-                await _nakamaService.SendDeclineInvite(data.UserId);
+                await _messageService.SendDeclineInviteSended(data.UserId);
             });
             
             View.ChangeName(data.DisplayName);
