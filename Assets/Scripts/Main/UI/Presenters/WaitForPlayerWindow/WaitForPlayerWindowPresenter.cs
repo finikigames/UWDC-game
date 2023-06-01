@@ -179,6 +179,7 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
         }
         
         public override async UniTask Dispose() {
+            _timerService.RemoveTimer("waiting_for_play");
             _updateService.UnregisterUpdate(this);
             if (_matchmakerTicket != null) {
                 await _nakamaService.RemoveMatchmaker(_matchmakerTicket);
