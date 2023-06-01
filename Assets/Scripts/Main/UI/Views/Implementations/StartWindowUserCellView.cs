@@ -1,5 +1,6 @@
 ﻿using System;
 using EnhancedUI.EnhancedScroller;
+using Main.UI.Presenters;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -20,12 +21,11 @@ namespace Main.UI.Views.Implementations {
             _buttonText.text = "в бой";
         }
         
-        public void SubscribeOnClick(string userId, Action<string> callback, Action<string> nameCallback, Action<StartWindowUserCellView> sendCallback) {
+        public void SubscribeOnClick(UserInfoData data,
+                                     Action<UserInfoData, StartWindowUserCellView> sendCallback) {
             _clickButton.onClick.RemoveAllListeners();
             _clickButton.onClick.AddListener(() => {
-                callback?.Invoke(userId);
-                nameCallback?.Invoke(_userNickname.text);
-                sendCallback?.Invoke(this);
+                sendCallback?.Invoke(data, this);
             });
         }
         

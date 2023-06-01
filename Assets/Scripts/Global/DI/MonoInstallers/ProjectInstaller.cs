@@ -28,6 +28,10 @@ namespace Global.DI.MonoInstallers {
             InstallSignals();
 
             Container
+                .BindInterfacesAndSelfTo<GlobalScope>()
+                .AsSingle();
+            
+            Container
                 .BindInterfacesAndSelfTo<AnalyticsService>()
                 .AsSingle();
             

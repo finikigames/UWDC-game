@@ -32,7 +32,7 @@ namespace Global.Window {
         }
 
         public bool IsWindowOpened(WindowKey key) {
-            return IsWindowLoaded(key) || _windowsByUid[key].State == WindowState.Opened;
+            return IsWindowLoaded(key) && _windowsByUid[key].State == WindowState.Opened;
         }
         
         public void RegisterContainers(List<UIContainerToGameObjectElement> containers) {

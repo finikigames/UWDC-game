@@ -25,6 +25,12 @@ namespace Global.Services.Timer {
             TimerEnded = false;
             _timeLeft = _initialTime;
         }
+        
+        public override void ResetTimer(int time) {
+            TimerEnded = false;
+            _initialTime = time;
+            _timeLeft = _initialTime;
+        }
 
         public override void Process() {
             if (TimerEnded) return;
