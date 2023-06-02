@@ -35,11 +35,13 @@ namespace Main.UI.Views.Implementations.WaitForPlayerWindow {
         }
 
         public void ShowReturnButton() {
-            _returnButton.gameObject.SetActive(true);
+            _returnButton.enabled = true;
+            _timerText.gameObject.SetActive(true);
         }
 
         public void HideReturnButton() {
-            _returnButton.gameObject.SetActive(false);
+            _returnButton.enabled = false;
+            _timerText.gameObject.SetActive(false);
         }
 
         public void SubscribeToReturnButton(Action callback) {
@@ -47,7 +49,7 @@ namespace Main.UI.Views.Implementations.WaitForPlayerWindow {
             _returnButton.onClick.AddListener(() => callback?.Invoke());
         }
 
-    public void SetYourName(string text) {
+        public void SetYourName(string text) {
             _yourDisplayName.text = text;
         }
 
