@@ -24,6 +24,7 @@ namespace Main.UI.Views.Implementations.WaitForPlayerWindow {
         [SerializeField] private TextMeshProUGUI _timerText;
 
         [SerializeField] private TextMeshProUGUI _returnText;
+        [SerializeField] private TextMeshProUGUI _opponentExistText;
         
         protected override void OnEnable() {
             _showState = Core.MVP.Base.Enums.ShowState.Hidden;
@@ -69,6 +70,12 @@ namespace Main.UI.Views.Implementations.WaitForPlayerWindow {
 
         public void SetTimerText(string text) {
             _timerText.text = text;
+        }
+
+        public void SetOpponentExistState(bool state) {
+            var text = state ? "Вы уже выиграли у этого пользователя, за победу над ним вы не получите очки" : "";
+
+            _opponentExistText.text = text;
         }
     }
 }

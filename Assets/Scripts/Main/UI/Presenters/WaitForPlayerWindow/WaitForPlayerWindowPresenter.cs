@@ -58,6 +58,7 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
         }
 
         protected override async UniTask LoadContent() {
+            View.SetOpponentExistState(false);
             await _nakamaService.GoOffline();
             ApplicationQuit.SubscribeOnQuit(CloseThisWindow);
             _matchmakerTicket = await _nakamaService.AddMatchmaker();
@@ -149,6 +150,15 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
             View.SetOpponentName(opponentUserInfo.DisplayName);
 
             _timerService.RemoveTimer("waiting_for_play");
+            
+            var list = await _nakamaService.ListStorageObjects<PlayerResults>("players", "wins");
+            foreach (var element in list.Data) {
+                if (element == opponentId) {
+                    View.SetOpponentExistState(true);
+                    break;
+                }
+            }
+            
             _timerService.StartTimer("await_start_game", 5, null, false, time => View.SetTimerText("Матч начнется через: " + time));
             
             _schedulerService
