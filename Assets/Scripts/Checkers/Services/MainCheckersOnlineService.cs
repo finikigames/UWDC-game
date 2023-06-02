@@ -88,7 +88,7 @@ namespace Checkers.Services {
 
             };
             
-            _sceneSettings.PawnMover.OnTurn += (turnData) => {
+            _sceneSettings.PawnMover.OnTurn += async (turnData) => {
                 var currentTurn = _sceneSettings.TurnHandler.Turn;
 
                 if (currentTurn != _mainColor) return;
@@ -98,7 +98,7 @@ namespace Checkers.Services {
                 var json = JsonConvert.SerializeObject(turnData);
 
                 Debug.Log($"Send turn with data from {turnData.From} and to {turnData.To}");
-                _nakamaService.SendMatchStateAsync(matchId, (long) CheckersMatchState.Turn, json);
+                await _nakamaService.SendMatchStateAsync(matchId, (long) CheckersMatchState.Turn, json);
             };
         }
 

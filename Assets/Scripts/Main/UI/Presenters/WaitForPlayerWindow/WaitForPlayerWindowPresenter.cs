@@ -59,6 +59,7 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
         }
 
         protected override async UniTask LoadContent() {
+            await _nakamaService.GoOffline();
             ApplicationQuit.SubscribeOnQuit(CloseThisWindow);
             _matchmakerTicket = await _nakamaService.AddMatchmaker();
             
@@ -69,6 +70,7 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
             View.ShowReturnButton();
 
             await DeclineAllSendedSignals();
+            await _nakamaService.RemoveAllParties();
             var winsCount = await _nakamaService.ListStorageObjects<PlayerResults>("players", "wins");
 
             var me = _nakamaService.GetMe();
@@ -218,6 +220,9 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
             _updateService.UnregisterUpdate(this);
             if (_matchmakerTicket != null) {
                 await _nakamaService.RemoveMatchmaker(_matchmakerTicket);
+            }
+            else {
+                await _nakamaService.GoOnline();
             }
 
             _appConfig.InSearch = false;

@@ -110,7 +110,7 @@ namespace Global.Window {
                 await window.Close();
             }
             else {
-                throw new WarningException($"Can't close the window with uid: {key}");
+                Debug.LogWarning($"Can't close the window with uid: {key}");
             }
         }
 

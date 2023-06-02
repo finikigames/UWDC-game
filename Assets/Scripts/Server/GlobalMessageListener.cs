@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using Global;
 using Global.ConfigTemplate;
 using Nakama;
@@ -41,13 +42,31 @@ namespace Server {
             }
             
             if (content.TryGetValue("declineInviteSended", out var userDeclinedSendedId)) {
-                _globalScope.SendedInvites.Remove(userDeclinedSendedId);
+                if (!_globalScope.SendedInvites.ContainsKey(userDeclinedSendedId)) {
+                    _globalScope.SendedInvites.Remove(userDeclinedSendedId);
+                }
             }
 
             if (content.TryGetValue("declineInviteReceived", out var userDeclinedReceivedId)) {
-                _globalScope.ReceivedInvites.Remove(userDeclinedReceivedId);
+                if (!_globalScope.ReceivedInvites.ContainsKey(userDeclinedReceivedId)) {
+                    _globalScope.ReceivedInvites.Remove(userDeclinedReceivedId);
+                }
             }
 
+            await ChekIncomingInvites(content, senderUserId);
+
+            // Check for approved matches
+            if (content.TryGetValue("approveMatchInvite", out var matchAndPartyId)) {
+                _globalScope.ApprovedMatchAndNeedLoad = true;
+                _appConfig.OpponentUserId = senderUserId;
+            }
+
+            if (content.TryGetValue("leave", out var leave)) {
+                _appConfig.Leave = true;
+            }
+        }
+
+        private async UniTask ChekIncomingInvites(Dictionary<string, string> content, string senderUserId) {
             // Check for incoming invites
             if (content.TryGetValue("newInvite", out var value)) {
                 var inviteData = JsonConvert.DeserializeObject<InviteData>(value);
@@ -57,16 +76,6 @@ namespace Server {
                 }
 
                 await _messageService.SendDeclineInviteSended(inviteData.UserId);
-            }
-            
-            // Check for approved matches
-            if (content.TryGetValue("approveMatchInvite", out var matchAndPartyId)) {
-                _globalScope.ApprovedMatchAndNeedLoad = true;
-                _appConfig.OpponentUserId = senderUserId;
-            }
-
-            if (content.TryGetValue("leave", out var leave)) {
-                _appConfig.Leave = true;
             }
         }
     }
