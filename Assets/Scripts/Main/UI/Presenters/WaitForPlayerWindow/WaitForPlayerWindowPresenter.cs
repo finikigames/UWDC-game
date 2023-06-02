@@ -7,6 +7,7 @@ using Global.ConfigTemplate;
 using Global.Context;
 using Global.Enums;
 using Global.Scheduler.Base;
+using Global.Services;
 using Global.Services.Timer;
 using Global.StateMachine.Base.Enums;
 using Global.Window.Base;
@@ -58,6 +59,7 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
         }
 
         protected override async UniTask LoadContent() {
+            ApplicationQuit.SubscribeOnQuit(CloseThisWindow);
             _matchmakerTicket = await _nakamaService.AddMatchmaker();
             
             View.SubscribeToReturnButton(OnReturnClick);
@@ -211,6 +213,7 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
         }
         
         public override async UniTask Dispose() {
+            ApplicationQuit.UnSubscribeOnQuit(CloseThisWindow);
             _timerService.RemoveTimer("waiting_for_play");
             _updateService.UnregisterUpdate(this);
             if (_matchmakerTicket != null) {
