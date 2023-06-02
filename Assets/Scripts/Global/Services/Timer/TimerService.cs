@@ -17,6 +17,10 @@ namespace Global.Services.Timer {
         }
 
         public void StartDownTimer(string timerId, float time, Action onEnd, bool isLoop = false, Action<float> onTick = null) {
+            if (_timers.ContainsKey(timerId)) {
+                _timers.Remove(timerId);
+            }
+            
             var timer = new DownTimer(time, onEnd, isLoop, onTick);
             
             _timers.Add(timerId, timer);
