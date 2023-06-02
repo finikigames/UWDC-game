@@ -110,10 +110,13 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
             int i = 0;
             foreach (var user in _matched.Users) {
                 if (user.Presence.UserId == me.User.Id) {
-                    if (i == 0) _appConfig.PawnColor = PawnColor.White;
-                }
-                else {
+                    if (i == 0) {
+                        _appConfig.PawnColor = PawnColor.White;
+                        break;
+                    }
+
                     _appConfig.PawnColor = PawnColor.Black;
+                    break;
                 }
 
                 i++;
