@@ -1822,9 +1822,9 @@ RectTransform:
   m_Father: {fileID: 2227777894339125231}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 530, y: -1029.35}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 1060, y: 2058.7}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2203390416622031555
@@ -2841,7 +2841,7 @@ MonoBehaviour:
   _timerText: {fileID: 1803108996572433084}
   _usersRoot: {fileID: 3769091375773640807}
   _faqRoot: {fileID: 6053707215143632427}
-  _faqLayout: {fileID: 0}
+  _faqLayout: {fileID: 2196518012010213837}
   _faqButton: {fileID: 2722358770846118961}
   _usersButton: {fileID: 8695782506477621987}
   _faqButtonOutline: {fileID: 3613174755357404928}
