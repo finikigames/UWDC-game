@@ -373,10 +373,8 @@ MonoBehaviour:
   _opponentName: {fileID: 2964681631717951336}
   _yourName: {fileID: 4483697255139853468}
   _turnTimer: {fileID: 4360064199505195860}
-  _pauseTimer: {fileID: 0}
   _opponentChekersBar: {fileID: 4616279217869756817}
   _playerChekersBar: {fileID: 4344791992757091153}
-  _pauseBody: {fileID: 0}
 --- !u!1 &191098414445792479
 GameObject:
   m_ObjectHideFlags: 0
@@ -1026,8 +1024,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 641.99994, y: -289.35864}
-  m_SizeDelta: {x: 1284, y: 578.7175}
+  m_AnchoredPosition: {x: 641.99994, y: -240.16}
+  m_SizeDelta: {x: 1284, y: 480.32}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2439557229288762434
 MonoBehaviour:
@@ -1047,7 +1045,7 @@ MonoBehaviour:
     m_Top: 24
     m_Bottom: 0
   m_ChildAlignment: 0
-  m_Spacing: -162.2
+  m_Spacing: -122.5
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 0
@@ -3732,7 +3730,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 642, y: -486}
+  m_AnchoredPosition: {x: 642, y: -391}
   m_SizeDelta: {x: 1250, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5030268718265477598
@@ -3943,7 +3941,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 0, y: 298}
+  m_AnchoredPosition: {x: 0, y: 242}
   m_SizeDelta: {x: 0, y: 204.80798}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &4701047431903795270
