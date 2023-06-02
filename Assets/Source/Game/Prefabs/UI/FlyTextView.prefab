@@ -260,7 +260,7 @@ GameObject:
   - component: {fileID: 3198990367344918196}
   - component: {fileID: 4396318865421580761}
   m_Layer: 5
-  m_Name: BG
+  m_Name: Bg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -722,6 +722,9 @@ MonoBehaviour:
   _blackBg: {fileID: 807044814135838173}
   _group: {fileID: 3562115336861493320}
   _flyText: {fileID: 464616867978011403}
+  _bg: {fileID: 4396318865421580761}
+  _bgGreen: {fileID: 21300000, guid: 2f4de2aa479aa004bb6216cd41cee564, type: 3}
+  _bgRed: {fileID: 21300000, guid: 99fecff947652ed4e99b8952df3a571e, type: 3}
 --- !u!1 &6315137590382633552
 GameObject:
   m_ObjectHideFlags: 0
@@ -869,7 +872,7 @@ GameObject:
   - component: {fileID: 6991629041090810978}
   - component: {fileID: 6013571203889396578}
   m_Layer: 5
-  m_Name: BG
+  m_Name: solidBg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
