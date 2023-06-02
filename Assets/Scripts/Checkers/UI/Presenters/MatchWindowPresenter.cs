@@ -143,11 +143,13 @@ namespace Checkers.UI.Presenters {
         }
 
         private void TurnTimeOut() {
+            if (_appConfig.GameEnded) return;
             var winner = _sceneSettings.TurnHandler.Turn == PawnColor.Black ? PawnColor.Black : PawnColor.White;
             _sceneSettings.TurnHandler.EndGame(winner, WinLoseReason.Timeout);
         }
 
         private void PauseTimeOut() {
+            if (_appConfig.GameEnded) return;
             _sceneSettings.TurnHandler.EndGame(_sceneSettings.TurnHandler.YourColor, WinLoseReason.Timeout);
         }
 
