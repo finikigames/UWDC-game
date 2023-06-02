@@ -112,6 +112,16 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
 
             _appConfig.OpponentUserId = opponentId;
             
+            _nakamaService.SubscribeToMessages(OnChatMessage);
+
+            var value = Random.Range(0, 1000000);
+            _matchmakingValue = value;
+            
+            Debug.Log($"Get a random value of {value}");
+            
+            _opponentId = opponentId;
+            await _messageService.SendMatchmakingInfo(opponentId, _matchmakingValue.ToString());
+            
             var opponentUserInfo = await _nakamaService.GetUserInfo(opponentId);
 
             var opponentWinsCount = await _nakamaService.ListStorageObjects<PlayerResults>("players", "wins", opponentId);
@@ -119,14 +129,7 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
             
             _appConfig.OpponentDisplayName = opponentUserInfo.DisplayName;
             View.SetOpponentName(opponentUserInfo.DisplayName);
-            
-            _nakamaService.SubscribeToMessages(OnChatMessage);
 
-            var value = Random.Range(0, 1000000);
-            _matchmakingValue = value;
-            _opponentId = opponentId;
-            await _messageService.SendMatchmakingInfo(opponentId, _matchmakingValue.ToString());
-            
             _timerService.RemoveTimer("waiting_for_play");
             _timerService.StartTimer("await_start_game", 5, null, false, time => View.SetTimerText(time.ToString()));
             
@@ -154,6 +157,8 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
             }
             
             if (content.TryGetValue("valueDropped", out var senderValue)) {
+                Debug.Log($"Opponent value {senderValue}, my value {_matchmakingValue}");
+                
                 if (_matchmakingValue > int.Parse(senderValue)) {
                     _appConfig.PawnColor = (int)PawnColor.White;
                     return;

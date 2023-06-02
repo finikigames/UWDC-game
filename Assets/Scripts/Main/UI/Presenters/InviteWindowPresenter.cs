@@ -1,4 +1,5 @@
-﻿using Core.Extensions;
+﻿using System.Threading.Tasks;
+using Core.Extensions;
 using Cysharp.Threading.Tasks;
 using Global;
 using Global.ConfigTemplate;
@@ -46,7 +47,11 @@ namespace Main.UI.Presenters {
                 _appConfig.OpponentUserId = senderUserId;
                 _signalBus.Fire(new CloseWindowSignal(WindowKey.InviteWindow));
                 PlayerPrefsX.SetBool("Matchmaking", false);
-                
+
+                await DeclineAllReceivedSignals();
+                await DeclineAllSendedSignals();
+                await _nakamaService.RemoveAllPartiesExcept(_appConfig.OpponentUserId);
+
                 _appConfig.PawnColor = PawnColor.Black;
                 _appConfig.OpponentDisplayName = data.DisplayName;
                 
@@ -60,6 +65,34 @@ namespace Main.UI.Presenters {
             });
             
             View.ChangeName(data.DisplayName);
+        }
+
+        private async UniTask DeclineAllSendedSignals() {
+            UniTask[] tasks = new UniTask[_globalScope.SendedInvites.Count];
+            int i = 0;
+            foreach (var pair in _globalScope.SendedInvites)
+            {
+                tasks[i] = _messageService.SendDeclineInviteSended(pair.Key);
+                i++;
+            }
+
+            _globalScope.SendedInvites.Clear();
+            await UniTask.WhenAll(tasks);
+        }
+
+        private async UniTask DeclineAllReceivedSignals()
+        {
+            UniTask[] tasks = new UniTask[_globalScope.ReceivedInvites.Count];
+            int i = 0;
+            foreach (var pair in _globalScope.ReceivedInvites)
+            {
+                tasks[i] = _messageService.SendDeclineInviteReceived(pair.Key);
+                i++;
+            }
+            
+            _globalScope.ReceivedInvites.Clear();
+
+            await UniTask.WhenAll(tasks);
         }
     }
 }
