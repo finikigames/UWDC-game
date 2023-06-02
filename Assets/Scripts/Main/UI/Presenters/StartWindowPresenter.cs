@@ -11,7 +11,6 @@ using Global.Enums;
 using Global.Extensions;
 using Global.Services.Timer;
 using Global.StateMachine.Base.Enums;
-using Global.UI.Data;
 using Global.Window;
 using Global.Window.Base;
 using Global.Window.Enums;
@@ -22,10 +21,8 @@ using Main.UI.Data.WaitForPlayerWindow;
 using Main.UI.Views.Base;
 using Main.UI.Views.Implementations;
 using Nakama;
-using Nakama.TinyJson;
 using Server;
 using Server.Services;
-using UnityEngine;
 using UnityEngine.Scripting;
 using Zenject;
 

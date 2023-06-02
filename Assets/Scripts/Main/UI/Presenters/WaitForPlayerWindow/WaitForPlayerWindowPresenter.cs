@@ -32,6 +32,7 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
         private TimerService _timerService;
         private ISchedulerService _schedulerService;
         private MessageService _messageService;
+        private GlobalScope _globalScope;
 
         private bool _needLoad;
 
@@ -53,6 +54,7 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
             _timerService = Resolve<TimerService>(GameContext.Project);
             _schedulerService = Resolve<ISchedulerService>(GameContext.Project);
             _messageService = Resolve<MessageService>(GameContext.Project);
+            _globalScope = Resolve<GlobalScope>(GameContext.Project);
         }
 
         protected override async UniTask LoadContent() {
@@ -64,6 +66,7 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
             
             View.ShowReturnButton();
 
+            await DeclineAllSendedSignals();
             var winsCount = await _nakamaService.ListStorageObjects<PlayerResults>("players", "wins");
 
             var me = _nakamaService.GetMe();
@@ -92,6 +95,8 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
 
         private async UniTask AsyncLoad() {
             string matchId = string.Empty;
+            await _nakamaService.GoOffline();
+            
             foreach (var user in _matched.Users) {
                 matchId += user.Presence.Username;
             }
@@ -141,6 +146,19 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
                     
                     StartLoad();
                 });
+        }
+        
+        private async UniTask DeclineAllSendedSignals() {
+            UniTask[] tasks = new UniTask[_globalScope.SendedInvites.Count];
+            int i = 0;
+            foreach (var pair in _globalScope.SendedInvites)
+            {
+                tasks[i] = _messageService.SendDeclineInviteSended(pair.Key);
+                i++;
+            }
+
+            _globalScope.SendedInvites.Clear();
+            await UniTask.WhenAll(tasks);
         }
 
         private void StartLoad() {

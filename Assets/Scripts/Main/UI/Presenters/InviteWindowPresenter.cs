@@ -6,6 +6,7 @@ using Global.ConfigTemplate;
 using Global.Context;
 using Global.Enums;
 using Global.StateMachine.Base.Enums;
+using Global.UI.Data;
 using Global.Window.Base;
 using Global.Window.Enums;
 using Global.Window.Signals;
@@ -41,6 +42,13 @@ namespace Main.UI.Presenters {
             
             View.SubscribeToApply(async () => {
                 var senderUserId = data.UserId;
+                var sender = await _nakamaService.GetUserInfo(senderUserId);
+                if (!sender.Online) {
+                    CloseThisWindow();
+                    _signalBus.Fire(new OpenWindowSignal(WindowKey.FlyText, new FlyTextData("Ваш оппонент не в сети")));
+                    return;
+                }
+                
                 await _nakamaService.CreateMatch(data.MatchId);
                 await _nakamaService.RemoveAllParties();
                 await _messageService.SendUserConfirmation(data.MatchId, senderUserId);
