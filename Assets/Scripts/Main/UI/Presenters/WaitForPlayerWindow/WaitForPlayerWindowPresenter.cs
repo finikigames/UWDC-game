@@ -117,7 +117,7 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
             var value = Random.Range(0, 1000000);
             _matchmakingValue = value;
             
-            Debug.Log($"Get a random value of {value}");
+            Debug.Log($"[Color getter] Get a random value of {value}");
             
             _opponentId = opponentId;
             await _messageService.SendMatchmakingInfo(opponentId, _matchmakingValue.ToString());
@@ -137,6 +137,7 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
                 .StartSequence()
                 .Append(5, () => {
                     CloseThisWindow();
+                    Debug.Log("[Color getter] Started loading");
                     _timerService.RemoveTimer("await_start_game");
                     
                     StartLoad();
@@ -152,22 +153,30 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
             var content = message.Content.FromJson<Dictionary<string, string>>();
             
             var profile = _nakamaService.GetMe();
+            if (content.TryGetValue("senderUserId", out var senderUserId)) {
+                if (profile.User.Id == senderUserId) return;
+            }
+            
             if (content.TryGetValue("targetUserId", out var targetUser)) {
                 if (profile.User.Id != targetUser) return;
             }
             
             if (content.TryGetValue("valueDropped", out var senderValue)) {
-                Debug.Log($"Opponent value {senderValue}, my value {_matchmakingValue}");
+                Debug.Log($"[Color getter] Opponent value {senderValue}, my value {_matchmakingValue}");
                 
                 if (_matchmakingValue > int.Parse(senderValue)) {
+                    Debug.Log("[Color getter] Setting white");
                     _appConfig.PawnColor = (int)PawnColor.White;
                     return;
                 }
 
                 if (_matchmakingValue < int.Parse(senderValue)) {
+                    Debug.Log("[Color getter] Setting black");
                     _appConfig.PawnColor = PawnColor.Black;
                     return;
                 }
+                
+                Debug.Log("[Color getter] From equal");
                 
                 var value = Random.Range(0, 1000000);
                 _matchmakingValue = value;
