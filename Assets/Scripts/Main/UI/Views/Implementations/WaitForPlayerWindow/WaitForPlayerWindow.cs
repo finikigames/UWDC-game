@@ -23,6 +23,8 @@ namespace Main.UI.Views.Implementations.WaitForPlayerWindow {
 
         [SerializeField] private TextMeshProUGUI _timerText;
 
+        [SerializeField] private TextMeshProUGUI _returnText;
+        
         protected override void OnEnable() {
             _showState = Core.MVP.Base.Enums.ShowState.Hidden;
 
@@ -36,12 +38,12 @@ namespace Main.UI.Views.Implementations.WaitForPlayerWindow {
 
         public void ShowReturnButton() {
             _returnButton.enabled = true;
-            _timerText.gameObject.SetActive(true);
+            _returnText.gameObject.SetActive(true);
         }
 
         public void HideReturnButton() {
             _returnButton.enabled = false;
-            _timerText.gameObject.SetActive(false);
+            _returnText.gameObject.SetActive(false);
         }
 
         public void SubscribeToReturnButton(Action callback) {
