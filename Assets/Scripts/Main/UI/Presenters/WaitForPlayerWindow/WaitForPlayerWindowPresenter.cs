@@ -149,7 +149,7 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
             View.SetOpponentName(opponentUserInfo.DisplayName);
 
             _timerService.RemoveTimer("waiting_for_play");
-            _timerService.StartTimer("await_start_game", 5, null, false, time => View.SetTimerText(time.ToString()));
+            _timerService.StartTimer("await_start_game", 5, null, false, time => View.SetTimerText("Матч начнется через: " + time));
             
             _schedulerService
                 .StartSequence()
