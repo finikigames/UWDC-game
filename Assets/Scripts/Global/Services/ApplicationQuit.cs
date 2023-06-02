@@ -1,10 +1,28 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 namespace Global.Services {
     public class ApplicationQuit : MonoBehaviour {
         private static Action _onPause { get; set; }
         private static Action _onResume { get; set; }
+        [DllImport("__Internal")]
+        private static extern void registerVisibilityChangeEvent();
+ 
+        void Start() {
+            registerVisibilityChangeEvent();
+        }
+ 
+        void OnVisibilityChange(string visibilityState) {
+            System.Console.WriteLine("[" + System.DateTime.Now + "] the game switched to " + (visibilityState == "visible" ? "foreground" : "background"));
+            var focus = visibilityState == "visible" ? true : false;
+            if (!focus) {
+                WantsToQuit();
+                return;
+            }
+
+            _onResume?.Invoke();
+        }
         
         private void OnApplicationFocus(bool focus) {
             if (!focus) {
