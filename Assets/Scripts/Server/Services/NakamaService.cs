@@ -354,6 +354,9 @@ namespace Server.Services {
         }
 
         public async UniTask CreateSocket() {
+            if (_socket != null) {
+                await _socket.ConnectAsync(_session, true);
+            }
             _socket = Socket.From(_client, _adapter);
         }
 

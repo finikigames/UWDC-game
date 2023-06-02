@@ -110,6 +110,8 @@ namespace Checkers.UI.Presenters {
                 }
             }
 
+            if (_appConfig.GameEnded) return;
+            
             if (_needPauseGame) {
                 _signalBus.Fire(new OpenWindowSignal(WindowKey.PauseWindow, new PauseWindowData()));
                 _needPauseGame = false;
