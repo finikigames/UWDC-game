@@ -73,19 +73,7 @@ namespace Server {
             
             await _nakamaService.SendMessage(_globalChannel, content);
         }
-        
-        public async UniTask SendMatchmakingInfo(string targetUserId, string value) {
-            var me = _nakamaService.GetMe();
-            
-            var content = new Dictionary<string, string>() {
-                {"senderUserId", me.User.Id},
-                {"valueDropped", value},
-                {"targetUserId", targetUserId}
-            };
 
-            await _nakamaService.SendMessage(_globalChannel, content);
-        }
-        
         public async UniTask SendDeclineInviteReceived(string inviteSenderUserId) {
             var me = _nakamaService.GetMe();
             

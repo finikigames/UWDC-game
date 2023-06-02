@@ -41,7 +41,6 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
         private IMatchmakerMatched _matched;
         private IChannel _matchChannel;
 
-        private int _matchmakingValue;
         private string _opponentId;
 
         public WaitForPlayerWindowPresenter(ContextService service) : base(service) {
@@ -105,12 +104,25 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
                 matchId += user.Presence.Username;
             }
             await _nakamaService.CreateMatch(matchId);
+
+            var me = _nakamaService.GetMe();
+            
+            int i = 0;
+            foreach (var user in _matched.Users) {
+                if (user.Presence.UserId == me.User.Id) {
+                    if (i == 0) _appConfig.PawnColor = PawnColor.White;
+                }
+                else {
+                    _appConfig.PawnColor = PawnColor.Black;
+                }
+
+                i++;
+            }
             
             View.HideReturnButton();
 
             var users = _matched.Users;
 
-            var me = _nakamaService.GetMe();
             string opponentId = string.Empty;
             foreach (var user in users) {
                 if (user.Presence.UserId == me.User.Id) continue;
@@ -123,13 +135,7 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
             
             _nakamaService.SubscribeToMessages(OnChatMessage);
 
-            var value = Random.Range(0, 1000000);
-            _matchmakingValue = value;
-            
-            Debug.Log($"[Color getter] Get a random value of {value}");
-            
             _opponentId = opponentId;
-            await _messageService.SendMatchmakingInfo(opponentId, _matchmakingValue.ToString());
             
             var opponentUserInfo = await _nakamaService.GetUserInfo(opponentId);
 
@@ -181,28 +187,6 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
             
             if (content.TryGetValue("targetUserId", out var targetUser)) {
                 if (profile.User.Id != targetUser) return;
-            }
-            
-            if (content.TryGetValue("valueDropped", out var senderValue)) {
-                Debug.Log($"[Color getter] Opponent value {senderValue}, my value {_matchmakingValue}");
-                
-                if (_matchmakingValue > int.Parse(senderValue)) {
-                    Debug.Log("[Color getter] Setting white");
-                    _appConfig.PawnColor = (int)PawnColor.White;
-                    return;
-                }
-
-                if (_matchmakingValue < int.Parse(senderValue)) {
-                    Debug.Log("[Color getter] Setting black");
-                    _appConfig.PawnColor = PawnColor.Black;
-                    return;
-                }
-                
-                Debug.Log("[Color getter] From equal");
-                
-                var value = Random.Range(0, 1000000);
-                _matchmakingValue = value;
-                await _messageService.SendMatchmakingInfo(_opponentId, _matchmakingValue.ToString());
             }
         }
 
