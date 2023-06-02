@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using UnityEngine;
+using UnityEngine.Scripting;
 
 namespace Global.Services {
     public class ApplicationQuit : MonoBehaviour {
@@ -13,9 +14,9 @@ namespace Global.Services {
             registerVisibilityChangeEvent();
         }
  
+        [Preserve]
         void OnVisibilityChange(string visibilityState) {
-            System.Console.WriteLine("[" + System.DateTime.Now + "] the game switched to " + (visibilityState == "visible" ? "foreground" : "background"));
-            var focus = visibilityState == "visible" ? true : false;
+            var focus = visibilityState == "visible";
             if (!focus) {
                 WantsToQuit();
                 return;
