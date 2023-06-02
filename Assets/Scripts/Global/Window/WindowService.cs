@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using Core.MVP.Base.Interfaces;
 using Cysharp.Threading.Tasks;
 using Global.ConfigTemplate;
@@ -19,6 +20,7 @@ namespace Global.Window {
         private Dictionary<UIContainerType, GameObject> _containers;
         private readonly Dictionary<WindowKey, UIWindow> _windowsByUid;
         private readonly Dictionary<WindowKey, UIWindow> _activeWindows;
+        private readonly Dictionary<WindowKey, Task> _loadCache;
 
         public WindowService(SignalBus signalBus,
                              WindowsConfigs config,
@@ -28,6 +30,7 @@ namespace Global.Window {
             _windowFactory = windowFactory;
 
             _windowsByUid = new();
+            _loadCache = new Dictionary<WindowKey, Task>();
             SubscribeSignals();
         }
 
@@ -60,6 +63,12 @@ namespace Global.Window {
 
             UIWindow window;
             bool isInitialized = false;
+
+            if (_loadCache.ContainsKey(key)) {
+                var task = _loadCache[key];
+                await task;
+            }
+            
             if (_windowsByUid.ContainsKey(key)) {
                 window = _windowsByUid[key];
                 isInitialized = true;
@@ -67,7 +76,13 @@ namespace Global.Window {
             else {
                 Transform transform = GetUIContainer(UIContainerType.WindowsContainer);
 
-                window = await _windowFactory.Create(config, transform, key, Vector3.zero);
+                var task = _windowFactory.Create(config, transform, key, Vector3.zero).AsTask();
+                _loadCache.Add(key, task);
+
+                window = await task;
+
+                _loadCache.Remove(key);
+                
                 window.SubscribeDestroy(OnDestroyView);
                 
                 _windowsByUid.Add(key, window);   
