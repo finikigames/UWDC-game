@@ -45,7 +45,7 @@ namespace Main.UI.Presenters {
                 var sender = await _nakamaService.GetUserInfo(senderUserId);
                 if (!sender.Online) {
                     CloseThisWindow();
-                    _signalBus.Fire(new OpenWindowSignal(WindowKey.FlyText, new FlyTextData("Ваш оппонент не в сети")));
+                    _signalBus.Fire(new OpenWindowSignal(WindowKey.FlyText, new FlyTextData{FlyText = "Ваш оппонент не в сети"}));
                     return;
                 }
                 
