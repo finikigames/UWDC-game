@@ -259,6 +259,8 @@ namespace Main.UI.Presenters {
             };
             
             _globalScope.SendedInvites.Add(data.UserId, inviteData);
+            
+            _signalBus.Fire(new OpenWindowSignal(WindowKey.FlyText, new FlyTextData { FlyText = "отправлено" }));
         }
 
         public EnhancedScrollerCellView GetCellView(EnhancedScroller scroller, int dataIndex, int cellIndex) {

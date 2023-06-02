@@ -192,10 +192,12 @@ namespace Checkers.Services {
         }
 
         private void CheckTurn(PawnColor pawnColor) {
-            if (_mainColor == pawnColor) {
-                var data = new FlyTextData("твой ход");
-                _signalBus.Fire(new OpenWindowSignal(WindowKey.FlyText, data));
-            }
+            string flyText = _mainColor == pawnColor ? "твой ход" : "ход соперника";
+            var data = new FlyTextData {
+                FlyText = flyText,
+                PawnColor = pawnColor
+            };
+            _signalBus.Fire(new OpenWindowSignal(WindowKey.FlyText, data));
         }
 
         private void OnPawnCheck(PawnColor color, GameObject pawn) {

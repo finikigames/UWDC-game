@@ -12,7 +12,9 @@ namespace Global.UI.Presenters {
         public FlyTextPresenter(ContextService service) : base(service) { }
 
         protected override async UniTask LoadContent() {
+            View.InitializeView();
             View.ShowFlyText(WindowData.FlyText);
+            View.SetBackgroundColor(WindowData.PawnColor);
         }
     }
 }
