@@ -104,21 +104,19 @@ namespace Checkers.Services {
             
             if (!_hasInput) return;
 
+            if (!IsMineTurn() && _sceneSettings.MoveChecker.PawnsHaveCapturingMove(GetOpponentColor())) return;
+            
             _hasInput = false;
             
-            var turnData = _turns.Peek();
+            var turnData = _turns.Dequeue();
             var toCoords = turnData.To;
             var tileTo = _sceneSettings.Getter.GetTile(toCoords.Column, toCoords.Row);
 
             var fromCoords = turnData.From;
             var tileFrom = _sceneSettings.Getter.GetTile(fromCoords.Column, fromCoords.Row);
 
-            if (!_sceneSettings.PawnMover.CanPawnBeSelected(tileTo) ||
-                !_sceneSettings.PawnMover.CanPawnBeSelected(tileFrom)) return;
-            
             Debug.Log($"Trying to move tile with coords from {fromCoords} and to coords {toCoords}");
 
-            _turns.Dequeue();
             tileFrom.GetComponent<TileClickDetector>().MouseDown();
             tileTo.GetComponent<TileClickDetector>().MouseDown();
         }
@@ -138,7 +136,7 @@ namespace Checkers.Services {
             if (_windowService.IsWindowOpened(WindowKey.FleeWindow)) return;
             if (_windowService.IsWindowOpened(WindowKey.RulesWindow)) return;
             
-            if (_sceneSettings.TurnHandler.Turn != _mainColor) return;
+            if (!IsMineTurn()) return;
             var mouseInput = Input.mousePosition;
 
             var worldPosition = UnityEngine.Camera.main.ScreenToWorldPoint(mouseInput);
@@ -156,6 +154,18 @@ namespace Checkers.Services {
             var tile = tileGetter.GetTile(column, row);
             var clickDetector = tile.GetComponent<TileClickDetector>();
             clickDetector.MouseDown();
+        }
+
+        private PawnColor GetOpponentColor() {
+            if (_mainColor == PawnColor.Black) {
+                return PawnColor.White;
+            }
+
+            return PawnColor.Black;
+        }
+        
+        private bool IsMineTurn() {
+            return _sceneSettings.TurnHandler.Turn == _mainColor;
         }
 
         private void OnMatchState(IMatchState state) {
