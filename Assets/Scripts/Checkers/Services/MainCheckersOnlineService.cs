@@ -1,9 +1,9 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Checkers.Board;
 using Checkers.ConfigTemplate;
 using Checkers.Settings;
 using Checkers.UI.Data;
-using Core.Primitives;
 using DG.Tweening;
 using Global.ConfigTemplate;
 using Global.Enums;
@@ -14,18 +14,11 @@ using Global.Window.Enums;
 using Global.Window.Signals;
 using Nakama;
 using Newtonsoft.Json;
-using Server;
 using Server.Services;
 using UnityEngine;
 using Zenject;
 
 namespace Checkers.Services {
-    public struct TurnData {
-        public Coords To;
-        public Coords From;
-        public bool Capture;
-    }
-
     public class MainCheckersOnlineService : ITickable {
         private readonly MainCheckerSceneSettings _sceneSettings;
         private readonly ISchedulerService _schedulerService;
@@ -33,13 +26,14 @@ namespace Checkers.Services {
         private readonly SignalBus _signalBus;
         private readonly AppConfig _appConfig;
         private readonly WindowService _windowService;
-        private readonly MessageService _messageService;
         private readonly CheckersConfig _checkersConfig;
+        
         private PawnColor _mainColor;
         private UnityEngine.Camera _cam;
 
-        private TurnData _turnData;
         private bool _hasInput;
+
+        private Queue<TurnData> _turns;
 
         public MainCheckersOnlineService(MainCheckerSceneSettings sceneSettings,
                                          ISchedulerService schedulerService, 
@@ -47,21 +41,20 @@ namespace Checkers.Services {
                                          CheckersConfig checkersConfig,
                                          SignalBus signalBus,
                                          AppConfig appConfig,
-                                         WindowService windowService,
-                                         MessageService messageService) {
+                                         WindowService windowService) {
             _sceneSettings = sceneSettings;
             _schedulerService = schedulerService;
             _nakamaService = nakamaService;
             _signalBus = signalBus;
             _appConfig = appConfig;
             _windowService = windowService;
-            _messageService = messageService;
             _checkersConfig = checkersConfig;
         }
         
         public void Initialize() {
             _signalBus.Fire(new OpenWindowSignal(WindowKey.MatchWindow, new MatchWindowData()));
-            
+
+            _turns = new Queue<TurnData>();
             _mainColor = _appConfig.PawnColor;
             
             var turnHandler = _sceneSettings.TurnHandler;
@@ -113,14 +106,19 @@ namespace Checkers.Services {
 
             _hasInput = false;
             
-            var toCoords = _turnData.To;
+            var turnData = _turns.Peek();
+            var toCoords = turnData.To;
             var tileTo = _sceneSettings.Getter.GetTile(toCoords.Column, toCoords.Row);
 
-            var fromCoords = _turnData.From;
+            var fromCoords = turnData.From;
             var tileFrom = _sceneSettings.Getter.GetTile(fromCoords.Column, fromCoords.Row);
 
-            Debug.Log($"Trying to move tile with coords from {fromCoords} and to coords {toCoords}");
+            if (!_sceneSettings.PawnMover.CanPawnBeSelected(tileTo) ||
+                !_sceneSettings.PawnMover.CanPawnBeSelected(tileFrom)) return;
             
+            Debug.Log($"Trying to move tile with coords from {fromCoords} and to coords {toCoords}");
+
+            _turns.Dequeue();
             tileFrom.GetComponent<TileClickDetector>().MouseDown();
             tileTo.GetComponent<TileClickDetector>().MouseDown();
         }
@@ -169,9 +167,9 @@ namespace Checkers.Services {
                     var turnData = JsonConvert.DeserializeObject<TurnData>(content);
 
                     Debug.Log($"Received raw data with from {turnData.From} and to {turnData.To}");
-                    _turnData = turnData;
+                    _turns.Enqueue(turnData);
                     
-                    Debug.Log($"Inverted data with from {_turnData.From} and to {_turnData.To}");
+                    Debug.Log($"Inverted data with from {turnData.From} and to {turnData.To}");
 
                     _hasInput = true;
                     break;
