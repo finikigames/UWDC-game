@@ -7,6 +7,7 @@ using Global.StateMachine.Base.Enums;
 using Global.Window.Enums;
 using Global.Window.Signals;
 using Main.UI.Data;
+using Server.Services;
 using UnityEngine.SceneManagement;
 using Zenject;
 
@@ -16,13 +17,16 @@ namespace Main {
         private readonly SignalBus _signalBus;
         private readonly GameStateMachine _gameStateMachine;
         private readonly AppConfig _appConfig;
+        private readonly NakamaService _nakamaService;
 
         public CheckersInitialize(SignalBus signalBus,
                                   GameStateMachine gameStateMachine,
-                                  AppConfig appConfig) {
+                                  AppConfig appConfig,
+                                  NakamaService nakamaService) {
             _signalBus = signalBus;
             _gameStateMachine = gameStateMachine;
             _appConfig = appConfig;
+            _nakamaService = nakamaService;
         }
         
         public void Initialize() {
@@ -34,6 +38,8 @@ namespace Main {
         }
 
         public async UniTask LoadYourAsyncScene(ToCheckersMetaSignal signal) {
+            await _nakamaService.GoOffline();
+            
             var currentScene = SceneManager.GetActiveScene();
 
             _signalBus.Fire(new CloseWindowSignal(WindowKey.StartWindow));

@@ -11,6 +11,7 @@ using Global.Enums;
 using Global.Extensions;
 using Global.Services.Timer;
 using Global.StateMachine.Base.Enums;
+using Global.UI.Data;
 using Global.Window;
 using Global.Window.Base;
 using Global.Window.Enums;
@@ -130,17 +131,46 @@ namespace Main.UI.Presenters {
             if (!_globalScope.ApprovedMatchAndNeedLoad) return;
             _globalScope.ApprovedMatchAndNeedLoad = false;
 
-            var inviteData = _globalScope.SendedInvites[_globalScope.ApproveSenderId];
+            if (!_globalScope.SendedInvites.ContainsKey(_appConfig.OpponentUserId)) return;
+            
+            var inviteData = _globalScope.SendedInvites[_appConfig.OpponentUserId];
             _appConfig.OpponentDisplayName = inviteData.DisplayName;
-            foreach (var pair in _globalScope.SendedInvites) {
-                
-            }
+            await DeclineAllReceivedSignals();
+            await DeclineAllSendedSignals();
             _globalScope.SendedInvites.Clear();
-            await _nakamaService.RemoveAllPartiesExcept(_globalScope.ApproveSenderId);
+            await _nakamaService.RemoveAllPartiesExcept(_appConfig.OpponentUserId);
             await LoadParty();
         }
+        
+        private async UniTask DeclineAllSendedSignals() {
+            UniTask[] tasks = new UniTask[_globalScope.SendedInvites.Count];
+            int i = 0;
+            foreach (var pair in _globalScope.SendedInvites)
+            {
+                tasks[i] = _messageService.SendDeclineInviteSended(pair.Key);
+                i++;
+            }
 
-        private void CheckInvite() {
+            _globalScope.SendedInvites.Clear();
+            await UniTask.WhenAll(tasks);
+        }
+
+        private async UniTask DeclineAllReceivedSignals()
+        {
+            UniTask[] tasks = new UniTask[_globalScope.ReceivedInvites.Count];
+            int i = 0;
+            foreach (var pair in _globalScope.ReceivedInvites)
+            {
+                tasks[i] = _messageService.SendDeclineInviteReceived(pair.Key);
+                i++;
+            }
+            
+            _globalScope.ReceivedInvites.Clear();
+
+            await UniTask.WhenAll(tasks);
+        }
+
+        private async void CheckInvite() {
             if (_globalScope.ReceivedInvites.Count == 0) return;
             if (_windowService.IsWindowOpened(WindowKey.InviteWindow)) return;
 
@@ -153,6 +183,9 @@ namespace Main.UI.Presenters {
 
             _globalScope.ReceivedInvites.Remove(inviteData.Key);
 
+            var userData = await _nakamaService.GetUserInfo(inviteData.Key);
+            if (!userData.Online) return;
+            
             _signalBus.Fire(new OpenWindowSignal(WindowKey.InviteWindow, new InviteWindowData {
                 InviteData = inviteData.Value
             }));
@@ -227,6 +260,8 @@ namespace Main.UI.Presenters {
             };
             
             _globalScope.SendedInvites.Add(data.UserId, inviteData);
+            
+            _signalBus.Fire(new OpenWindowSignal(WindowKey.FlyText, new FlyTextData { FlyText = "отправлено" }));
         }
 
         public EnhancedScrollerCellView GetCellView(EnhancedScroller scroller, int dataIndex, int cellIndex) {

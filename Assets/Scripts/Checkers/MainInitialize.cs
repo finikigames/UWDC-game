@@ -37,8 +37,11 @@ namespace Checkers {
         }
         
         public async UniTask LoadYourAsyncScene() {
+            await _nakamaService.GoOnline();
+            
             var currentScene = SceneManager.GetActiveScene();
 
+            _appConfig.GameEnded = false;
             _appConfig.InMatch = false;
             
             _signalBus.Fire(new CloseWindowSignal(WindowKey.MatchWindow));

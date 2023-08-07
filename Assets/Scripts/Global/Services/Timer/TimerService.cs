@@ -12,17 +12,27 @@ namespace Global.Services.Timer {
             _timersToDelete = new HashSet<string>();
         }
 
-        public void StartTimer(string timerId, float time, Action onEnd, bool isLoop = false, Action<int> onTick = null) {
+        public void StartTimer(string timerId, float time, Action onEnd, bool isLoop = false, Action<float> onTick = null) {
             StartDownTimer(timerId, time, onEnd, isLoop, onTick);
         }
 
-        public void StartDownTimer(string timerId, float time, Action onEnd, bool isLoop = false, Action<int> onTick = null) {
+        public void StartDownTimer(string timerId, float time, Action onEnd, bool isLoop = false, Action<float> onTick = null) {
+            if (_timers.ContainsKey(timerId)) {
+                _timers.Remove(timerId);
+            }
+            
             var timer = new DownTimer(time, onEnd, isLoop, onTick);
             
             _timers.Add(timerId, timer);
         }
 
-        public void StartUpTimer(string timerId, float time, Action onEnd, bool isLoop = false, Action<int> onTick = null)
+        public float GetTime(string timerId) {
+            if (!_timers.ContainsKey(timerId)) return 0f;
+
+            return _timers[timerId].GetTime();
+        }
+
+        public void StartUpTimer(string timerId, float time, Action onEnd, bool isLoop = false, Action<float> onTick = null)
         {
             var timer = new UpTimer(time, onEnd, isLoop, onTick);
             _timers.Add(timerId, timer);
@@ -33,7 +43,15 @@ namespace Global.Services.Timer {
         }
 
         public void ResetTimer(string timerId) {
+            if (!_timers.ContainsKey(timerId)) return;
+            
             _timers[timerId].ResetTimer();
+        }
+
+        public void ResetTimer(string timerId, float time) {
+            if (!_timers.ContainsKey(timerId)) return;
+            
+            _timers[timerId].ResetTimer(time);
         }
 
         public void Tick() {

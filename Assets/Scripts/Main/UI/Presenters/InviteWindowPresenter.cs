@@ -1,10 +1,12 @@
-﻿using Core.Extensions;
+﻿using System.Threading.Tasks;
+using Core.Extensions;
 using Cysharp.Threading.Tasks;
 using Global;
 using Global.ConfigTemplate;
 using Global.Context;
 using Global.Enums;
 using Global.StateMachine.Base.Enums;
+using Global.UI.Data;
 using Global.Window.Base;
 using Global.Window.Enums;
 using Global.Window.Signals;
@@ -40,13 +42,25 @@ namespace Main.UI.Presenters {
             
             View.SubscribeToApply(async () => {
                 var senderUserId = data.UserId;
+                var sender = await _nakamaService.GetUserInfo(senderUserId);
+                if (!sender.Online) {
+                    CloseThisWindow();
+                    _signalBus.Fire(new OpenWindowSignal(WindowKey.FlyText, new FlyTextData{FlyText = "Ваш оппонент не в сети"}));
+                    return;
+                }
+                
                 await _nakamaService.CreateMatch(data.MatchId);
                 await _nakamaService.RemoveAllParties();
                 await _messageService.SendUserConfirmation(data.MatchId, senderUserId);
+                _appConfig.OpponentUserId = senderUserId;
                 _signalBus.Fire(new CloseWindowSignal(WindowKey.InviteWindow));
                 PlayerPrefsX.SetBool("Matchmaking", false);
-                
-                _appConfig.PawnColor = (int)PawnColor.Black;
+
+                await DeclineAllReceivedSignals();
+                await DeclineAllSendedSignals();
+                await _nakamaService.RemoveAllPartiesExcept(_appConfig.OpponentUserId);
+
+                _appConfig.PawnColor = PawnColor.Black;
                 _appConfig.OpponentDisplayName = data.DisplayName;
                 
                 _signalBus.Fire(new ToCheckersMetaSignal{WithPlayer = true});
@@ -59,6 +73,34 @@ namespace Main.UI.Presenters {
             });
             
             View.ChangeName(data.DisplayName);
+        }
+
+        private async UniTask DeclineAllSendedSignals() {
+            UniTask[] tasks = new UniTask[_globalScope.SendedInvites.Count];
+            int i = 0;
+            foreach (var pair in _globalScope.SendedInvites)
+            {
+                tasks[i] = _messageService.SendDeclineInviteSended(pair.Key);
+                i++;
+            }
+
+            _globalScope.SendedInvites.Clear();
+            await UniTask.WhenAll(tasks);
+        }
+
+        private async UniTask DeclineAllReceivedSignals()
+        {
+            UniTask[] tasks = new UniTask[_globalScope.ReceivedInvites.Count];
+            int i = 0;
+            foreach (var pair in _globalScope.ReceivedInvites)
+            {
+                tasks[i] = _messageService.SendDeclineInviteReceived(pair.Key);
+                i++;
+            }
+            
+            _globalScope.ReceivedInvites.Clear();
+
+            await UniTask.WhenAll(tasks);
         }
     }
 }

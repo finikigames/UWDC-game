@@ -6,6 +6,7 @@ using Global.Services;
 using Global.Services.Timer;
 using Global.StateMachine;
 using Global.StateMachine.States;
+using Global.UI.Signals;
 using Global.Window;
 using Global.Window.Signals;
 using UnityEngine;
@@ -27,6 +28,9 @@ namespace Global.DI.MonoInstallers {
             InstallFactories();
             InstallSignals();
 
+            Container
+                .DeclareSignal<ShowRulesWindowCloseButton>();
+            
             Container
                 .BindInterfacesAndSelfTo<GlobalScope>()
                 .AsSingle();

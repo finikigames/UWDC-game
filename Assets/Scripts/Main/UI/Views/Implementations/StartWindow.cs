@@ -80,6 +80,16 @@ namespace Main.UI.Views.Implementations {
             _winsCountText.text = wins.ToString();
         }
 
+        public void DisablePlayButton() {
+            _startButton.enabled = false;
+            _startButton.GetComponent<Image>().color = Color.gray;
+        }
+
+        public void EnablePlayButton() {
+            _startButton.enabled = true;
+            _startButton.GetComponent<Image>().color = Color.white;
+        }
+
         public void SetLosesCount(int loses) {
             _looseCountText.text = loses.ToString();
         }

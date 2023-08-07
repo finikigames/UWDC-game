@@ -3,17 +3,17 @@ using System;
 namespace Global.Services.Timer {
     public class UpTimer : Timer
     {
-        private readonly Action OnEnd;
-        private readonly Action<int> OnTick;
+        private readonly Action _onEnd;
+        private readonly Action<float> _onTick;
         private float _currentTime;
         private float _timeDuration;
         
-        public UpTimer(float time, Action callback, bool isLoop = false, Action<int> callbackTick = null) {
+        public UpTimer(float time, Action callback, bool isLoop = false, Action<float> callbackTick = null) {
             _timeDuration = time;
             _currentTime = 0;
             IsLoop = isLoop;
-            OnEnd = callback;
-            OnTick = callbackTick;
+            _onEnd = callback;
+            _onTick = callbackTick;
         }
 
         public override void SetTime(float time) {
@@ -21,8 +21,18 @@ namespace Global.Services.Timer {
             _currentTime = 0;
         }
 
+        public override float GetTime() {
+            return _currentTime;
+        }
+
         public override void ResetTimer() {
             TimerEnded = false;
+            _currentTime = 0;
+        }
+        
+        public override void ResetTimer(float time) {
+            TimerEnded = false;
+            _timeDuration = time;
             _currentTime = 0;
         }
 
@@ -30,7 +40,7 @@ namespace Global.Services.Timer {
             if (TimerEnded) return;
             
             _currentTime += UnityEngine.Time.deltaTime;
-            OnTick?.Invoke((int)Math.Floor(_currentTime));
+            _onTick?.Invoke((int)Math.Floor(_currentTime));
 
             if (_currentTime >= _timeDuration) {
                 EndTimer();
@@ -40,11 +50,11 @@ namespace Global.Services.Timer {
         private void EndTimer() {
             if (!IsLoop) {
                 TimerEnded = true;
-                OnEnd?.Invoke();
+                _onEnd?.Invoke();
             }
             else {
                 _currentTime = _timeDuration;
-                OnEnd?.Invoke();
+                _onEnd?.Invoke();
             }
         }
     }

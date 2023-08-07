@@ -15,6 +15,7 @@ namespace Checkers.Board
 
         public Action<PawnColor, GameObject> OnPawnCheck;
         public Action<PawnColor, WinLoseReason> OnEndGame;
+        public Action<PawnColor> OnTurnChange;
 
         public int whitePawnCount;
         public int blackPawnCount;
@@ -41,6 +42,8 @@ namespace Checkers.Board
         public void NextTurn()
         {
             Turn = Turn == PawnColor.White ? PawnColor.Black : PawnColor.White;
+            
+            OnTurnChange?.Invoke(Turn);
         }
 
         public PawnColor GetTurn()
@@ -69,8 +72,8 @@ namespace Checkers.Board
                 EndGame(PawnColor.White);
         }
 
-        private void EndGame(PawnColor winnerPawnColor) {
-            OnEndGame?.Invoke(winnerPawnColor, WinLoseReason.Rule);
+        public void EndGame(PawnColor winnerPawnColor, WinLoseReason reason = WinLoseReason.Rule) {
+            OnEndGame?.Invoke(winnerPawnColor, reason);
         }
     }
 }

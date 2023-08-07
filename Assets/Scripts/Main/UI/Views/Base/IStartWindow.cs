@@ -13,6 +13,8 @@ namespace Main.UI.Views.Base {
         void SetScrollerDelegate(IEnhancedScrollerDelegate deleg);
         void ReloadData();
         void SetWinsCount(int wins);
+        void DisablePlayButton();
+        void EnablePlayButton();
         void SetLosesCount(int loses);
         void SetAllMembersCount(int count);
         void SetOnlineMembersCount(int count);

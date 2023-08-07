@@ -6,6 +6,5 @@ namespace Global {
         public Dictionary<string, InviteData> ReceivedInvites = new Dictionary<string, InviteData>();
 
         public bool ApprovedMatchAndNeedLoad;
-        public string ApproveSenderId;
     }
 }

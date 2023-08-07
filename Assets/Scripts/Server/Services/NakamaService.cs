@@ -51,6 +51,10 @@ namespace Server.Services {
 
         private async UniTask CheckForSessionExpired() {
             if (!_session.IsExpired) return;
+            if (_session.IsRefreshExpired) {
+                await CommonInitialize();
+                return;
+            }
 
             await _client.SessionRefreshAsync(_session);
         }
@@ -77,6 +81,14 @@ namespace Server.Services {
 
         public async UniTask RemoveMatchmaker(IMatchmakerTicket ticket) {
             await _socket.RemoveMatchmakerAsync(ticket);
+        }
+
+        public async UniTask GoOffline() {
+            await _socket.UpdateStatusAsync(null);
+        }
+
+        public async UniTask GoOnline() {
+            await _socket.UpdateStatusAsync("online");
         }
 
         public void SubscribeToMatchmakerMatched(Action<IMatchmakerMatched> callback) {
@@ -342,7 +354,10 @@ namespace Server.Services {
         }
 
         public async UniTask CreateSocket() {
-            _socket = Socket.From(_client, _adapter);
+            if (_socket != null) {
+                await _socket.ConnectAsync(_session, true);
+            }
+            _socket = _client.NewSocket(true, _adapter);
         }
 
         public async UniTask ConnectSocket() {

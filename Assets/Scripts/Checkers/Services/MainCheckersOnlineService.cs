@@ -3,16 +3,18 @@ using Checkers.Board;
 using Checkers.ConfigTemplate;
 using Checkers.Settings;
 using Checkers.UI.Data;
-using Checkers.UI.Presenters;
 using Core.Primitives;
 using DG.Tweening;
 using Global.ConfigTemplate;
 using Global.Enums;
 using Global.Scheduler.Base;
+using Global.UI.Data;
+using Global.Window;
 using Global.Window.Enums;
 using Global.Window.Signals;
 using Nakama;
 using Newtonsoft.Json;
+using Server;
 using Server.Services;
 using UnityEngine;
 using Zenject;
@@ -23,48 +25,44 @@ namespace Checkers.Services {
         public Coords From;
         public bool Capture;
     }
-    
-    public struct StartedSignal {
-        public PawnColor StartColor;
-    }
 
-    public struct YouAreBlack {
-        
-    }
-    
     public class MainCheckersOnlineService : ITickable {
         private readonly MainCheckerSceneSettings _sceneSettings;
         private readonly ISchedulerService _schedulerService;
         private readonly NakamaService _nakamaService;
         private readonly SignalBus _signalBus;
         private readonly AppConfig _appConfig;
+        private readonly WindowService _windowService;
+        private readonly MessageService _messageService;
         private readonly CheckersConfig _checkersConfig;
         private PawnColor _mainColor;
         private UnityEngine.Camera _cam;
 
         private TurnData _turnData;
         private bool _hasInput;
-        private bool _someoneLeaved;
-        private bool _endGame;
 
         public MainCheckersOnlineService(MainCheckerSceneSettings sceneSettings,
                                          ISchedulerService schedulerService, 
                                          NakamaService nakamaService,
                                          CheckersConfig checkersConfig,
                                          SignalBus signalBus,
-                                         AppConfig appConfig) {
+                                         AppConfig appConfig,
+                                         WindowService windowService,
+                                         MessageService messageService) {
             _sceneSettings = sceneSettings;
             _schedulerService = schedulerService;
             _nakamaService = nakamaService;
             _signalBus = signalBus;
             _appConfig = appConfig;
+            _windowService = windowService;
+            _messageService = messageService;
             _checkersConfig = checkersConfig;
         }
         
         public void Initialize() {
             _signalBus.Fire(new OpenWindowSignal(WindowKey.MatchWindow, new MatchWindowData()));
             
-            _mainColor = (PawnColor)_appConfig.PawnColor;
+            _mainColor = _appConfig.PawnColor;
             
             var turnHandler = _sceneSettings.TurnHandler;
 
@@ -73,11 +71,12 @@ namespace Checkers.Services {
             _sceneSettings.TurnHandler.YourColor = _mainColor;
             
             _nakamaService.SubscribeToMatchState(OnMatchState);
-            _nakamaService.SubscribeToMatchPresence(OnMatchPresence);
-            _sceneSettings.TurnHandler.OnEndGame += (s, r) => _endGame = true;
             
             turnHandler.OnPawnCheck += OnPawnCheck;
             turnHandler.OnEndGame += OnEndGame;
+            turnHandler.OnTurnChange += CheckTurn;
+            
+            CheckTurn(turnHandler.GetTurn());
 
             _sceneSettings.HeroHealthSlider.maxValue = 12;
             _sceneSettings.HeroHealthSlider.value = 12;
@@ -89,7 +88,7 @@ namespace Checkers.Services {
 
             };
             
-            _sceneSettings.PawnMover.OnTurn += (turnData) => {
+            _sceneSettings.PawnMover.OnTurn += async (turnData) => {
                 var currentTurn = _sceneSettings.TurnHandler.Turn;
 
                 if (currentTurn != _mainColor) return;
@@ -99,18 +98,12 @@ namespace Checkers.Services {
                 var json = JsonConvert.SerializeObject(turnData);
 
                 Debug.Log($"Send turn with data from {turnData.From} and to {turnData.To}");
-                _nakamaService.SendMatchStateAsync(matchId, (long) CheckersMatchState.Turn, json);
+                await _nakamaService.SendMatchStateAsync(matchId, (long) CheckersMatchState.Turn, json);
             };
         }
 
-        private void OnMatchPresence(IMatchPresenceEvent obj) {
-            if (obj.Leaves.Any()) {
-                _someoneLeaved = true;
-            }
-        }
-
         public void Tick() {
-            if (_endGame) return;
+            if (_appConfig.GameEnded) return;
             
             CheckInput();
 
@@ -133,16 +126,20 @@ namespace Checkers.Services {
         }
 
         private void CheckLeave() {
-            if (!_someoneLeaved) return;
+            if (!_appConfig.Leave) return;
 
-            _someoneLeaved = false;
-            
+            _appConfig.Leave = false;
             _signalBus.Fire(new OpenWindowSignal(WindowKey.WinWindow, new WinWindowData{Reason = WinLoseReason.Concide}));
         }
 
         private void CheckInput() {
             if (!Input.GetMouseButtonDown(0)) return;
-
+            if (_windowService.IsWindowOpened(WindowKey.PauseWindow)) return;
+            if (_windowService.IsWindowOpened(WindowKey.WinWindow)) return;
+            if (_windowService.IsWindowOpened(WindowKey.LoseWindow)) return;
+            if (_windowService.IsWindowOpened(WindowKey.FleeWindow)) return;
+            if (_windowService.IsWindowOpened(WindowKey.RulesWindow)) return;
+            
             if (_sceneSettings.TurnHandler.Turn != _mainColor) return;
             var mouseInput = Input.mousePosition;
 
@@ -154,7 +151,7 @@ namespace Checkers.Services {
             if ((column < 0 || column > 7) || (row < 0 || row > 7)) return;
             var tileGetter = _sceneSettings.Getter;
 
-            if (_appConfig.PawnColor == (int) PawnColor.Black) {
+            if (_appConfig.PawnColor == PawnColor.Black) {
                 column = 7 - column;
                 row = 7 - row;
             }
@@ -194,6 +191,15 @@ namespace Checkers.Services {
             _sceneSettings.BoardRoot.rotation = Quaternion.Euler(_checkersConfig.BoardBlackMainRotation);
         }
 
+        private void CheckTurn(PawnColor pawnColor) {
+            string flyText = _mainColor == pawnColor ? "твой ход" : "ход соперника";
+            var data = new FlyTextData {
+                FlyText = flyText,
+                PawnColor = pawnColor
+            };
+            _signalBus.Fire(new OpenWindowSignal(WindowKey.FlyText, data));
+        }
+
         private void OnPawnCheck(PawnColor color, GameObject pawn) {
             var copy = Object.Instantiate(pawn, pawn.transform.position, pawn.transform.rotation);
             if (color == PawnColor.Black) {
@@ -230,6 +236,7 @@ namespace Checkers.Services {
         }
 
         private void OnEndGame(PawnColor color, WinLoseReason reason) {
+            _appConfig.GameEnded = true;
             if (color != _mainColor) {
                 _schedulerService
                     .StartSequence()

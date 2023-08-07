@@ -7,6 +7,7 @@ using Global.ConfigTemplate;
 using Global.Context;
 using Global.Enums;
 using Global.Scheduler.Base;
+using Global.Services;
 using Global.Services.Timer;
 using Global.StateMachine.Base.Enums;
 using Global.Window.Base;
@@ -32,6 +33,7 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
         private TimerService _timerService;
         private ISchedulerService _schedulerService;
         private MessageService _messageService;
+        private GlobalScope _globalScope;
 
         private bool _needLoad;
 
@@ -39,7 +41,6 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
         private IMatchmakerMatched _matched;
         private IChannel _matchChannel;
 
-        private int _matchmakingValue;
         private string _opponentId;
 
         public WaitForPlayerWindowPresenter(ContextService service) : base(service) {
@@ -53,9 +54,13 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
             _timerService = Resolve<TimerService>(GameContext.Project);
             _schedulerService = Resolve<ISchedulerService>(GameContext.Project);
             _messageService = Resolve<MessageService>(GameContext.Project);
+            _globalScope = Resolve<GlobalScope>(GameContext.Project);
         }
 
         protected override async UniTask LoadContent() {
+            View.SetOpponentExistState(false);
+            await _nakamaService.GoOffline();
+            ApplicationQuit.SubscribeOnQuit(CloseThisWindow);
             _matchmakerTicket = await _nakamaService.AddMatchmaker();
             
             View.SubscribeToReturnButton(OnReturnClick);
@@ -64,6 +69,8 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
             
             View.ShowReturnButton();
 
+            await DeclineAllSendedSignals();
+            await _nakamaService.RemoveAllParties();
             var winsCount = await _nakamaService.ListStorageObjects<PlayerResults>("players", "wins");
 
             var me = _nakamaService.GetMe();
@@ -92,16 +99,34 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
 
         private async UniTask AsyncLoad() {
             string matchId = string.Empty;
+            await _nakamaService.GoOffline();
+            
             foreach (var user in _matched.Users) {
                 matchId += user.Presence.Username;
             }
             await _nakamaService.CreateMatch(matchId);
+
+            var me = _nakamaService.GetMe();
+            
+            int i = 0;
+            foreach (var user in _matched.Users) {
+                if (user.Presence.UserId == me.User.Id) {
+                    if (i == 0) {
+                        _appConfig.PawnColor = PawnColor.White;
+                        break;
+                    }
+
+                    _appConfig.PawnColor = PawnColor.Black;
+                    break;
+                }
+
+                i++;
+            }
             
             View.HideReturnButton();
 
             var users = _matched.Users;
 
-            var me = _nakamaService.GetMe();
             string opponentId = string.Empty;
             foreach (var user in users) {
                 if (user.Presence.UserId == me.User.Id) continue;
@@ -112,6 +137,10 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
 
             _appConfig.OpponentUserId = opponentId;
             
+            _nakamaService.SubscribeToMessages(OnChatMessage);
+
+            _opponentId = opponentId;
+            
             var opponentUserInfo = await _nakamaService.GetUserInfo(opponentId);
 
             var opponentWinsCount = await _nakamaService.ListStorageObjects<PlayerResults>("players", "wins", opponentId);
@@ -119,25 +148,41 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
             
             _appConfig.OpponentDisplayName = opponentUserInfo.DisplayName;
             View.SetOpponentName(opponentUserInfo.DisplayName);
-            
-            _nakamaService.SubscribeToMessages(OnChatMessage);
 
-            var value = Random.Range(0, 1000000);
-            _matchmakingValue = value;
-            _opponentId = opponentId;
-            await _messageService.SendMatchmakingInfo(opponentId, _matchmakingValue.ToString());
-            
             _timerService.RemoveTimer("waiting_for_play");
-            _timerService.StartTimer("await_start_game", 5, null, false, time => View.SetTimerText(time.ToString()));
+            
+            var list = await _nakamaService.ListStorageObjects<PlayerResults>("players", "wins");
+            foreach (var element in list.Data) {
+                if (element == opponentId) {
+                    View.SetOpponentExistState(true);
+                    break;
+                }
+            }
+            
+            _timerService.StartTimer("await_start_game", 5, null, false, time => View.SetTimerText("Матч начнется через: " + time));
             
             _schedulerService
                 .StartSequence()
                 .Append(5, () => {
                     CloseThisWindow();
-                    _timerService.RemoveTimer("waiting_for_play");
+                    Debug.Log("[Color getter] Started loading");
+                    _timerService.RemoveTimer("await_start_game");
                     
                     StartLoad();
                 });
+        }
+        
+        private async UniTask DeclineAllSendedSignals() {
+            UniTask[] tasks = new UniTask[_globalScope.SendedInvites.Count];
+            int i = 0;
+            foreach (var pair in _globalScope.SendedInvites)
+            {
+                tasks[i] = _messageService.SendDeclineInviteSended(pair.Key);
+                i++;
+            }
+
+            _globalScope.SendedInvites.Clear();
+            await UniTask.WhenAll(tasks);
         }
 
         private void StartLoad() {
@@ -149,24 +194,12 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
             var content = message.Content.FromJson<Dictionary<string, string>>();
             
             var profile = _nakamaService.GetMe();
-            if (content.TryGetValue("targetUserId", out var targetUser)) {
-                if (profile.User.Id != targetUser) return;
+            if (content.TryGetValue("senderUserId", out var senderUserId)) {
+                if (profile.User.Id == senderUserId) return;
             }
             
-            if (content.TryGetValue("valueDropped", out var senderValue)) {
-                if (_matchmakingValue > int.Parse(senderValue)) {
-                    _appConfig.PawnColor = (int)PawnColor.White;
-                    return;
-                }
-
-                if (_matchmakingValue < int.Parse(senderValue)) {
-                    _appConfig.PawnColor = (int)PawnColor.Black;
-                    return;
-                }
-                
-                var value = Random.Range(0, 1000000);
-                _matchmakingValue = value;
-                await _messageService.SendMatchmakingInfo(_opponentId, _matchmakingValue.ToString());
+            if (content.TryGetValue("targetUserId", out var targetUser)) {
+                if (profile.User.Id != targetUser) return;
             }
         }
 
@@ -179,9 +212,14 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
         }
         
         public override async UniTask Dispose() {
+            ApplicationQuit.UnSubscribeOnQuit(CloseThisWindow);
+            _timerService.RemoveTimer("waiting_for_play");
             _updateService.UnregisterUpdate(this);
             if (_matchmakerTicket != null) {
                 await _nakamaService.RemoveMatchmaker(_matchmakerTicket);
+            }
+            else {
+                await _nakamaService.GoOnline();
             }
 
             _appConfig.InSearch = false;

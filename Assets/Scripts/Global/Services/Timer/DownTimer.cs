@@ -1,19 +1,22 @@
 using System;
 
 namespace Global.Services.Timer {
-    public class DownTimer : Timer
-    {
-        private readonly Action OnEnd;
-        private readonly Action<int> OnTick;
+    public class DownTimer : Timer {
+        private readonly Action _onEnd;
+        private readonly Action<float> _onTick;
         private float _initialTime;
         private float _timeLeft;
 
-        public DownTimer(float time, Action callback, bool isLoop = false, Action<int> callbackTick = null) {
+        public DownTimer(float time, Action callback, bool isLoop = false, Action<float> callbackTick = null) {
             _timeLeft = time;
             _initialTime = time;
             IsLoop = isLoop;
-            OnEnd = callback;
-            OnTick = callbackTick;
+            _onEnd = callback;
+            _onTick = callbackTick;
+        }
+
+        public override float GetTime() {
+            return _timeLeft;
         }
 
         public override void SetTime(float time) {
@@ -25,12 +28,18 @@ namespace Global.Services.Timer {
             TimerEnded = false;
             _timeLeft = _initialTime;
         }
+        
+        public override void ResetTimer(float time) {
+            TimerEnded = false;
+            _initialTime = time;
+            _timeLeft = _initialTime;
+        }
 
         public override void Process() {
             if (TimerEnded) return;
             
             _timeLeft -= UnityEngine.Time.deltaTime;
-            OnTick?.Invoke((int)Math.Ceiling(_timeLeft));
+            _onTick?.Invoke((int)Math.Ceiling(_timeLeft));
 
             if (_timeLeft <= 0) {
                 EndTimer();
@@ -40,11 +49,11 @@ namespace Global.Services.Timer {
         private void EndTimer() {
             if (!IsLoop) {
                 TimerEnded = true;
-                OnEnd?.Invoke();
+                _onEnd?.Invoke();
             }
             else {
                 _timeLeft = _initialTime;
-                OnEnd?.Invoke();
+                _onEnd?.Invoke();
             }
         }
     }

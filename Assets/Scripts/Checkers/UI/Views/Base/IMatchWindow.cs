@@ -10,7 +10,7 @@ namespace Checkers.UI.Views.Base {
         void SetYourName(string yourName);
         void SetOpponentName(string opponentName);
         void GetLostCheсker(bool isPlayer);
-        void SetTimerTime(int time);
+        void SetTimerTime(float time);
         void ResetBars(bool isWhite);
         Vector3 GetSendPawnPosition(bool isPlayer);
     }

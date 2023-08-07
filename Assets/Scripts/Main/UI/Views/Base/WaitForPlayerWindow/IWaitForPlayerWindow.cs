@@ -11,5 +11,6 @@ namespace Main.UI.Views.Base.WaitForPlayerWindow {
         void SetYourWins(string text);
         void SetOpponentWins(string text);
         void SetTimerText(string text);
+        void SetOpponentExistState(bool state);
     }
 }
