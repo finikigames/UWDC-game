@@ -193,7 +193,7 @@ namespace Checkers.Pawns
 
         private bool IsMoveCapturingAndValid()
         {
-            return pawnMoveValidator.IsCapturingMove(lastClickedPawn, lastClickedTile);
+            return pawnMoveValidator.IsCapturingMove(lastClickedPawn, lastClickedTile, true);
         }
 
         private void CapturePawn()

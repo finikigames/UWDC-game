@@ -15,6 +15,9 @@ namespace Checkers.Pawns
         private TileIndex targetTileIndex;
         private TileIndex currentTileIndex;
         private TileIndex positionDifferenceInIndex;
+        private GameObject potentionalPawn;
+        private bool fromCapture;
+        private bool forCapture;
 
         private void Awake()
         {
@@ -39,6 +42,8 @@ namespace Checkers.Pawns
             targetTileIndex = targetTile.GetComponent<TileProperties>().GetTileIndex();
             currentTileIndex = pawn.GetComponent<IPawnProperties>().GetTileIndex();
             positionDifferenceInIndex = targetTileIndex - currentTileIndex;
+            potentionalPawn = null;
+            fromCapture = false;
         }
 
         private bool IsMoveDiagonal()
@@ -81,8 +86,8 @@ namespace Checkers.Pawns
             return tileGetter.GetTile(tileIndex).GetComponent<TileProperties>().IsOccupied();
         }
 
-        public bool IsCapturingMove(GameObject pawnToCheck, GameObject targetTileToCheck)
-        {
+        public bool IsCapturingMove(GameObject pawnToCheck, GameObject targetTileToCheck, bool forCapture = false) {
+            this.forCapture = forCapture;
             SetValues(pawnToCheck, targetTileToCheck);
             if (!IsMoveDiagonal() || IsTileOccupied(targetTileIndex))
                 return false;
@@ -109,16 +114,32 @@ namespace Checkers.Pawns
         private bool IsPawnOnOneBeforeTargetTile()
         {
             var moveDirectionInIndex = GetDiagonalMoveDirectionInIndex();
+            int occupiedCount = 0;
             for (var checkedTileIndex = currentTileIndex + moveDirectionInIndex;
-                 checkedTileIndex != targetTileIndex;
-                 checkedTileIndex += moveDirectionInIndex)
-                if (IsTileOccupied(checkedTileIndex) && checkedTileIndex != targetTileIndex - moveDirectionInIndex)
+                checkedTileIndex != targetTileIndex;
+                checkedTileIndex += moveDirectionInIndex) {
+                if (IsPawnKing() && forCapture) {
+                    if (!IsTileOccupied(checkedTileIndex)) continue;
+                    occupiedCount++;
+                    if (occupiedCount > 1) return false;
+                    
+                    potentionalPawn = tileGetter.GetTile(checkedTileIndex).GetComponent<TileProperties>().GetPawn();
+                    fromCapture = true;
+                }
+                else if (IsTileOccupied(checkedTileIndex) && checkedTileIndex != targetTileIndex - moveDirectionInIndex) {
                     return false;
-            return IsTileOccupied(targetTileIndex - moveDirectionInIndex);
+                }
+            }
+
+            return (IsPawnKing() && fromCapture) || IsTileOccupied(targetTileIndex - moveDirectionInIndex);
         }
 
         private GameObject GetPotentialPawnToCapture()
         {
+            if (IsPawnKing() && fromCapture) {
+                return potentionalPawn;
+            }
+            
             var moveDirectionInIndex = GetDiagonalMoveDirectionInIndex();
             return tileGetter.GetTile(targetTileIndex - moveDirectionInIndex).GetComponent<TileProperties>().GetPawn();
         }

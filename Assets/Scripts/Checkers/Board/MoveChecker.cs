@@ -171,7 +171,7 @@ namespace Checkers.Board
                  tileIndexToCheck += checkingDirectionInIndex)
             {
                 var tileToCheck = tileGetter.GetTile(tileIndexToCheck);
-                if (pawnMoveValidator.IsCapturingMove(pawnToCheck, tileToCheck))
+                if (pawnMoveValidator.IsCapturingMove(pawnToCheck, tileToCheck, true))
                     result.AddLast(tileIndexToCheck);
             }
 
