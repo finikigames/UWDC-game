@@ -31,8 +31,6 @@ namespace Checkers.Services {
         private PawnColor _mainColor;
         private UnityEngine.Camera _cam;
 
-        private bool _hasInput;
-
         private Queue<TurnData> _turns;
 
         public MainCheckersOnlineService(MainCheckerSceneSettings sceneSettings,
@@ -102,12 +100,10 @@ namespace Checkers.Services {
 
             CheckLeave();
             
-            if (!_hasInput) return;
+            if (_turns.Count == 0) return;
 
             if (!IsMineTurn() && _sceneSettings.MoveChecker.PawnsHaveCapturingMove(GetOpponentColor())) return;
-            
-            _hasInput = false;
-            
+
             var turnData = _turns.Dequeue();
             var toCoords = turnData.To;
             var tileTo = _sceneSettings.Getter.GetTile(toCoords.Column, toCoords.Row);
@@ -180,8 +176,6 @@ namespace Checkers.Services {
                     _turns.Enqueue(turnData);
                     
                     Debug.Log($"Inverted data with from {turnData.From} and to {turnData.To}");
-
-                    _hasInput = true;
                     break;
                 }
                 case (long) CheckersMatchState.WhiteTurnEnded: {
