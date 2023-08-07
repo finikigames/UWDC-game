@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Checkers.Board;
 using Checkers.ConfigTemplate;
 using Checkers.Settings;
@@ -31,7 +30,7 @@ namespace Checkers.Services {
         private PawnColor _mainColor;
         private UnityEngine.Camera _cam;
 
-        private Queue<TurnData> _turns;
+        private Queue<TurnData> _turns = new Queue<TurnData>();
 
         public MainCheckersOnlineService(MainCheckerSceneSettings sceneSettings,
                                          ISchedulerService schedulerService, 
@@ -52,7 +51,6 @@ namespace Checkers.Services {
         public void Initialize() {
             _signalBus.Fire(new OpenWindowSignal(WindowKey.MatchWindow, new MatchWindowData()));
 
-            _turns = new Queue<TurnData>();
             _mainColor = _appConfig.PawnColor;
             
             var turnHandler = _sceneSettings.TurnHandler;
@@ -102,7 +100,7 @@ namespace Checkers.Services {
             
             if (_turns.Count == 0) return;
 
-            if (!IsMineTurn() && _sceneSettings.MoveChecker.PawnsHaveCapturingMove(GetOpponentColor())) return;
+            if (_sceneSettings.PawnMover.TurnState) return;
 
             var turnData = _turns.Dequeue();
             var toCoords = turnData.To;
