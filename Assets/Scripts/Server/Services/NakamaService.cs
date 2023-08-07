@@ -185,11 +185,22 @@ namespace Server.Services {
                 Collection = collectionId,
                 Key = key,
                 Value = JsonConvert.SerializeObject(value),
-                PermissionRead = 1,
+                PermissionRead = 2,
                 PermissionWrite = 1
             };
 
             await _client.WriteStorageObjectsAsync(_session, new [] { writeObject });
+        }
+        
+        public async UniTask DeleteStorageObject<T>(string collectionId, string key, T value) where T : class, new() {
+            await CheckForSessionExpired();
+
+            var deleteObject = new StorageObjectId {
+                Collection = collectionId,
+                Key = key
+            };
+
+            await _client.DeleteStorageObjectsAsync(_session, new[] { deleteObject });
         }
 
         public async UniTask<IApiStorageObjectList> ListStorageObjects(string id, string userId = null) {
@@ -208,7 +219,7 @@ namespace Server.Services {
             }
 
             await CheckForSessionExpired();
-            var objects = await _client.ListUsersStorageObjectsAsync(_session, collectionId, userId, limit:2);
+            var objects = await _client.ListUsersStorageObjectsAsync(_session, collectionId, userId, limit:15);
 
             foreach (var obj in objects.Objects) {
                 if (obj.Key != key) continue;
@@ -219,6 +230,22 @@ namespace Server.Services {
             return new();
         }
 
+        public async UniTask<string> GetStorageObject(string collectionId, string key, string userId = null) {
+            if (string.IsNullOrEmpty(userId)) {
+                userId = _session.UserId;
+            }
+
+            await CheckForSessionExpired();
+            var objects = await _client.ListUsersStorageObjectsAsync(_session, collectionId, userId, limit: 15);
+
+            foreach (var obj in objects.Objects) {
+                if (obj.Key != key) continue;
+
+                return obj.Value;
+            }
+
+            return "";
+        }
         
         public void SubscribeToMessages(Action<IApiChannelMessage> onParty) {
             _socket.ReceivedChannelMessage += onParty;
