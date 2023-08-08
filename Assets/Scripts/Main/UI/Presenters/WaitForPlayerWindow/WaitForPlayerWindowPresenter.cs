@@ -218,10 +218,9 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
             if (_matchmakerTicket != null) {
                 await _nakamaService.RemoveMatchmaker(_matchmakerTicket);
             }
-            else {
-                await _nakamaService.GoOnline();
-            }
 
+            await _nakamaService.GoOnline();
+            
             _appConfig.InSearch = false;
             _nakamaService.UnsubscribeFromMessages(OnChatMessage);
             _nakamaService.UnsubscribeMatchmakerMatched(OnMatchmakerMatched);
