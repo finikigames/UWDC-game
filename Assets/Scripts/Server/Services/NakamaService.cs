@@ -325,7 +325,7 @@ namespace Server.Services {
 
             return value;
         }
-        
+
         public string GetCurrentMatchId() {
             return _match.Id;
         }
@@ -334,6 +334,7 @@ namespace Server.Services {
         private void OnPlayModeChanged(PlayModeStateChange change) {
             if (change == PlayModeStateChange.ExitingPlayMode) {
                 LeaveMatches();
+                EditorApplication.playModeStateChanged -= OnPlayModeChanged;
             }
         }
 #endif

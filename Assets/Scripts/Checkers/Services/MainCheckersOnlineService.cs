@@ -1,9 +1,8 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
 using Checkers.Board;
 using Checkers.ConfigTemplate;
 using Checkers.Settings;
 using Checkers.UI.Data;
-using Core.Primitives;
 using DG.Tweening;
 using Global.ConfigTemplate;
 using Global.Enums;
@@ -14,18 +13,11 @@ using Global.Window.Enums;
 using Global.Window.Signals;
 using Nakama;
 using Newtonsoft.Json;
-using Server;
 using Server.Services;
 using UnityEngine;
 using Zenject;
 
 namespace Checkers.Services {
-    public struct TurnData {
-        public Coords To;
-        public Coords From;
-        public bool Capture;
-    }
-
     public class MainCheckersOnlineService : ITickable {
         private readonly MainCheckerSceneSettings _sceneSettings;
         private readonly ISchedulerService _schedulerService;
@@ -33,13 +25,12 @@ namespace Checkers.Services {
         private readonly SignalBus _signalBus;
         private readonly AppConfig _appConfig;
         private readonly WindowService _windowService;
-        private readonly MessageService _messageService;
         private readonly CheckersConfig _checkersConfig;
+        
         private PawnColor _mainColor;
         private UnityEngine.Camera _cam;
 
-        private TurnData _turnData;
-        private bool _hasInput;
+        private Queue<TurnData> _turns = new Queue<TurnData>();
 
         public MainCheckersOnlineService(MainCheckerSceneSettings sceneSettings,
                                          ISchedulerService schedulerService, 
@@ -47,21 +38,19 @@ namespace Checkers.Services {
                                          CheckersConfig checkersConfig,
                                          SignalBus signalBus,
                                          AppConfig appConfig,
-                                         WindowService windowService,
-                                         MessageService messageService) {
+                                         WindowService windowService) {
             _sceneSettings = sceneSettings;
             _schedulerService = schedulerService;
             _nakamaService = nakamaService;
             _signalBus = signalBus;
             _appConfig = appConfig;
             _windowService = windowService;
-            _messageService = messageService;
             _checkersConfig = checkersConfig;
         }
         
         public void Initialize() {
             _signalBus.Fire(new OpenWindowSignal(WindowKey.MatchWindow, new MatchWindowData()));
-            
+
             _mainColor = _appConfig.PawnColor;
             
             var turnHandler = _sceneSettings.TurnHandler;
@@ -109,18 +98,19 @@ namespace Checkers.Services {
 
             CheckLeave();
             
-            if (!_hasInput) return;
+            if (_turns.Count == 0) return;
 
-            _hasInput = false;
-            
-            var toCoords = _turnData.To;
+            if (_sceneSettings.PawnMover.TurnState) return;
+
+            var turnData = _turns.Dequeue();
+            var toCoords = turnData.To;
             var tileTo = _sceneSettings.Getter.GetTile(toCoords.Column, toCoords.Row);
 
-            var fromCoords = _turnData.From;
+            var fromCoords = turnData.From;
             var tileFrom = _sceneSettings.Getter.GetTile(fromCoords.Column, fromCoords.Row);
 
             Debug.Log($"Trying to move tile with coords from {fromCoords} and to coords {toCoords}");
-            
+
             tileFrom.GetComponent<TileClickDetector>().MouseDown();
             tileTo.GetComponent<TileClickDetector>().MouseDown();
         }
@@ -140,7 +130,7 @@ namespace Checkers.Services {
             if (_windowService.IsWindowOpened(WindowKey.FleeWindow)) return;
             if (_windowService.IsWindowOpened(WindowKey.RulesWindow)) return;
             
-            if (_sceneSettings.TurnHandler.Turn != _mainColor) return;
+            if (!IsMineTurn()) return;
             var mouseInput = Input.mousePosition;
 
             var worldPosition = UnityEngine.Camera.main.ScreenToWorldPoint(mouseInput);
@@ -160,6 +150,18 @@ namespace Checkers.Services {
             clickDetector.MouseDown();
         }
 
+        private PawnColor GetOpponentColor() {
+            if (_mainColor == PawnColor.Black) {
+                return PawnColor.White;
+            }
+
+            return PawnColor.Black;
+        }
+        
+        private bool IsMineTurn() {
+            return _sceneSettings.TurnHandler.Turn == _mainColor;
+        }
+
         private void OnMatchState(IMatchState state) {
             var enc = System.Text.Encoding.UTF8;
             var content = enc.GetString(state.State);
@@ -169,11 +171,9 @@ namespace Checkers.Services {
                     var turnData = JsonConvert.DeserializeObject<TurnData>(content);
 
                     Debug.Log($"Received raw data with from {turnData.From} and to {turnData.To}");
-                    _turnData = turnData;
+                    _turns.Enqueue(turnData);
                     
-                    Debug.Log($"Inverted data with from {_turnData.From} and to {_turnData.To}");
-
-                    _hasInput = true;
+                    Debug.Log($"Inverted data with from {turnData.From} and to {turnData.To}");
                     break;
                 }
                 case (long) CheckersMatchState.WhiteTurnEnded: {

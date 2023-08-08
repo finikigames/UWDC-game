@@ -183,9 +183,6 @@ namespace Main.UI.Presenters {
 
             _globalScope.ReceivedInvites.Remove(inviteData.Key);
 
-            var userData = await _nakamaService.GetUserInfo(inviteData.Key);
-            if (!userData.Online) return;
-            
             _signalBus.Fire(new OpenWindowSignal(WindowKey.InviteWindow, new InviteWindowData {
                 InviteData = inviteData.Value
             }));

@@ -2222,6 +2222,9 @@ MonoBehaviour:
   Getter: {fileID: 2074681161}
   BoardRoot: {fileID: 2074681159}
   PawnMover: {fileID: 2074681163}
+  MoveChecker: {fileID: 2074681164}
+  _playerBar: {x: 0, y: 0, z: 0}
+  _opponentBar: {x: 0, y: 0, z: 0}
 --- !u!114 &894243956
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3772,7 +3775,7 @@ Camera:
   far clip plane: 1000
   field of view: 60.000004
   orthographic: 1
-  orthographic size: 9.24
+  orthographic size: 8.070063
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2

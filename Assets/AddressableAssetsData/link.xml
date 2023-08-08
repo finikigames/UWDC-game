@@ -3,16 +3,22 @@
     <type fullname="Checkers.UI.Views.Implementations.FleeWindow" preserve="all" />
     <type fullname="Checkers.UI.Views.Implementations.LoseWindow" preserve="all" />
     <type fullname="Checkers.UI.Views.Implementations.MatchWindow" preserve="all" />
-    <type fullname="Checkers.UI.Views.Implementations.RulesWindow" preserve="all" />
+    <type fullname="Checkers.UI.Views.Implementations.PauseWindow" preserve="all" />
     <type fullname="Checkers.UI.Views.Implementations.WinWindow" preserve="all" />
+    <type fullname="Checkers.UI.Views.PlayerChekersBar" preserve="all" />
   </assembly>
   <assembly fullname="EnhancedScroller, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="EnhancedUI.EnhancedScroller.EnhancedScroller" preserve="all" />
+  </assembly>
+  <assembly fullname="Global, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="Global.UI.Views.Implementations.FlyTextView" preserve="all" />
+    <type fullname="Global.UI.Views.Implementations.RulesWindow" preserve="all" />
   </assembly>
   <assembly fullname="Main, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="Main.UI.Views.Implementations.InviteWindow" preserve="all" />
     <type fullname="Main.UI.Views.Implementations.StartWindow" preserve="all" />
     <type fullname="Main.UI.Views.Implementations.WaitForPlayerWindow.WaitForPlayerWindow" preserve="all" />
+    <type fullname="Main.UI.Views.LogoView" preserve="all" />
   </assembly>
   <assembly fullname="Unity.Addressables, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" preserve="all">
     <type fullname="UnityEngine.AddressableAssets.Addressables" preserve="all" />

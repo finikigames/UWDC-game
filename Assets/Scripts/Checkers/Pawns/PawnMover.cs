@@ -31,6 +31,8 @@ namespace Checkers.Pawns
         private bool isPawnMoving;
         private bool isMoveMulticapturing;
 
+        public bool TurnState => isPawnMoving;
+        
         private void Awake()
         {
             pawnMoveValidator = GetComponent<PawnMoveValidator>();

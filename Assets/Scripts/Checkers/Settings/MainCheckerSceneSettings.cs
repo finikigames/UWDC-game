@@ -13,6 +13,7 @@ namespace Checkers.Settings {
         public TileGetter Getter;
         public Transform BoardRoot;
         public PawnMover PawnMover;
+        public MoveChecker MoveChecker;
         
         public Vector3 _playerBar;
         public Vector3 _opponentBar;
