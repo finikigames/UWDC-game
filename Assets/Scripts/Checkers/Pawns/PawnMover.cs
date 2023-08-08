@@ -26,6 +26,8 @@ namespace Checkers.Pawns
         private PromotionChecker promotionChecker;
         private TurnHandler turnHandler;
         private CPUPlayer cpuPlayer;
+        private PawnsGenerator _pawnsGenerator;
+
         private bool isPawnMoving;
         private bool isMoveMulticapturing;
 
@@ -36,6 +38,7 @@ namespace Checkers.Pawns
             promotionChecker = GetComponent<PromotionChecker>();
             turnHandler = GetComponent<TurnHandler>();
             cpuPlayer = GetComponent<CPUPlayer>();
+            _pawnsGenerator = GetComponent<PawnsGenerator>();
         }
 
         public void PawnClicked(GameObject pawn)
@@ -52,8 +55,15 @@ namespace Checkers.Pawns
         {
             PawnColor turn = turnHandler.GetTurn();
             if (isPawnMoving || turn != GetPawnColor(pawn) || isMoveMulticapturing ||
-                !moveChecker.PawnHasAnyMove(pawn)) return false;
-            if (moveChecker.PawnsHaveCapturingMove(turn) && !moveChecker.PawnHasCapturingMove(pawn)) return false;
+                !moveChecker.PawnHasAnyMove(pawn)) {
+                pawn.GetComponent<IPawnProperties>().AddPawnCantSelection();
+                return false;
+            }
+
+            if (moveChecker.PawnsHaveCapturingMove(turn) && !moveChecker.PawnHasCapturingMove(pawn)) {
+                pawn.GetComponent<IPawnProperties>().AddPawnCantSelection();
+                return false;
+            }
             return true;
         }
 
@@ -178,6 +188,8 @@ namespace Checkers.Pawns
             lastClickedPawn = null;
             isMoveMulticapturing = false;
             turnHandler.NextTurn();
+
+            ShowPawnPossibility();
         }
 
         private IEnumerator MoveHorizontal(Vector3 targetPosition)
@@ -262,6 +274,20 @@ namespace Checkers.Pawns
         private bool IsMoveByCPUAndMulticapturing()
         {
             return cpuPlayer != null && cpuPlayer.enabled && GetPawnColor(lastClickedPawn) == PawnColor.Black;
+        }
+
+        private void ShowPawnPossibility() {
+            var turn = turnHandler.GetTurn();
+            
+            if (turn != turnHandler.YourColor) return;
+            if (!moveChecker.PawnsHaveCapturingMove(turn)) return;
+
+            var pawns = _pawnsGenerator.Pawns[turn];
+            foreach (var pawn in pawns) {
+                if (!moveChecker.PawnHasCapturingMove(pawn)) continue;
+                
+                pawn.GetComponent<IPawnProperties>().AddPawnCanSelection();
+            }
         }
     }
 }

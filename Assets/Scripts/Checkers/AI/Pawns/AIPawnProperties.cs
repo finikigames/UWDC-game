@@ -28,5 +28,12 @@ namespace Checkers.AI.Pawns
         public void RemovePawnSelection()
         {
         }
+
+        public void AddPawnCantSelection() {
+            
+        }
+
+        public void AddPawnCanSelection() {
+        }
     }
 }

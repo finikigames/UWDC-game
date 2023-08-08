@@ -1,7 +1,9 @@
-﻿using Checkers.Audio;
+﻿using System;
+using Checkers.Audio;
 using Checkers.Board;
 using Checkers.Interfaces;
 using Checkers.Structs;
+using DG.Tweening;
 using Global.Enums;
 using UnityEngine;
 
@@ -11,8 +13,13 @@ namespace Checkers.Pawns
     {
         public GameObject PromotionParticles;
         public GameObject PawnSelection;
+        public MeshRenderer PawnCanMove;
+        public MeshRenderer PawnCantMove;
         public Sprite CrownGreen;
         public Sprite CrownRed;
+
+        private Sequence _cantSequence;
+        private Sequence _canSequence;
 
         public PawnColor PawnColor { get; set; }
         public bool IsKing { get; set; }
@@ -44,11 +51,42 @@ namespace Checkers.Pawns
         public void AddPawnSelection() {
             if (activePawnSelection != null) return;
             activePawnSelection = Instantiate(PawnSelection, transform);
+            
+            KillSequences();
         }
 
         public void RemovePawnSelection() {
             if (activePawnSelection != null)
                 Destroy(activePawnSelection);
+        }
+
+        public void AddPawnCantSelection() {
+            KillSequences();
+            PawnCantMove.material.DOFade(0, 0);
+            _cantSequence = DOTween.Sequence();
+
+            _cantSequence
+                .AppendCallback(() => PawnCantMove.gameObject.SetActive(true))
+                .Append(PawnCantMove.material.DOFade(1, 1f))
+                .Append(PawnCantMove.material.DOFade(0, 1f))
+                .onComplete += () => PawnCantMove.gameObject.SetActive(false);
+        }
+        
+        public void AddPawnCanSelection() {
+            KillSequences();
+            PawnCanMove.material.DOFade(0, 0);
+            _canSequence = DOTween.Sequence();
+
+            _canSequence
+                .SetAutoKill(false)
+                .AppendCallback(() => PawnCanMove.gameObject.SetActive(true))
+                .Append(PawnCanMove.material.DOFade(1, 1f))
+                .onKill += () => PawnCanMove.gameObject.SetActive(false);
+        }
+
+        private void KillSequences() {
+            _cantSequence?.Kill(true);
+            _canSequence?.Kill(true);
         }
     }
 }

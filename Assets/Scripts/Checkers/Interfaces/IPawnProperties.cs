@@ -17,5 +17,9 @@ namespace Checkers.Interfaces
         void AddPawnSelection();
 
         void RemovePawnSelection();
+
+        void AddPawnCantSelection();
+
+        void AddPawnCanSelection();
     }
 }
