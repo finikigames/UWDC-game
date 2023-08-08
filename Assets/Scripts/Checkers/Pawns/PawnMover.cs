@@ -48,7 +48,7 @@ namespace Checkers.Pawns
                 UnselectPawn();
         }
 
-        private bool CanPawnBeSelected(GameObject pawn)
+        public bool CanPawnBeSelected(GameObject pawn)
         {
             PawnColor turn = turnHandler.GetTurn();
             if (isPawnMoving || turn != GetPawnColor(pawn) || isMoveMulticapturing ||

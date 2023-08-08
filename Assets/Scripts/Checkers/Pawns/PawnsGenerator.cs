@@ -1,4 +1,5 @@
-﻿using Checkers.Board;
+﻿using System.Collections.Generic;
+using Checkers.Board;
 using Checkers.Interfaces;
 using Global.Enums;
 using UnityEngine;
@@ -11,8 +12,14 @@ namespace Checkers.Pawns
         public GameObject Pawn;
         public Sprite WhiteSprite;
         public Sprite BlackSprite;
+        
+        public Dictionary<PawnColor, List<GameObject>> Pawns = new Dictionary<PawnColor, List<GameObject>> {
+            {PawnColor.White, new List<GameObject>()},
+            {PawnColor.Black, new List<GameObject>()}
+        };
 
         private TileGetter tileGetter;
+
         private int boardSize;
 
         private void Awake()
@@ -46,6 +53,8 @@ namespace Checkers.Pawns
             instantiatedPawn.GetComponentInChildren<SpriteRenderer>().sprite =
                 pawnColor == PawnColor.White ? WhiteSprite : BlackSprite;
             instantiatedPawn.GetComponent<IPawnProperties>().PawnColor = pawnColor;
+            
+            Pawns[pawnColor].Add(instantiatedPawn);
         }
 
         private void GenerateBlackPawns()

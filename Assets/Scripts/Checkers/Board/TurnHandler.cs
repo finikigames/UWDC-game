@@ -25,10 +25,14 @@ namespace Checkers.Board
         public PawnColor Turn;
 
         private CPUPlayer cpuPlayer;
+        private PawnsGenerator _pawnsGenerator;
+        private PawnMover _pawnMover;
 
         private void Awake()
         {
             Turn = StartingPawnColor;
+            _pawnsGenerator = GetComponent<PawnsGenerator>();
+            _pawnMover = GetComponent<PawnMover>();
         }
 
         private void Start()
@@ -44,6 +48,7 @@ namespace Checkers.Board
             Turn = Turn == PawnColor.White ? PawnColor.Black : PawnColor.White;
             
             OnTurnChange?.Invoke(Turn);
+            CheckToilet(Turn);
         }
 
         public PawnColor GetTurn()
@@ -61,15 +66,29 @@ namespace Checkers.Board
                 --whitePawnCount;
             else
                 --blackPawnCount;
+            
+            _pawnsGenerator.Pawns[pawnColor].Remove(pawn);
             CheckVictory();
         }
 
-        private void CheckVictory()
-        {
-            if (whitePawnCount == 0)
+        private void CheckVictory() {
+            if (whitePawnCount == 0) {
                 EndGame(PawnColor.Black);
-            else if (blackPawnCount == 0)
-                EndGame(PawnColor.White);
+                return;
+            }
+
+            if (blackPawnCount != 0) return;
+            
+            EndGame(PawnColor.White);
+        }
+        
+        private void CheckToilet(PawnColor pawnColor) {
+            var pawns = _pawnsGenerator.Pawns[pawnColor];
+            
+            if (pawns.Count != 1) return;
+            if (_pawnMover.CanPawnBeSelected(pawns[0])) return;
+            
+            EndGame(pawnColor == PawnColor.Black ? PawnColor.White : PawnColor.Black);
         }
 
         public void EndGame(PawnColor winnerPawnColor, WinLoseReason reason = WinLoseReason.Rule) {
