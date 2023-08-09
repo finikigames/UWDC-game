@@ -84,6 +84,10 @@ namespace Checkers.Pawns
                 .onKill += () => PawnCanMove.gameObject.SetActive(false);
         }
 
+        public void ClearSelection() {
+            KillSequences();
+        }
+
         private void KillSequences() {
             _cantSequence?.Kill(true);
             _canSequence?.Kill(true);

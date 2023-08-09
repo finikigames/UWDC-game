@@ -21,5 +21,7 @@ namespace Checkers.Interfaces
         void AddPawnCantSelection();
 
         void AddPawnCanSelection();
+
+        void ClearSelection();
     }
 }

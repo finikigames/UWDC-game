@@ -162,6 +162,22 @@ namespace Server.Services {
             await CheckForSessionExpired();
             await _client.JoinTournamentAsync(_session, id);
         }
+        
+        //Return first in leaderboard players 
+        public async UniTask<IApiTournamentRecordList> ListTournamentRecords(string id, int limit = 100, string cursor = null) {
+            if (!_tournament.IsActive()) return null;
+            await CheckForSessionExpired();
+            
+            return await _client.ListTournamentRecordsAsync(_session, id, new []{ _session.UserId }, limit:limit, cursor:cursor);
+        }
+        
+        //Return some count of players around player pos.
+        public async UniTask<IApiTournamentRecordList> ListTournamentRecordsAround(string id, int limit = 100) {
+            if (!_tournament.IsActive()) return null;
+            await CheckForSessionExpired();
+            
+            return await _client.ListTournamentRecordsAroundOwnerAsync(_session, id, _session.UserId, limit:limit);
+        }
 
         public async UniTask SubmitTournamentScore(string id, Dictionary<string, string> metadata, int score, int subScore) {
             if (!_tournament.IsActive()) return;

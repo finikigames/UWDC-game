@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using Checkers.AI;
 using Checkers.Board;
 using Checkers.Interfaces;
@@ -30,6 +31,7 @@ namespace Checkers.Pawns
 
         private bool isPawnMoving;
         private bool isMoveMulticapturing;
+        private List<IPawnProperties> _pawnsWithSelections = new();
 
         public bool TurnState => isPawnMoving;
         
@@ -189,6 +191,11 @@ namespace Checkers.Pawns
 
             lastClickedPawn = null;
             isMoveMulticapturing = false;
+
+            foreach (IPawnProperties pawn in _pawnsWithSelections) {
+                pawn.ClearSelection();
+            }
+            
             turnHandler.NextTurn();
 
             ShowPawnPossibility();
@@ -284,11 +291,14 @@ namespace Checkers.Pawns
             if (turn != turnHandler.YourColor) return;
             if (!moveChecker.PawnsHaveCapturingMove(turn)) return;
 
+            _pawnsWithSelections.Clear();
             var pawns = _pawnsGenerator.Pawns[turn];
             foreach (var pawn in pawns) {
                 if (!moveChecker.PawnHasCapturingMove(pawn)) continue;
-                
-                pawn.GetComponent<IPawnProperties>().AddPawnCanSelection();
+
+                var properties = pawn.GetComponent<IPawnProperties>();
+                properties.AddPawnCanSelection();
+                _pawnsWithSelections.Add(properties);
             }
         }
     }
