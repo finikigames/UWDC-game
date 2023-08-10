@@ -42,13 +42,13 @@ namespace Server {
             }
             
             if (content.TryGetValue("declineInviteSended", out var userDeclinedSendedId)) {
-                if (!_globalScope.SendedInvites.ContainsKey(userDeclinedSendedId)) {
+                if (_globalScope.SendedInvites.ContainsKey(userDeclinedSendedId)) {
                     _globalScope.SendedInvites.Remove(userDeclinedSendedId);
                 }
             }
 
             if (content.TryGetValue("declineInviteReceived", out var userDeclinedReceivedId)) {
-                if (!_globalScope.ReceivedInvites.ContainsKey(userDeclinedReceivedId)) {
+                if (_globalScope.ReceivedInvites.ContainsKey(userDeclinedReceivedId)) {
                     _globalScope.ReceivedInvites.Remove(userDeclinedReceivedId);
                 }
             }

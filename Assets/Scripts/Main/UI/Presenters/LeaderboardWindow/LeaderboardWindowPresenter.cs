@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Core.Ticks.Interfaces;
 using Cysharp.Threading.Tasks;
 using EnhancedUI.EnhancedScroller;
@@ -9,6 +10,7 @@ using Main.ConfigTemplate;
 using Main.UI.Data.LeaderboardWindow;
 using Main.UI.Views.Base.LeaderboardWindow;
 using Main.UI.Views.Implementations.LeaderboardWindow;
+using Nakama;
 using Server.Services;
 using UnityEngine.Scripting;
 
@@ -42,8 +44,10 @@ namespace Main.UI.Presenters.LeaderboardWindow {
             
             View.SetScrollerDelegate(this);
             
-            var list = await _nakamaService.ListTournamentRecordsAroundOwner(_tournamentId, null);
+            var list = await _nakamaService.ListTournamentRecordsAroundOwner(_tournamentId, null, 20);
 
+            var userIds = GetUsersIds(list);
+            var infos = await _nakamaService.GetUsersInfos(userIds);
             int i = 0;
             foreach (var record in list.Records) {
                 string score = record.Score;
@@ -57,7 +61,7 @@ namespace Main.UI.Presenters.LeaderboardWindow {
                 
                 var leaderboardInfo = new LeaderboardInfoData {
                     Rank = record.Rank,
-                    Nickname = record.Username,
+                    Nickname = infos.Users.ElementAt(i).DisplayName,
                     Score = score,
                     OwnerId = record.OwnerId
                 };
@@ -68,6 +72,18 @@ namespace Main.UI.Presenters.LeaderboardWindow {
 
             View.ReloadData();
             View.JumpToIndex(_meIndex);
+        }
+
+        private string[] GetUsersIds(IApiTournamentRecordList records) {
+            string[] userIds = new string[records.Records.Count()];
+
+            int i = 0;
+            foreach (var record in records.Records) {
+                userIds[i] = record.OwnerId;
+                i++;
+            }
+
+            return userIds;
         }
 
         public int GetNumberOfCells(EnhancedScroller scroller) {
