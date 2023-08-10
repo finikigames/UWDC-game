@@ -58,10 +58,16 @@ namespace Main.UI.Presenters.LeaderboardWindow {
                 if (_nakamaService.GetMe().User.Id == record.OwnerId) {
                     _meIndex = i;
                 }
+
+                string displayName = string.Empty;
+
+                foreach (var user in infos.Users) {
+                    if (user.Id == record.OwnerId) displayName = user.DisplayName;
+                }
                 
                 var leaderboardInfo = new LeaderboardInfoData {
                     Rank = record.Rank,
-                    Nickname = infos.Users.ElementAt(i).DisplayName,
+                    Nickname = displayName,
                     Score = score,
                     OwnerId = record.OwnerId
                 };
