@@ -199,8 +199,6 @@ namespace Main.UI.Presenters {
                 break;
             }
 
-            _globalScope.ReceivedInvites.Remove(inviteData.Key);
-
             _signalBus.Fire(new OpenWindowSignal(WindowKey.InviteWindow, new InviteWindowData {
                 InviteData = inviteData.Value
             }));

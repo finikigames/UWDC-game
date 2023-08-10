@@ -76,7 +76,8 @@ namespace Main.UI.Presenters {
             
             View.SubscribeToDecline(async () => {
                 await _messageService.SendDeclineInviteSended(data.UserId);
-                
+
+                _globalScope.ReceivedInvites.Remove(data.UserId);
                 CloseThisWindow();
             });
             
