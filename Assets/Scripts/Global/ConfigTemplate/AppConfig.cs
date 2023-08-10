@@ -6,8 +6,9 @@ namespace Global.ConfigTemplate {
     public class AppConfig {
         public float PauseTime;
         public float TurnTime;
+        
+        [NonSerialized]
         public float RemainTime;
-
         [NonSerialized] 
         public bool GameEnded;
         [NonSerialized] 

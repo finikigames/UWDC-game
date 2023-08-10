@@ -122,7 +122,7 @@ namespace Checkers.Pawns
         }
 
         private bool CanTileBeClicked() {
-            if (_appConfig.RemainTime <= 1f) return false;
+            if (_appConfig.RemainTime <= 0.5f) return false;
             return !isPawnMoving && lastClickedPawn != null;
         }
 
