@@ -60,6 +60,17 @@ namespace Checkers.Board
                 return true;
             return false;
         }
+        
+        public bool PawnHasCapturingMove(TileIndex coords, PawnColor color)
+        {
+            TileIndex checkingDirectionInIndex = new TileIndex(1, 1);
+            if (HasCapturingMoveOnDiagonalByIndex(checkingDirectionInIndex, coords, color))
+                return true;
+            checkingDirectionInIndex = new TileIndex(-1, 1);
+            if (HasCapturingMoveOnDiagonalByIndex(checkingDirectionInIndex, coords, color))
+                return true;
+            return false;
+        }
 
         private bool HasCapturingMoveOnDiagonal(TileIndex checkingDirectionInIndex)
         {
@@ -68,7 +79,21 @@ namespace Checkers.Board
                  tileIndexToCheck += checkingDirectionInIndex)
             {
                 var tileToCheck = tileGetter.GetTile(tileIndexToCheck);
-                if (pawnMoveValidator.IsCapturingMove(pawnToCheck, tileToCheck))
+                if (pawnMoveValidator.IsCapturingMove(pawnToCheck, tileToCheck, true))
+                    return true;
+            }
+
+            return false;
+        }
+        
+        private bool HasCapturingMoveOnDiagonalByIndex(TileIndex checkingDirectionInIndex, TileIndex startIndex, PawnColor color)
+        {
+            for (var tileIndexToCheck = GetFirstTileIndexToCheckByCoords(checkingDirectionInIndex, startIndex);
+                 IsIndexValid(tileIndexToCheck);
+                 tileIndexToCheck += checkingDirectionInIndex)
+            {
+                var tileToCheck = tileGetter.GetTile(tileIndexToCheck);
+                if (pawnMoveValidator.IsGhostCapturingMove(startIndex, color, tileToCheck))
                     return true;
             }
 
@@ -78,6 +103,16 @@ namespace Checkers.Board
         private TileIndex GetFirstTileIndexToCheck(TileIndex checkingDirectionInIndex)
         {
             var firstTileIndexToCheck = pawnToCheck.GetComponent<IPawnProperties>().GetTileIndex();
+            while (IsIndexValid(firstTileIndexToCheck - checkingDirectionInIndex))
+            {
+                firstTileIndexToCheck -= checkingDirectionInIndex;
+            }
+
+            return firstTileIndexToCheck;
+        }
+        
+        private TileIndex GetFirstTileIndexToCheckByCoords(TileIndex checkingDirectionInIndex, TileIndex startIndex) {
+            var firstTileIndexToCheck = startIndex;
             while (IsIndexValid(firstTileIndexToCheck - checkingDirectionInIndex))
             {
                 firstTileIndexToCheck -= checkingDirectionInIndex;
