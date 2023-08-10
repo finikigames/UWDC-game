@@ -8,6 +8,7 @@ namespace Main.UI.Views.Base {
         void Init();
         void OnTextChange(Action callback);
         void OnStartClick(Action callback);
+        void OnLeaderboardClick(Action callback);
         void SetTimeTournament(string time);
         void ClearScroller();
         void SetScrollerDelegate(IEnhancedScrollerDelegate deleg);

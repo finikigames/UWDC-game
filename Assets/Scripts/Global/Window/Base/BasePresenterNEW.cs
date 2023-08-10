@@ -1,5 +1,6 @@
 ﻿using System;
 using Core.MVP.Base.Interfaces;
+using Core.Observable;
 using Cysharp.Threading.Tasks;
 using Global.Context;
 using Global.StateMachine.Base.Enums;
@@ -10,8 +11,11 @@ namespace Global.Window.Base {
     public abstract class BasePresenterNEW<TView, TData> : IBasePresenter<WindowKey>
                                                            where TView : IView
                                                            where TData : IWindowData {
+        private Observable<WindowState> _state;
         protected TData WindowData;
         protected TView View;
+
+        protected WindowState State => _state.Value;
         
         private ContextService _contextService;
         [Inject]
@@ -26,8 +30,11 @@ namespace Global.Window.Base {
             return container.Resolve<T>();
         }
 
+        public void ProvideState(Observable<WindowState> state) {
+            _state = state;
+        }
+
         public virtual void PreloadInitialize() {
-            
         }
 
         public virtual async UniTask Initialize(IWindowData data, WindowKey key, bool isInit) {
@@ -37,13 +44,12 @@ namespace Global.Window.Base {
         }
 
         public virtual async UniTask InitializeOnce() {
-            
         }
 
         public void InitializeView(IView view) {
             View = (TView) view;
         }
-        
+
         public async UniTask Open() {
             await LoadContent();
             await View.ShowView();
@@ -54,13 +60,9 @@ namespace Global.Window.Base {
         }
 
         public async UniTask Close() {
-            await View.Hide();
+            await View.HideView();
         }
 
-        public void CloseImmediate() {
-            View.HideImmediate();
-        }
-        
         protected virtual async UniTask InitializeData() {}
         
         protected virtual async UniTask LoadContent() {}
@@ -68,8 +70,7 @@ namespace Global.Window.Base {
         public virtual void InitDependencies() {
         }
 
-        public virtual async UniTask Dispose() {
-            
+        public virtual void Dispose() {
         }
 
         protected void FireSignal<TSignal>(TSignal signal) {

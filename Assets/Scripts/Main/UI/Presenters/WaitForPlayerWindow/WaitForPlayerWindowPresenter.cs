@@ -211,15 +211,15 @@ namespace Main.UI.Presenters.WaitForPlayerWindow {
             View.HideReturnButton();
         }
         
-        public override async UniTask Dispose() {
+        public override void Dispose() {
             ApplicationQuit.UnSubscribeOnQuit(CloseThisWindow);
             _timerService.RemoveTimer("waiting_for_play");
             _updateService.UnregisterUpdate(this);
             if (_matchmakerTicket != null) {
-                await _nakamaService.RemoveMatchmaker(_matchmakerTicket);
+                _nakamaService.RemoveMatchmaker(_matchmakerTicket);
             }
 
-            await _nakamaService.GoOnline();
+            _nakamaService.GoOnline();
             
             _appConfig.InSearch = false;
             _nakamaService.UnsubscribeFromMessages(OnChatMessage);

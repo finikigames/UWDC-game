@@ -122,7 +122,7 @@ namespace Checkers.UI.Presenters {
             _needResumeGame = false;
         }
 
-        public override async UniTask Dispose() {
+        public override void Dispose() {
             _updateService.UnregisterUpdate(this);
             _timerService.RemoveTimer(TurnId);
             ApplicationQuit.UnSubscribeOnQuit(PauseGame);

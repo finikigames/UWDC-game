@@ -53,6 +53,7 @@ SpriteAtlas:
     - 3467c76054a62894b8e145001e8c3eef: 21300000
     - 1cbaa1b301c3378409a9d8c7cef6e601: 21300000
     - 19a6d6e8911f0e2488dfbf2e64f5725f: 21300000
+    - c70cf2f8da2e23647942b7d18165957e: 21300000
     - 9c624b1a6277d6540a6e324fcd175c0d: 21300000
     - 6b79297cf338bc1408da68bb6460156c: 21300000
     - 688c9d8fb052129489d34e1c4b11536d: 21300000
@@ -61,6 +62,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 3467c76054a62894b8e145001e8c3eef, type: 3}
   - {fileID: 21300000, guid: 1cbaa1b301c3378409a9d8c7cef6e601, type: 3}
   - {fileID: 21300000, guid: 19a6d6e8911f0e2488dfbf2e64f5725f, type: 3}
+  - {fileID: 21300000, guid: c70cf2f8da2e23647942b7d18165957e, type: 3}
   - {fileID: 21300000, guid: 9c624b1a6277d6540a6e324fcd175c0d, type: 3}
   - {fileID: 21300000, guid: 6b79297cf338bc1408da68bb6460156c, type: 3}
   - {fileID: 21300000, guid: 688c9d8fb052129489d34e1c4b11536d, type: 3}
@@ -68,6 +70,7 @@ SpriteAtlas:
   - bg_cut
   - Logo_White_hor_noStatus_noTM
   - BlueButtonNoBorder
+  - button_yellow_cut
   - BlueButton
   - RedButton
   - cross_cut

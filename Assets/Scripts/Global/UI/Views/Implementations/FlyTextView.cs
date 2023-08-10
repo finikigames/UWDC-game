@@ -25,8 +25,6 @@ namespace Global.UI.Views.Implementations {
         private bool _shown;
         
         protected override void OnEnable() {
-            _showState = Core.MVP.Base.Enums.ShowState.Hidden;
-
             ChangeShowMechanism(new FadeShowMechanism(_group));
             ChangeHideMechanism(new FadeHideMechanism(_group));
         }

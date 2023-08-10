@@ -11,8 +11,6 @@ namespace Checkers.UI.Views.Implementations {
         [SerializeField] private TextMeshProUGUI _timerText;
         
         protected override void OnEnable() {
-            _showState = Core.MVP.Base.Enums.ShowState.Hidden;
-             
             ChangeShowMechanism(new ChainShowMechanism(
                 new FadeShowMechanism(_group),
                 new CustomShowMechanism(ShowBlack)));
