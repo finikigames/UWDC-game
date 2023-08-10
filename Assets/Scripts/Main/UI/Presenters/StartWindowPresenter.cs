@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Core.Extensions;
 using Core.Ticks.Interfaces;
 using Cysharp.Threading.Tasks;
@@ -24,6 +25,7 @@ using Main.UI.Views.Implementations;
 using Nakama;
 using Server;
 using Server.Services;
+using UnityEngine;
 using UnityEngine.Scripting;
 using Zenject;
 
@@ -41,10 +43,12 @@ namespace Main.UI.Presenters {
         private WindowService _windowService;
         private GlobalScope _globalScope;
         private MessageService _messageService;
+        private TournamentsScheduleConfig _tournamentsConfig;
 
         private string _globalGroupName = "globalGroup";
         private string _tournamentId = "4ec4f126-3f9d-11e7-84ef-b7c182b36521";
 
+        private TournamentsScheduleData _currentTournament;
         private List<UserInfoData> _userInfoDatas;
         private IApiGroup _globalGroupInfo;
 
@@ -63,6 +67,7 @@ namespace Main.UI.Presenters {
             _windowService = Resolve<WindowService>(GameContext.Project);
             _globalScope = Resolve<GlobalScope>(GameContext.Project);
             _messageService = Resolve<MessageService>(GameContext.Project);
+            _tournamentsConfig = Resolve<TournamentsScheduleConfig>(GameContext.Project);
         }
 
         public override async UniTask InitializeOnce() {
@@ -70,7 +75,11 @@ namespace Main.UI.Presenters {
             View.OnTextChange(OnUsersUpdate);
         }
 
-        protected override async UniTask LoadContent() {
+        protected override async UniTask LoadContent()
+        {
+            _timerService.ResetTimer("nearestTournamentTime");
+            _timerService.ResetTimer("tournamentTime");
+            
             var group = await _nakamaService.CreateGroup(_globalGroupName);
             await _nakamaService.JoinGroup(group.Id);
             var channel = await _nakamaService.JoinChat(group.Id);
@@ -93,18 +102,8 @@ namespace Main.UI.Presenters {
             View.SetLosesCount(loses.Data.Count);
             
             View.OnStartClick(OnStartClick);
-
-            var whenEnded = tournament.GetRemainingTime();
             
-            _timerService.StartTimer("tournamentTime", whenEnded, () => {
-                View.SetTimeTournament("Недоступно");
-            }, false, current => {
-                var time = TimeSpan.FromSeconds(current);
-                
-                var timeToDisplay = time.ToString(@"hh\:mm\:ss");
-                
-                View.SetTimeTournament(timeToDisplay);
-            });
+            SetTimer(tournament);
 
             _onSendInviteClick = null;
             _onSendInviteClick += OnSendInviteClick;
@@ -115,6 +114,85 @@ namespace Main.UI.Presenters {
             _timerService.StartTimer("updateUsersTimer", 10, OnUsersUpdate, true);
             
             _globalScope.SendedInvites.Clear();
+        }
+
+        private bool HasActiveTournament() {            
+            foreach (var tournamentData in _tournamentsConfig.Datas) {
+                if (tournamentData.Day == (int)DateTime.Now.DayOfWeek) {
+                    var start = DateTime.Parse(tournamentData.StartTime);
+                    var end = DateTime.Parse(tournamentData.FinishTime);
+
+                    if (start <= DateTime.UtcNow && end > DateTime.UtcNow) {
+                        View.EnablePlayButton();
+                        _currentTournament = tournamentData;
+                        return true;
+                    }
+                }
+                else {
+                    View.DisablePlayButton();
+                }
+            }
+
+            return false;
+        }
+
+        private void SetTimer(IApiTournament tournament) {
+            var whenEnded = tournament.GetRemainingTime();
+
+            if (HasActiveTournament()) {
+                _timerService.StartTimer("tournamentTime", whenEnded, () => { }, 
+                    false, 
+                    current => {
+                        var diff = DateTime.Parse(_currentTournament.FinishTime) - DateTime.UtcNow;
+                        var timeToDisplay = String.Format("{0:D2}:{1:D2}:{2:D2}", diff.Hours, diff.Minutes, diff.Seconds);
+                        
+                        View.EnablePlayButton();
+                        View.SetTimeTournament(timeToDisplay); 
+                    });
+            }
+            else {
+                _timerService.StartTimer("nearestTournamentTime", whenEnded, () => {
+                        _timerService.StartTimer("tournamentTime", whenEnded, () => { }, 
+                            false, 
+                            current => {
+                                var diff = DateTime.Parse(_currentTournament.FinishTime) - DateTime.UtcNow;
+                                var timeToDisplay = String.Format("{0:D2}:{1:D2}:{2:D2}", diff.Hours, diff.Minutes, diff.Seconds);
+                        
+                                View.EnablePlayButton();
+                                View.SetTimeTournament(timeToDisplay); 
+                            });
+                    }, 
+                    false, 
+                    current => {
+                        var nearest = FindNearestDate();
+                        var diff = nearest - DateTime.UtcNow;
+                        var timeToDisplay = String.Format("{0:D2}:{1:D2}:{2:D2}", diff.Hours, diff.Minutes, diff.Seconds);
+                        View.SetTimeTournament("До начала: " + timeToDisplay);
+                    });
+            }
+        }
+
+        private DateTime FindNearestDate() {
+            var nearest = DateTime.Parse(_tournamentsConfig.Datas[0].StartTime);
+            _currentTournament = _tournamentsConfig.Datas[0];
+
+            var list = _tournamentsConfig.Datas.OrderBy(z => z.Day)
+                .ToList();
+
+            var forwardList = list.Where(x => x.Day >= (int) DateTime.UtcNow.DayOfWeek)
+                .OrderBy(y => y.StartTime)
+                .ToList();
+
+            if (forwardList.Count != 0) {
+                nearest = DateTime.Parse(forwardList.First().StartTime);
+                _currentTournament = forwardList.First();
+            }
+            else {
+                nearest = DateTime.Parse(list.First().StartTime);
+                _currentTournament = list.First();
+            }
+
+            return nearest;
         }
 
         private void OnStartClick() {
