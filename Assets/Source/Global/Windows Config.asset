@@ -143,7 +143,7 @@ MonoBehaviour:
         GUID: 442e82239c56459e8aa5af76da613c56
         _typeNameAndAssembly: Main.UI.Presenters.InviteWindowPresenter, Main
         _suppressLogs: 0
-    - Uid: 
+    - Uid: 8005b412-f31b-4f7f-a045-3678fdd01d6d
       PrefabReference:
         m_AssetGUID: 9ee2aaf69838be144a79f51a0e892a20
         m_SubObjectName: 
@@ -159,7 +159,7 @@ MonoBehaviour:
         GUID: 72982864ebae4aa489f26586115e206e
         _typeNameAndAssembly: Checkers.UI.Presenters.PauseWindowPresenter, Checkers
         _suppressLogs: 0
-    - Uid: 
+    - Uid: 868bf43d-5cd0-43b7-b910-e87886c5d0b8
       PrefabReference:
         m_AssetGUID: cc23cc3219e467749b4dd2acd39eed5e
         m_SubObjectName: 
@@ -174,4 +174,21 @@ MonoBehaviour:
         GuidAssignmentFailed: 0
         GUID: 71f87e4613a012f489303bb12618ad03
         _typeNameAndAssembly: Global.UI.Presenters.FlyTextPresenter, Global
+        _suppressLogs: 0
+    - Uid: 868bf43d-5cd0-43b7-b910-e87886c5d0b8
+      PrefabReference:
+        m_AssetGUID: 4fa01a4b1ebaba947b533e26c0793c34
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_EditorAssetChanged: 0
+      Key: 11
+      Priority: 0
+      IsFullScreen: 0
+      CanClose: 1
+      Context: 3
+      _controller:
+        GuidAssignmentFailed: 0
+        GUID: 5e89f39d32384b2f85e05d4d5b87b755
+        _typeNameAndAssembly: Main.UI.Presenters.LeaderboardWindow.LeaderboardWindowPresenter,
+          Main
         _suppressLogs: 0

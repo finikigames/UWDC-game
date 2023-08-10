@@ -9,6 +9,7 @@ using Global.ConfigTemplate;
 using Global.Context;
 using Global.Enums;
 using Global.Extensions;
+using Global.Services;
 using Global.Services.Timer;
 using Global.StateMachine.Base.Enums;
 using Global.UI.Data;
@@ -18,6 +19,7 @@ using Global.Window.Enums;
 using Global.Window.Signals;
 using Main.ConfigTemplate;
 using Main.UI.Data;
+using Main.UI.Data.LeaderboardWindow;
 using Main.UI.Data.WaitForPlayerWindow;
 using Main.UI.Views.Base;
 using Main.UI.Views.Implementations;
@@ -71,6 +73,9 @@ namespace Main.UI.Presenters {
         }
 
         protected override async UniTask LoadContent() {
+            ApplicationQuit.SubscribeOnQuit(GoOffline);
+            ApplicationQuit.SubscribeOnResume(GoOnline);
+            
             var group = await _nakamaService.CreateGroup(_globalGroupName);
             await _nakamaService.JoinGroup(group.Id);
             var channel = await _nakamaService.JoinChat(group.Id);
@@ -93,6 +98,7 @@ namespace Main.UI.Presenters {
             View.SetLosesCount(loses.Data.Count);
             
             View.OnStartClick(OnStartClick);
+            View.OnLeaderboardClick(OnLeaderboardClick);
 
             var whenEnded = tournament.GetRemainingTime();
             
@@ -117,8 +123,20 @@ namespace Main.UI.Presenters {
             _globalScope.SendedInvites.Clear();
         }
 
+        private async void GoOffline() {
+            await _nakamaService.GoOffline();
+        }
+
+        private async void GoOnline() {
+            await _nakamaService.GoOnline();
+        }
+
         private void OnStartClick() {
             _signalBus.Fire(new OpenWindowSignal(WindowKey.WaitForPlayerWindow, new WaitForPlayerWindowData()));
+        }
+
+        private void OnLeaderboardClick() {
+            _signalBus.Fire(new OpenWindowSignal(WindowKey.LeaderboardWindow, new LeaderboardWindowData()));
         }
 
         public void CustomUpdate() {
@@ -278,6 +296,9 @@ namespace Main.UI.Presenters {
         }
 
         public override async UniTask Dispose() {
+            ApplicationQuit.UnSubscribeOnQuit(GoOffline);
+            ApplicationQuit.UnSubscribeOnResume(GoOnline);
+            
             _timerService.RemoveTimer("tournamentTime");
             _timerService.RemoveTimer("updateUsersTimer");
 

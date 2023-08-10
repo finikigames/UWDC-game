@@ -55,7 +55,7 @@ namespace Global.Window {
             
             //TODO check state = opened
             await window.Initialize(data, windowPair.isInitialized);
-            window.Open();
+            await window.Open();
         }
 
         private async UniTask<(UIWindow window, bool isInitialized)> PreloadWindow(WindowKey key) {

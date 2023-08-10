@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Config:
     Prefab: {fileID: 2618001057299709718, guid: 7f46e26f88a97834fba69620348ee263, type: 3}
+    LeaderboardPrefab: {fileID: 6782235707715197833, guid: 3c69b23615ec55a49896f2fa9c89eb27, type: 3}
