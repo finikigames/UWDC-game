@@ -109,8 +109,8 @@ namespace Server.Services {
                 .ToDictionary(pair => pair.Key, pair => pair.Value);
         }
 
-        public async UniTask<IApiTournamentRecordList> ListTournamentRecordsAroundOwner(string tournamentId, string cursor) {
-            return await _client.ListTournamentRecordsAroundOwnerAsync(_session, tournamentId, _me.User.Id, limit: 100, cursor:cursor);
+        public async UniTask<IApiTournamentRecordList> ListTournamentRecordsAroundOwner(string tournamentId, string cursor, int limit = 100) {
+            return await _client.ListTournamentRecordsAroundOwnerAsync(_session, tournamentId, _me.User.Id, limit:limit, cursor:cursor);
         }
         
         public async UniTask LeaveCurrentMatch() {
@@ -278,6 +278,11 @@ namespace Server.Services {
         public async UniTask<IApiAccount> GetUserInfo() {
             await CheckForSessionExpired();
             return await _client.GetAccountAsync(_session);
+        }
+        
+        public async UniTask<IApiUsers> GetUsersInfos(string[] userIds) {
+            await CheckForSessionExpired();
+            return  await _client.GetUsersAsync(_session, userIds);
         }
 
         public async UniTask<IApiUser> GetUserInfo(string userId) {

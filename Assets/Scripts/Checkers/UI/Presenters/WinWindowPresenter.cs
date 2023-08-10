@@ -37,6 +37,7 @@ namespace Checkers.UI.Presenters {
             Debug.Log("[Windows] Opened win window");
             View.SubscribeToContinue(ToMain);
             
+            _signalBus.Fire(new CloseWindowSignal(WindowKey.FleeWindow));
             await CheckIfMatchmaking();
             var reasonText = GetWinReasonText(WindowData.Reason);
             View.SetReasonText(reasonText);

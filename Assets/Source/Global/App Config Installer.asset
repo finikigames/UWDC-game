@@ -14,9 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Config:
     PauseTime: 10
-    TurnTime: 20
-    PawnColor: 1
-    OpponentDisplayName: Victor Cactus
-    OpponentUserId: 
-    InMatch: 1
-    InSearch: 0
+    TurnTime: 21

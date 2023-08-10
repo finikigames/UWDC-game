@@ -34,6 +34,7 @@ namespace Checkers.UI.Presenters {
             Debug.Log("[Windows] Opened lose window");
             View.SubscribeToContinue(ToMain);
             
+            _signalBus.Fire(new CloseWindowSignal(WindowKey.FleeWindow));
             var reasonText = GetLoseReasonText(WindowData.Reason);
             View.SetReasonText(reasonText);
 
