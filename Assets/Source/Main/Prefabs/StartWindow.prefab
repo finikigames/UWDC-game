@@ -2838,9 +2838,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Uid: 
-  _buttons: []
   _headerText: {fileID: 4410677307809763513}
   _closeButton: {fileID: 4410677307762983808}
+  _closeAdditionalArea: {fileID: 0}
   _blackBg: {fileID: 4410677307725540920}
   _group: {fileID: 1954195927424276072}
   _scroller: {fileID: 2666890865276684552}
@@ -4263,7 +4263,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 711.11115, y: 133.88889}
+  m_SizeDelta: {x: 500.0001, y: 218.3334}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2567661605657665129
 CanvasRenderer:
