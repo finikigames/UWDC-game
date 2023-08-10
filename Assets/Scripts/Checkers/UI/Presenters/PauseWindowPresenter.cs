@@ -44,7 +44,7 @@ namespace Checkers.UI.Presenters {
             CloseThisWindow();
         }
 
-        public override async UniTask Dispose() {
+        public override void Dispose() {
             _timerService.RemoveTimer(PauseId);
         }
     }

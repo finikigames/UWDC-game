@@ -15,8 +15,6 @@ namespace Main.UI.Views.Implementations {
         [SerializeField] private TextMeshProUGUI _mainText;
 
         protected override void OnEnable() {
-            _showState = Core.MVP.Base.Enums.ShowState.Hidden;
-             
             ChangeShowMechanism(new ChainShowMechanism(
                 new FadeShowMechanism(_group),
                 new CustomShowMechanism(ShowBlack)));

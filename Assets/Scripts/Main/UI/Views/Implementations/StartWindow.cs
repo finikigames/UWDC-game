@@ -13,6 +13,7 @@ namespace Main.UI.Views.Implementations {
         [SerializeField] private CanvasGroup _group;
         [SerializeField] private EnhancedScroller _scroller;
         [SerializeField] private Button _startButton;
+        [SerializeField] private Button _leaderboardButton;
         [SerializeField] private TextMeshProUGUI _allMembersCount;
         [SerializeField] private TextMeshProUGUI _onlineMembersCount;
         [SerializeField] private TextMeshProUGUI _winsCountText;
@@ -30,8 +31,6 @@ namespace Main.UI.Views.Implementations {
         public string SearchingPlayer => _searchInputField.text;
 
         protected override void OnEnable() {
-            _showState = Core.MVP.Base.Enums.ShowState.Hidden;
-
             ChangeShowMechanism(new FadeShowMechanism(_group));
             ChangeHideMechanism(new FadeHideMechanism(_group));
         }
@@ -44,6 +43,11 @@ namespace Main.UI.Views.Implementations {
         public void OnStartClick(Action callback) {
             _startButton.onClick.RemoveAllListeners();
             _startButton.onClick.AddListener(() => callback?.Invoke());
+        }
+
+        public void OnLeaderboardClick(Action callback) {
+            _leaderboardButton.onClick.RemoveAllListeners();
+            _leaderboardButton.onClick.AddListener(() => callback?.Invoke());
         }
 
         public void SetTimeTournament(string time) {

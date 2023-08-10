@@ -14,3 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Config:
     Prefab: {fileID: 2618001057299709718, guid: 7f46e26f88a97834fba69620348ee263, type: 3}
+    LeaderboardPrefab: {fileID: 6782235707715197833, guid: 3c69b23615ec55a49896f2fa9c89eb27, type: 3}
+    GoldFrame: {fileID: 21300000, guid: 9ba4de6060d60964b9f0902337c89dc7, type: 3}
+    SilverFrame: {fileID: 21300000, guid: 6cb5b4b8ca41f8b4aa988d5881b48795, type: 3}
+    BronzeFrame: {fileID: 21300000, guid: ba604a3e73bfe6f4e93e111c9639ae9e, type: 3}
+    YourFrame: {fileID: 21300000, guid: a66d7dc9011b4c8439b964bda1724b6e, type: 3}
+    NormalFrame: {fileID: 21300000, guid: 86a2fe846748d8548b69caaf474b00ca, type: 3}
