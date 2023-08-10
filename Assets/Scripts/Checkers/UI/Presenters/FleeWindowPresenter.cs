@@ -33,7 +33,6 @@ namespace Checkers.UI.Presenters {
         protected override async UniTask LoadContent() {
             View.SubscribeToReturnButton(() => {
                 CloseThisWindow();
-                View.Hide(null);
             });
             View.SubscribeToFleeButton(async () => {
                 await _messageService.Leave(_appConfig.OpponentUserId);

@@ -1,9 +1,10 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using System;
+using Cysharp.Threading.Tasks;
 
 namespace Core.MVP.Base.Interfaces {
     public interface IView {
-        UniTask ShowView();
-        UniTask Hide();
+        UniTask ShowView(Action onShow = null);
+        UniTask HideView(Action onHide = null);
         void HideImmediate();
         void Dispose();
     }

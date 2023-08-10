@@ -487,6 +487,7 @@ MonoBehaviour:
   cellIdentifier: 
   _userNickname: {fileID: 4010799093340805990}
   _winText: {fileID: 8145592526501967510}
+  _frameSprite: {fileID: 7596122869113403049}
   Height: 100
 --- !u!1 &7736683762183953891
 GameObject:

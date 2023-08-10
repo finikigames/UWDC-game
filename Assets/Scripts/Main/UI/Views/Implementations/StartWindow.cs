@@ -31,8 +31,6 @@ namespace Main.UI.Views.Implementations {
         public string SearchingPlayer => _searchInputField.text;
 
         protected override void OnEnable() {
-            _showState = Core.MVP.Base.Enums.ShowState.Hidden;
-
             ChangeShowMechanism(new FadeShowMechanism(_group));
             ChangeHideMechanism(new FadeHideMechanism(_group));
         }

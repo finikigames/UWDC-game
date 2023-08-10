@@ -1,5 +1,4 @@
 using System;
-using Core.MVP.Base.Enums;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Global.VisibilityMechanisms;
@@ -11,6 +10,7 @@ namespace Global.Window.Base {
     public class BaseWindow : BaseView {
         [SerializeField] private TextMeshProUGUI _headerText;
         [SerializeField] protected Button _closeButton;
+        [SerializeField] protected Button _closeAdditionalArea;
 
         [SerializeField] protected Image _blackBg;
 
@@ -18,12 +18,10 @@ namespace Global.Window.Base {
             get;
             set;
         }
-        
+
         #region BaseView
 
         protected override void OnEnable() {
-            _showState = ShowState.Hidden;
-            
             ChangeShowMechanism(new ChainShowMechanism(
                 new ScaleShowMechanism(),
                 new CustomShowMechanism(ShowBlack)));
@@ -53,36 +51,40 @@ namespace Global.Window.Base {
 
         #region BaseWindow
 
-        public virtual async UniTask ShowView() {
-            Open();
-        }
-
-        public virtual void Open() {
+        public override async UniTask ShowView(Action onShow = null) {
+            base.ShowView(onShow);
+            
             Initialize();
+            
+            if (_closeButton != null) {
+                _closeButton.onClick.RemoveAllListeners();
+                _closeButton.onClick.AddListener(() => OnClickCloseButton?.Invoke());
+                // TEMP remove after all views is moved to the new ui system
+                if (OnClickCloseButton == null) {
+                    _closeButton.onClick.AddListener(() => HideView());
+                }
+            }
 
-            Show();
-
-            _closeButton.onClick.RemoveAllListeners();
-            _closeButton.onClick.AddListener(() => OnClickCloseButton?.Invoke());
-            // TEMP remove after all views is moved to the new ui system
-            _closeButton.onClick.AddListener(() => Close());
-        }
-
-        protected virtual void Close(Action onClose = null) {
-            Hide(onClose);
+            if (_closeAdditionalArea != null) {
+                _closeAdditionalArea.onClick.RemoveAllListeners();
+                _closeAdditionalArea.onClick.AddListener(() => OnClickCloseButton?.Invoke());
+                // TEMP remove after all views is moved to the new ui system
+                if (OnClickCloseButton == null) {
+                    _closeAdditionalArea.onClick.AddListener(() => HideView());
+                }
+            }
         }
 
         public virtual void Initialize() { }
 
         protected void ShowBlack() {
             _blackBg.enabled = true;
-            _blackBg.DOFade(0.8f, 0.2f);
+            _blackBg.DOFade(0.8f, 0.3f);
         }
 
         protected void HideBlack() {
-            var sequence = DOTween.Sequence();
-
-            sequence.Append(_blackBg.DOFade(0, 0.2f))
+            DOTween.Sequence()
+                .Append(_blackBg.DOFade(0, 0.3f))
                 .AppendCallback(() => { _blackBg.enabled = true; });
         }
 

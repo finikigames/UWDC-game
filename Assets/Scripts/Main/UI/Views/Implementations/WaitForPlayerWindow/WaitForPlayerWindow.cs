@@ -27,8 +27,6 @@ namespace Main.UI.Views.Implementations.WaitForPlayerWindow {
         [SerializeField] private TextMeshProUGUI _opponentExistText;
         
         protected override void OnEnable() {
-            _showState = Core.MVP.Base.Enums.ShowState.Hidden;
-
             ChangeShowMechanism(new ChainShowMechanism(
                 new FadeShowMechanism(_group),
                 new CustomShowMechanism(ShowBlack)));

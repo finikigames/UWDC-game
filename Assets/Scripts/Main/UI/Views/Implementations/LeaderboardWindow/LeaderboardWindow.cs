@@ -14,8 +14,6 @@ namespace Main.UI.Views.Implementations.LeaderboardWindow {
         public int StartDataIndex => _scroller.StartDataIndex;
 
         protected override void OnEnable() {
-            _showState = Core.MVP.Base.Enums.ShowState.Hidden;
-
             ChangeShowMechanism(new FadeShowMechanism(_group));
             ChangeHideMechanism(new FadeHideMechanism(_group));
         }
@@ -26,6 +24,10 @@ namespace Main.UI.Views.Implementations.LeaderboardWindow {
         
         public void ReloadData() {
             _scroller.ReloadData();
+        }
+
+        public void JumpToIndex(int meIndex) {
+            _scroller.JumpToDataIndex(meIndex);
         }
     }
 }

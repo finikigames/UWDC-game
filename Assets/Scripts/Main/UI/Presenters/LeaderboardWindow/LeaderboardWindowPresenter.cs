@@ -22,6 +22,7 @@ namespace Main.UI.Presenters.LeaderboardWindow {
         private IUpdateService _updateService;
         
         private List<LeaderboardInfoData> _userInfoDatas;
+        private int _meIndex;
         
         private string _tournamentId = "4ec4f126-3f9d-11e7-84ef-b7c182b36521";
         
@@ -43,17 +44,30 @@ namespace Main.UI.Presenters.LeaderboardWindow {
             
             var list = await _nakamaService.ListTournamentRecordsAroundOwner(_tournamentId, null);
 
+            int i = 0;
             foreach (var record in list.Records) {
+                string score = record.Score;
+                if (string.IsNullOrEmpty(record.Score)) {
+                    score = "0";
+                }
+
+                if (_nakamaService.GetMe().User.Id == record.OwnerId) {
+                    _meIndex = i;
+                }
+                
                 var leaderboardInfo = new LeaderboardInfoData {
                     Rank = record.Rank,
                     Nickname = record.Username,
-                    Score = record.Score
+                    Score = score,
+                    OwnerId = record.OwnerId
                 };
                 
                 _userInfoDatas.Add(leaderboardInfo);
+                i++;
             }
-            
+
             View.ReloadData();
+            View.JumpToIndex(_meIndex);
         }
 
         public int GetNumberOfCells(EnhancedScroller scroller) {
@@ -65,9 +79,30 @@ namespace Main.UI.Presenters.LeaderboardWindow {
         }
 
         public EnhancedScrollerCellView GetCellView(EnhancedScroller scroller, int dataIndex, int cellIndex) {
-            LeaderboardUserCellView view = scroller.GetCellView(_mainUIConfig.Prefab) as LeaderboardUserCellView;
+            LeaderboardUserCellView view = scroller.GetCellView(_mainUIConfig.LeaderboardPrefab) as LeaderboardUserCellView;
 
             var data = _userInfoDatas[dataIndex];
+
+            bool topRank = false;
+            if (data.Rank == "1") {
+                view.ChangeSprite(_mainUIConfig.GoldFrame);
+                topRank = true;
+            }
+            else if (data.Rank == "2") {
+                view.ChangeSprite(_mainUIConfig.SilverFrame);
+                topRank = true;
+            }
+            else if (data.Rank == "3") {
+                view.ChangeSprite(_mainUIConfig.BronzeFrame);
+                topRank = true;
+            }
+            else {
+                view.ChangeSprite(_mainUIConfig.NormalFrame);
+            }
+            
+            if (_nakamaService.GetMe().User.Id == data.OwnerId && !topRank) {
+                view.ChangeSprite(_mainUIConfig.YourFrame);
+            }
             
             view.Init($"{data.Rank}. {data.Nickname}", data.Score.ToString());
 
@@ -78,7 +113,7 @@ namespace Main.UI.Presenters.LeaderboardWindow {
             
         }
 
-        public override async UniTask Dispose() {
+        public override void Dispose() {
             _updateService.UnregisterUpdate(this);
         }
     }

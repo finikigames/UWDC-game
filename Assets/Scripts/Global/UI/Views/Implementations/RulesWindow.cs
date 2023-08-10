@@ -9,8 +9,6 @@ namespace Global.UI.Views.Implementations {
         [SerializeField] private CanvasGroup _group;
 
         protected override void OnEnable() {
-            _showState = Core.MVP.Base.Enums.ShowState.Hidden;
-             
             ChangeShowMechanism(new ChainShowMechanism(
                 new FadeShowMechanism(_group),
                 new CustomShowMechanism(ShowBlack)));

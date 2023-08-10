@@ -295,7 +295,7 @@ namespace Main.UI.Presenters {
             return view;
         }
 
-        public override async UniTask Dispose() {
+        public override void Dispose() {
             ApplicationQuit.UnSubscribeOnQuit(GoOffline);
             ApplicationQuit.UnSubscribeOnResume(GoOnline);
             

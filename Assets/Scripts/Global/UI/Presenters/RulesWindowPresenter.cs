@@ -16,7 +16,7 @@ namespace Global.UI.Presenters {
             SignalBus.Subscribe<ShowRulesWindowCloseButton>(OnRulesCloseState);
         }
 
-        public override async UniTask Dispose() {
+        public override void Dispose() {
             SignalBus.Unsubscribe<ShowRulesWindowCloseButton>(OnRulesCloseState);
         }
 

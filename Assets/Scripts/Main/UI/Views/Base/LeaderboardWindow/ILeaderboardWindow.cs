@@ -7,5 +7,6 @@ namespace Main.UI.Views.Base.LeaderboardWindow {
         int StartDataIndex { get; }
         void SetScrollerDelegate(IEnhancedScrollerDelegate deleg);
         void ReloadData();
+        void JumpToIndex(int meIndex);
     }
 }
