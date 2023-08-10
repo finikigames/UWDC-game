@@ -127,7 +127,7 @@ namespace Main.UI.Presenters.LeaderboardWindow {
             
         }
 
-        public override void Dispose() {
+        public override async UniTask Dispose() {
             _updateService.UnregisterUpdate(this);
         }
     }

@@ -33,7 +33,7 @@ namespace Global.Window {
         }
 
         public async UniTask Close() {
-            _controller.Dispose();
+            await _controller.Dispose();
             _view.Dispose();
             await _controller.Close();
             State = WindowState.Closed;

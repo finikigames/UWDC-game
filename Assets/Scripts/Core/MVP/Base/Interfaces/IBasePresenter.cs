@@ -10,7 +10,7 @@ namespace Core.MVP.Base.Interfaces {
         void PreloadInitialize();
         void InitDependencies();
         void InitializeView(IView view);
-        void Dispose();
+        UniTask Dispose();
         UniTask InitializeOnce();
     }
 }
