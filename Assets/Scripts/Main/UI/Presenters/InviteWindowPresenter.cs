@@ -43,6 +43,13 @@ namespace Main.UI.Presenters {
             View.SubscribeToApply(async () => {
                 var senderUserId = data.UserId;
                 var sender = await _nakamaService.GetUserInfo(senderUserId);
+
+                if (!_globalScope.ReceivedInvites.ContainsKey(senderUserId)) {
+                    CloseThisWindow();
+                    _signalBus.Fire(new OpenWindowSignal(WindowKey.FlyText, new FlyTextData{FlyText = "Ваш оппонент не в сети"}));
+                    return;
+                }
+                
                 if (!sender.Online) {
                     CloseThisWindow();
                     await _messageService.SendDeclineInviteSended(data.UserId);
