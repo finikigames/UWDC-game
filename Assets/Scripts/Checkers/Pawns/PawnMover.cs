@@ -7,8 +7,10 @@ using Checkers.Interfaces;
 using Checkers.Services;
 using Checkers.Structs;
 using Core.Primitives;
+using Global.ConfigTemplate;
 using Global.Enums;
 using UnityEngine;
+using Zenject;
 
 namespace Checkers.Pawns
 {
@@ -32,8 +34,14 @@ namespace Checkers.Pawns
         private bool isPawnMoving;
         private bool isMoveMulticapturing;
         private List<IPawnProperties> _pawnsWithSelections = new();
+        private AppConfig _appConfig;
 
         public bool TurnState => isPawnMoving;
+
+        [Inject]
+        public void Contructor(AppConfig appConfig) {
+            _appConfig = appConfig;
+        }
         
         private void Awake()
         {
@@ -113,8 +121,8 @@ namespace Checkers.Pawns
             }
         }
 
-        private bool CanTileBeClicked()
-        {
+        private bool CanTileBeClicked() {
+            if (_appConfig.RemainTime <= 1f) return false;
             return !isPawnMoving && lastClickedPawn != null;
         }
 

@@ -224,7 +224,8 @@ namespace Checkers.UI.Presenters {
 
         private void SetRemainTurnTime(float time) {
             _remainTime = time;
-            View.SetTimerTime((int)_remainTime);
+            _appConfig.RemainTime = _remainTime - 1f;
+            View.SetTimerTime((int)_appConfig.RemainTime);
         }
     }
 }
