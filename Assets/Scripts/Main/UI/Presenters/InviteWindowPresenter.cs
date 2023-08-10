@@ -52,6 +52,7 @@ namespace Main.UI.Presenters {
                 
                 if (!sender.Online) {
                     CloseThisWindow();
+                    _globalScope.ReceivedInvites.Remove(data.UserId);
                     await _messageService.SendDeclineInviteSended(data.UserId);
                     _signalBus.Fire(new OpenWindowSignal(WindowKey.FlyText, new FlyTextData{FlyText = "Ваш оппонент не в сети"}));
                     return;
