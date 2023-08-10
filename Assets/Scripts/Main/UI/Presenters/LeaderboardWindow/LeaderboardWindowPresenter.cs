@@ -83,25 +83,23 @@ namespace Main.UI.Presenters.LeaderboardWindow {
 
             var data = _userInfoDatas[dataIndex];
 
-            bool topRank = false;
             if (data.Rank == "1") {
                 view.ChangeSprite(_mainUIConfig.GoldFrame);
-                topRank = true;
             }
             else if (data.Rank == "2") {
                 view.ChangeSprite(_mainUIConfig.SilverFrame);
-                topRank = true;
             }
             else if (data.Rank == "3") {
                 view.ChangeSprite(_mainUIConfig.BronzeFrame);
-                topRank = true;
             }
             else {
                 view.ChangeSprite(_mainUIConfig.NormalFrame);
             }
             
-            if (_nakamaService.GetMe().User.Id == data.OwnerId && !topRank) {
-                view.ChangeSprite(_mainUIConfig.YourFrame);
+            view.SetYouFrame(_mainUIConfig.YourFrame, false);
+            
+            if (_nakamaService.GetMe().User.Id == data.OwnerId) {
+                view.SetYouFrame(_mainUIConfig.YourFrame, true);
             }
             
             view.Init($"{data.Rank}. {data.Nickname}", data.Score.ToString());
