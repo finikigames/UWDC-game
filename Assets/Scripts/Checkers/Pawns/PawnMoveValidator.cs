@@ -165,10 +165,11 @@ namespace Checkers.Pawns
                     if (!IsTileOccupied(checkedTileIndex)) continue;
                     var checkedPawn = tileGetter.GetTile(checkedTileIndex).GetComponent<TileProperties>().GetPawn();
                     if (potentialPawn == checkedPawn) continue;
-                    _ghostData.PotentialPawn = checkedPawn;
                     
                     ghostOccupiedCount++;
                     if (ghostOccupiedCount > 1) return false;
+                    
+                    _ghostData.PotentialPawn = checkedPawn;
                 } 
                 else if (IsPawnKing() && forCapture) {
                     if (potentialPawn != null && !IsTileOccupied(checkedTileIndex)) {
