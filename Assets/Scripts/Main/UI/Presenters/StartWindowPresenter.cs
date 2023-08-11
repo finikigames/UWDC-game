@@ -25,7 +25,6 @@ using Main.UI.Views.Implementations;
 using Nakama;
 using Server;
 using Server.Services;
-using UnityEngine;
 using UnityEngine.Scripting;
 using Zenject;
 
@@ -75,11 +74,7 @@ namespace Main.UI.Presenters {
             View.OnTextChange(OnUsersUpdate);
         }
 
-        protected override async UniTask LoadContent()
-        {
-            _timerService.ResetTimer("nearestTournamentTime");
-            _timerService.ResetTimer("tournamentTime");
-            
+        protected override async UniTask LoadContent() {
             var group = await _nakamaService.CreateGroup(_globalGroupName);
             await _nakamaService.JoinGroup(group.Id);
             var channel = await _nakamaService.JoinChat(group.Id);
@@ -116,6 +111,59 @@ namespace Main.UI.Presenters {
             _globalScope.SendedInvites.Clear();
         }
 
+        private void SetTimer(IApiTournament tournament) {
+            if (!tournament.IsActive()) {
+                View.DisablePlayButton();
+                View.SetTimeTournament("Недоступно");
+                return;
+            }
+            
+            if (HasActiveTournament()) {
+                var finish = DateTimeOffset.Parse(_currentTournament.FinishTime).ToUnixTimeSeconds();
+                var nowTime =  DateTimeOffset.Parse(DateTime.UtcNow.TimeOfDay.ToString()).ToUnixTimeSeconds();
+                var timeBeforeEnd = finish - nowTime;
+                
+                SetTournamentTimer(timeBeforeEnd);
+            }
+            else {
+                var nearestStart = DateTimeOffset.Parse(_currentTournament.StartTime).ToUnixTimeSeconds();
+                var finishTime = DateTimeOffset.Parse(_currentTournament.FinishTime).ToUnixTimeSeconds();
+                var nowTime =  DateTimeOffset.Parse(DateTime.UtcNow.TimeOfDay.ToString()).ToUnixTimeSeconds();
+                var timeBeforeStart = nearestStart - nowTime;
+
+                var nearest = FindNearestDate();
+                _timerService.StartTimer("nearestTournamentTime", timeBeforeStart, () => {
+                        var nowTime =  DateTimeOffset.Parse(DateTime.UtcNow.TimeOfDay.ToString()).ToUnixTimeSeconds();
+                        var timeBeforeEnd = finishTime - nowTime;
+                        
+                        SetTournamentTimer(timeBeforeEnd);
+                    }, 
+                    false, 
+                    current => {
+                        var diff = nearest - DateTime.UtcNow;
+                        var timeToDisplay = String.Format("{0:D2}:{1:D2}:{2:D2}", diff.Hours, diff.Minutes, diff.Seconds);
+                        
+                        View.DisablePlayButton();
+                        View.SetTimeTournament("До начала: \n" + timeToDisplay);
+                    });
+            }
+        }
+
+        private void SetTournamentTimer(long timeBeforeEnd) {
+            _timerService.StartTimer("tournamentTime", timeBeforeEnd, () => {
+                    View.DisablePlayButton();
+                    View.SetTimeTournament("Недоступно");
+                }, 
+                false, 
+                current => {
+                    var diff = DateTime.Parse(_currentTournament.FinishTime) - DateTime.UtcNow;
+                    var timeToDisplay = String.Format("{0:D2}:{1:D2}:{2:D2}", diff.Hours, diff.Minutes, diff.Seconds);
+                        
+                    View.EnablePlayButton();
+                    View.SetTimeTournament(timeToDisplay); 
+                });
+        }
+        
         private bool HasActiveTournament() {            
             foreach (var tournamentData in _tournamentsConfig.Datas) {
                 if (tournamentData.Day == (int)DateTime.Now.DayOfWeek) {
@@ -123,53 +171,12 @@ namespace Main.UI.Presenters {
                     var end = DateTime.Parse(tournamentData.FinishTime);
 
                     if (start <= DateTime.UtcNow && end > DateTime.UtcNow) {
-                        View.EnablePlayButton();
                         _currentTournament = tournamentData;
                         return true;
                     }
                 }
-                else {
-                    View.DisablePlayButton();
-                }
             }
-
             return false;
-        }
-
-        private void SetTimer(IApiTournament tournament) {
-            var whenEnded = tournament.GetRemainingTime();
-
-            if (HasActiveTournament()) {
-                _timerService.StartTimer("tournamentTime", whenEnded, () => { }, 
-                    false, 
-                    current => {
-                        var diff = DateTime.Parse(_currentTournament.FinishTime) - DateTime.UtcNow;
-                        var timeToDisplay = String.Format("{0:D2}:{1:D2}:{2:D2}", diff.Hours, diff.Minutes, diff.Seconds);
-                        
-                        View.EnablePlayButton();
-                        View.SetTimeTournament(timeToDisplay); 
-                    });
-            }
-            else {
-                _timerService.StartTimer("nearestTournamentTime", whenEnded, () => {
-                        _timerService.StartTimer("tournamentTime", whenEnded, () => { }, 
-                            false, 
-                            current => {
-                                var diff = DateTime.Parse(_currentTournament.FinishTime) - DateTime.UtcNow;
-                                var timeToDisplay = String.Format("{0:D2}:{1:D2}:{2:D2}", diff.Hours, diff.Minutes, diff.Seconds);
-                        
-                                View.EnablePlayButton();
-                                View.SetTimeTournament(timeToDisplay); 
-                            });
-                    }, 
-                    false, 
-                    current => {
-                        var nearest = FindNearestDate();
-                        var diff = nearest - DateTime.UtcNow;
-                        var timeToDisplay = String.Format("{0:D2}:{1:D2}:{2:D2}", diff.Hours, diff.Minutes, diff.Seconds);
-                        View.SetTimeTournament("До начала: " + timeToDisplay);
-                    });
-            }
         }
 
         private DateTime FindNearestDate() {
@@ -179,19 +186,24 @@ namespace Main.UI.Presenters {
             var list = _tournamentsConfig.Datas.OrderBy(z => z.Day)
                 .ToList();
 
-            var forwardList = list.Where(x => x.Day >= (int) DateTime.UtcNow.DayOfWeek)
-                .OrderBy(y => y.StartTime)
-                .ToList();
+            List<TournamentsScheduleData> forwardList = new();
+            foreach (var item in list) {
+                var ts = TimeSpan.Parse(item.StartTime);
+                if (item.Day > (int)DateTime.UtcNow.DayOfWeek
+                    || (item.Day == (int)DateTime.UtcNow.DayOfWeek && ts.TotalMilliseconds > DateTime.UtcNow.TimeOfDay.TotalMilliseconds)) {
+                    forwardList.Add(item);
+                }
+            }
 
-            if (forwardList.Count != 0) {
-                nearest = DateTime.Parse(forwardList.First().StartTime);
-                _currentTournament = forwardList.First();
+            var ordered = forwardList.OrderBy(y => y.StartTime).ToList();
+            if (ordered.Count != 0) {
+                nearest = DateTime.Parse(ordered.First().StartTime);
+                _currentTournament = ordered.First();
             }
             else {
                 nearest = DateTime.Parse(list.First().StartTime);
                 _currentTournament = list.First();
             }
-
             return nearest;
         }
 
@@ -357,6 +369,7 @@ namespace Main.UI.Presenters {
 
         public override async UniTask Dispose() {
             _timerService.RemoveTimer("tournamentTime");
+            _timerService.RemoveTimer("nearestTournamentTime");
             _timerService.RemoveTimer("updateUsersTimer");
 
             _updateService.UnregisterUpdate(this);

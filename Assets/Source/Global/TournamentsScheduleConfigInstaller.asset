@@ -13,4 +13,24 @@ MonoBehaviour:
   m_Name: TournamentsScheduleConfigInstaller
   m_EditorClassIdentifier: 
   Config:
-    Datas: []
+    Datas:
+    - Id: Novosibirsk_1
+      Day: 6
+      StartTime: 14:00:00
+      FinishTime: 16:00:00
+    - Id: Novosibirsk_2
+      Day: 7
+      StartTime: 14:00:00
+      FinishTime: 16:00:00
+    - Id: Chelyabinsk_1
+      Day: 3
+      StartTime: 08:00:00
+      FinishTime: 16:00:00
+    - Id: Chelyabinsk_2
+      Day: 2
+      StartTime: 16:00:00
+      FinishTime: 21:00:00
+    - Id: Chelyabinsk_3
+      Day: 4
+      StartTime: 17:08:00
+      FinishTime: 16:00:00
