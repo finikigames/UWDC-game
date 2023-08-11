@@ -29,6 +29,8 @@ namespace Server.Services {
         private IApiGroup _apiGroup;
         private IApiTournament _tournament;
 
+        private bool _isSocketConnecting;
+
         private Dictionary<string, IParty> _createdParties;
 
         public NakamaService() {
@@ -503,11 +505,13 @@ namespace Server.Services {
         }
 
         private async UniTask CheckForSocketConnect() {
-            if (_socket.IsConnected || _socket.IsConnecting) return;
+            if (_isSocketConnecting || _socket.IsConnected || _socket.IsConnecting) return;
 
-            OnSocketReconnect?.Invoke();
-            
+            _isSocketConnecting = true;
             await _socket.ConnectAsync(_session);
+            OnSocketReconnect?.Invoke();
+
+            _isSocketConnecting = false;
         }
 
         public void Dispose() {

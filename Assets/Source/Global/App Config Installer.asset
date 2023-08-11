@@ -16,3 +16,4 @@ MonoBehaviour:
     PauseTime: 10
     TurnTime: 20
     GlobalGroupName: globalGroup
+    SimulateReconnect: 0
