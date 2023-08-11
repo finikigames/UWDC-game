@@ -1,6 +1,4 @@
-﻿using Unity.Services.Core;
-using UnityEngine.Analytics;
-using Zenject;
+﻿using Zenject;
 
 namespace Global.Services {
     public class AnalyticsService : IInitializable {
