@@ -15,6 +15,8 @@ using UnityEditor;
 
 namespace Server.Services {
     public class NakamaService : IDisposable {
+        public Action OnSocketReconnect;
+        
         private Client _client;
         private Profile _profile;
         private ISession _session;
@@ -159,7 +161,13 @@ namespace Server.Services {
             await _socket.WriteChatMessageAsync(channel, data.ToJson());
         }
 
-        public async UniTask<IChannel> JoinChat(string groupId, ChannelType type = ChannelType.Group,bool persistence = true) {
+        public async UniTask<IChannel> JoinChatByName(string chatName) {
+            var group = await CreateGroup(chatName);
+            await JoinGroup(group.Id);
+            return await JoinChat(group.Id);
+        }
+        
+        public async UniTask<IChannel> JoinChat(string groupId, ChannelType type = ChannelType.Group, bool persistence = true) {
             await CheckForSocketConnect();
             
             _globalChannel = await _socket.JoinChatAsync(groupId, type, persistence);
@@ -326,7 +334,6 @@ namespace Server.Services {
                 }
             }
 
-            await CheckForSessionExpired();
             _apiGroup = await _client.CreateGroupAsync(_session, groupName);
             return _apiGroup;
         }
@@ -498,6 +505,8 @@ namespace Server.Services {
         private async UniTask CheckForSocketConnect() {
             if (_socket.IsConnected || _socket.IsConnecting) return;
 
+            OnSocketReconnect?.Invoke();
+            
             await _socket.ConnectAsync(_session);
         }
 

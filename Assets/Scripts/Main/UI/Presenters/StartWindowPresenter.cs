@@ -44,7 +44,6 @@ namespace Main.UI.Presenters {
         private GlobalScope _globalScope;
         private MessageService _messageService;
 
-        private string _globalGroupName = "globalGroup";
         private string _tournamentId = "4ec4f126-3f9d-11e7-84ef-b7c182b36521";
 
         private List<UserInfoData> _userInfoDatas;
@@ -75,13 +74,12 @@ namespace Main.UI.Presenters {
         protected override async UniTask LoadContent() {
             ApplicationQuit.SubscribeOnQuit(GoOffline);
             ApplicationQuit.SubscribeOnResume(GoOnline);
-            
-            var group = await _nakamaService.CreateGroup(_globalGroupName);
-            await _nakamaService.JoinGroup(group.Id);
-            var channel = await _nakamaService.JoinChat(group.Id);
+
+            var channel = await _nakamaService.JoinChatByName(_appConfig.GlobalGroupName);
             
             _messageService.InitializeGlobalChannel(channel);
-            _globalGroupInfo = await _nakamaService.GetGroupInfo(_globalGroupName);
+            
+            _globalGroupInfo = await _nakamaService.GetGroupInfo(_appConfig.GlobalGroupName);
 
             _userInfoDatas = new List<UserInfoData>();
 

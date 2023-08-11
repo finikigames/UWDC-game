@@ -6,6 +6,7 @@ namespace Global.ConfigTemplate {
     public class AppConfig {
         public float PauseTime;
         public float TurnTime;
+        public string GlobalGroupName;
         
         [NonSerialized]
         public float RemainTime;

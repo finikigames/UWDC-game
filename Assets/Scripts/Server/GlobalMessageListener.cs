@@ -6,6 +6,7 @@ using Nakama;
 using Nakama.TinyJson;
 using Newtonsoft.Json;
 using Server.Services;
+using UnityEngine;
 
 namespace Server {
     public class GlobalMessageListener {
@@ -26,6 +27,16 @@ namespace Server {
         
         public void Initialize() {
             _nakamaService.SubscribeToMessages(OnMessageListener);
+
+            _nakamaService.OnSocketReconnect += JoinGlobalChannel;
+        }
+
+        private async void JoinGlobalChannel() {
+            Debug.Log("Socket reconnect");
+                
+            var channel = await _nakamaService.JoinChatByName(_appConfig.GlobalGroupName);
+            
+            _messageService.InitializeGlobalChannel(channel);
         }
 
         private async void OnMessageListener(IApiChannelMessage m) {

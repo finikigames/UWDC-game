@@ -15,4 +15,4 @@ MonoBehaviour:
   Config:
     PauseTime: 10
     TurnTime: 20
-    RemainTime: 2
+    GlobalGroupName: globalGroup
