@@ -76,18 +76,26 @@ namespace Server.Services {
         }
 
         public async UniTask<IMatchmakerTicket> AddMatchmaker() {
+            await CheckForSocketConnect();
+            
             return await _socket.AddMatchmakerAsync(minCount: 2, maxCount: 2);
         }
 
         public async UniTask RemoveMatchmaker(IMatchmakerTicket ticket) {
+            await CheckForSocketConnect();
+            
             await _socket.RemoveMatchmakerAsync(ticket);
         }
 
         public async UniTask GoOffline() {
+            await CheckForSocketConnect();
+            
             await _socket.UpdateStatusAsync(null);
         }
 
         public async UniTask GoOnline() {
+            await CheckForSocketConnect();
+            
             await _socket.UpdateStatusAsync("online");
         }
 
@@ -112,11 +120,13 @@ namespace Server.Services {
         public async UniTask<IApiTournamentRecordList> ListTournamentRecordsAroundOwner(string tournamentId, string cursor, int limit = 100) {
             return await _client.ListTournamentRecordsAroundOwnerAsync(_session, tournamentId, _me.User.Id, limit:limit, cursor:cursor);
         }
-        
+
         public async UniTask LeaveCurrentMatch() {
+            await CheckForSocketConnect();
+            
             await _socket.LeaveMatchAsync(_match.Id);
         }
-        
+
         public async UniTask RemoveAllParties() {
             foreach (var partyPair in _createdParties) {
                 await LeaveParty(partyPair.Value.Id);
@@ -124,24 +134,34 @@ namespace Server.Services {
             
             _createdParties.Clear();
         }
-        
+
         public async UniTask<IParty> CreateParty() {
+            await CheckForSocketConnect();
+            
             return await _socket.CreatePartyAsync(false, 2);
         }
 
         public async UniTask LeaveParty(string partyId) {
+            await CheckForSocketConnect();
+            
             await _socket.LeavePartyAsync(partyId);
         }
-        
+
         public async UniTask JoinParty(string partyId) {
+            await CheckForSocketConnect();
+            
             await _socket.JoinPartyAsync(partyId);
         }
 
         public async UniTask SendMessage(IChannel channel, Dictionary<string, string> data) {
+            await CheckForSocketConnect();
+            
             await _socket.WriteChatMessageAsync(channel, data.ToJson());
         }
 
         public async UniTask<IChannel> JoinChat(string groupId, ChannelType type = ChannelType.Group,bool persistence = true) {
+            await CheckForSocketConnect();
+            
             _globalChannel = await _socket.JoinChatAsync(groupId, type, persistence);
             return _globalChannel;
         }
@@ -160,22 +180,24 @@ namespace Server.Services {
 
             return null;
         }
-        
+
         public async UniTask JoinTournament(string id) {
             if (!_tournament.IsActive()) return;
             await CheckForSessionExpired();
             await _client.JoinTournamentAsync(_session, id);
         }
-        
+
         //Return first in leaderboard players 
+
         public async UniTask<IApiTournamentRecordList> ListTournamentRecords(string id, int limit = 100, string cursor = null) {
             if (!_tournament.IsActive()) return null;
             await CheckForSessionExpired();
             
             return await _client.ListTournamentRecordsAsync(_session, id, new []{ _session.UserId }, limit:limit, cursor:cursor);
         }
-        
+
         //Return some count of players around player pos.
+
         public async UniTask<IApiTournamentRecordList> ListTournamentRecordsAround(string id, int limit = 100) {
             if (!_tournament.IsActive()) return null;
             await CheckForSessionExpired();
@@ -211,7 +233,7 @@ namespace Server.Services {
 
             await _client.WriteStorageObjectsAsync(_session, new [] { writeObject });
         }
-        
+
         public async UniTask DeleteStorageObject<T>(string collectionId, string key, T value) where T : class, new() {
             await CheckForSessionExpired();
 
@@ -232,7 +254,7 @@ namespace Server.Services {
             
             return await _client.ListUsersStorageObjectsAsync(_session, id, userId);
         }
-        
+
         public async UniTask<T> ListStorageObjects<T>(string collectionId, string key, string userId = null) where T : class, new() {
             if (string.IsNullOrEmpty(userId)) {
                 userId = _session.UserId;
@@ -266,7 +288,7 @@ namespace Server.Services {
 
             return "";
         }
-        
+
         public void SubscribeToMessages(Action<IApiChannelMessage> onParty) {
             _socket.ReceivedChannelMessage += onParty;
         }
@@ -274,12 +296,12 @@ namespace Server.Services {
         public void UnsubscribeFromMessages(Action<IApiChannelMessage> onParty) {
             _socket.ReceivedChannelMessage -= onParty;
         }
-        
+
         public async UniTask<IApiAccount> GetUserInfo() {
             await CheckForSessionExpired();
             return await _client.GetAccountAsync(_session);
         }
-        
+
         public async UniTask<IApiUsers> GetUsersInfos(string[] userIds) {
             await CheckForSessionExpired();
             return  await _client.GetUsersAsync(_session, userIds);
@@ -294,7 +316,7 @@ namespace Server.Services {
 
             return null;
         }
-        
+
         public async UniTask<IApiGroup> CreateGroup(string groupName) {
             await CheckForSessionExpired();
             var groups = await _client.ListGroupsAsync(_session, groupName);
@@ -308,7 +330,7 @@ namespace Server.Services {
             _apiGroup = await _client.CreateGroupAsync(_session, groupName);
             return _apiGroup;
         }
-        
+
         public async UniTask JoinGroup(string groupId) {
             await CheckForSessionExpired();
             var resultsMember = await _client.ListUserGroupsAsync(_session, 2, 1, "");
@@ -341,7 +363,7 @@ namespace Server.Services {
             await CheckForSessionExpired();
             return await _client.ListGroupUsersAsync(_session, groupName, 2, limit, cursor);
         }
-        
+
         public async UniTask<List<IGroupUserListGroupUser>> GetGroupUsersWithoutMe(string groupName, int limit, string cursor = "") {
             await CheckForSessionExpired();
             var usersList = await _client.ListGroupUsersAsync(_session, groupName, 2, limit, cursor);
@@ -362,6 +384,7 @@ namespace Server.Services {
                 EditorApplication.playModeStateChanged -= OnPlayModeChanged;
             }
         }
+
 #endif
 
         public async UniTask CreateClient() {
@@ -378,7 +401,7 @@ namespace Server.Services {
         public List<IUserPresence> GetCurrentMatchPlayers() {
             return _match.Presences.ToList();
         }
-        
+
         public int GetCurrentMatchPlayersCount() {
             return _match.Presences.Count();
         }
@@ -470,6 +493,12 @@ namespace Server.Services {
             if (_socket.IsConnected) return;
 
             await ConnectSocket();
+        }
+
+        private async UniTask CheckForSocketConnect() {
+            if (_socket.IsConnected || _socket.IsConnecting) return;
+
+            await _socket.ConnectAsync(_session);
         }
 
         public void Dispose() {
