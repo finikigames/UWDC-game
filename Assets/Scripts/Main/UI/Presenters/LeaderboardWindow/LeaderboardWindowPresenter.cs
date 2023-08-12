@@ -44,7 +44,7 @@ namespace Main.UI.Presenters.LeaderboardWindow {
             
             View.SetScrollerDelegate(this);
             
-            var list = await _nakamaService.ListTournamentRecordsAroundOwner(_tournamentId, null, 20);
+            var list = await _nakamaService.ListTournamentRecordsAroundOwner(_tournamentId, null, 100);
 
             var userIds = GetUsersIds(list);
             var infos = await _nakamaService.GetUsersInfos(userIds);

@@ -14,11 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Config:
     Datas:
-    - Id: Chelyabinsk_2
-      Day: 5
-      StartTime: 13:01:00
-      FinishTime: 22:00:00
     - Id: Novosibirsk_2
       Day: 6
-      StartTime: 05:00:00
-      FinishTime: 10:00:00
+      StartTime: 04:00:00
+      FinishTime: 09:00:00
